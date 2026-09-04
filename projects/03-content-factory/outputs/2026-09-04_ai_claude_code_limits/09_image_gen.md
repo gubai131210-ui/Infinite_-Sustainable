@@ -1,3 +1,3 @@
 # Image Gen
 
-已生成：assets/cover.png
+已生成：assets/cover.jpg

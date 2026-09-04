@@ -229,8 +229,8 @@ Xiaohongshu cover 3:4. Rice-paper cream background, minimal ink mountain silhoue
 - [x] 标题
 - [x] 正文
 - [x] 话题标签
-- [x] 封面图 assets/cover.png
-- [x] 壁纸图 assets/wallpaper.png
+- [x] 封面图 assets/cover.jpg
+- [x] 壁纸图 assets/wallpaper.jpg
 - [ ] 发布（按用户要求：仅本地，不自动发）
 
 ## 评论区置顶草稿
@@ -283,7 +283,7 @@ Xiaohongshu cover 3:4. Rice-paper cream background, minimal ink mountain silhoue
     mirror_stage(run_dir, "06_title", "06_titles.md", titles)
     mirror_stage(run_dir, "07_visual", "07_visual.md", visual)
     mirror_stage(run_dir, "08_image_prompt", "08_image_prompt.md", image_prompt)
-    mirror_stage(run_dir, "09_image_gen", "09_image_gen.md", "# Image Gen\n\n已生成：assets/cover.png, assets/wallpaper.png\n")
+    mirror_stage(run_dir, "09_image_gen", "09_image_gen.md", "# Image Gen\n\n已生成：assets/cover.jpg, assets/wallpaper.jpg\n")
     mirror_stage(run_dir, "10_xhs_carousel", "10_xhs_package.md", xhs)
     mirror_stage(run_dir, "11_short_video", "11_oral_script.md", oral)
     mirror_stage(run_dir, "12_blog", "12_blog.md", blog)
@@ -298,7 +298,7 @@ Xiaohongshu cover 3:4. Rice-paper cream background, minimal ink mountain silhoue
         publish_mode="local_only",
         created=str(date.today()),
         stages_completed=STAGE_DIRS.copy(),
-        assets=["assets/cover.png", "assets/wallpaper.png"],
+        assets=["assets/cover.jpg", "assets/wallpaper.jpg"],
         notes="传统文化优先样例；AI 图为创新组合，非馆藏翻制。",
     )
     write_json(run_dir / "00_manifest.json", asdict(manifest))
@@ -312,7 +312,7 @@ Xiaohongshu cover 3:4. Rice-paper cream background, minimal ink mountain silhoue
 ## 打开顺序
 1. `05_xhs_body.md` 正文
 2. `11_oral_script.md` 口播
-3. `assets/cover.png` / `assets/wallpaper.png`
+3. `assets/cover.jpg` / `assets/wallpaper.jpg`
 4. `03_fact_check.md` 边界
 
 ## 验证
@@ -447,7 +447,7 @@ Xiaohongshu cover 3:4 for tech news. Dark charcoal with soft blue gradient, abst
     xhs = """# 小红书成片清单
 
 - [x] 标题/正文/标签
-- [x] 封面 assets/cover.png
+- [x] 封面 assets/cover.jpg
 - [x] 口播提纲
 - [ ] 发布（local_only）
 """
@@ -464,7 +464,7 @@ Xiaohongshu cover 3:4 for tech news. Dark charcoal with soft blue gradient, abst
     mirror_stage(run_dir, "06_title", "06_titles.md", titles)
     mirror_stage(run_dir, "07_visual", "07_visual.md", visual)
     mirror_stage(run_dir, "08_image_prompt", "08_image_prompt.md", image_prompt)
-    mirror_stage(run_dir, "09_image_gen", "09_image_gen.md", "# Image Gen\n\n已生成：assets/cover.png\n")
+    mirror_stage(run_dir, "09_image_gen", "09_image_gen.md", "# Image Gen\n\n已生成：assets/cover.jpg\n")
     mirror_stage(run_dir, "10_xhs_carousel", "10_xhs_package.md", xhs)
     mirror_stage(run_dir, "11_short_video", "11_oral_script.md", oral)
     mirror_stage(run_dir, "12_blog", "12_blog.md", blog)
@@ -479,7 +479,7 @@ Xiaohongshu cover 3:4 for tech news. Dark charcoal with soft blue gradient, abst
         publish_mode="local_only",
         created=str(date.today()),
         stages_completed=STAGE_DIRS.copy(),
-        assets=["assets/cover.png"],
+        assets=["assets/cover.jpg"],
         notes="AI 资讯样例；数字发布前再核官方原文。",
     )
     write_json(run_dir / "00_manifest.json", asdict(manifest))
@@ -490,7 +490,7 @@ Xiaohongshu cover 3:4 for tech news. Dark charcoal with soft blue gradient, abst
 方向：AI 资讯（厂商额度）
 状态：MVP 本地闭环完成（未发布）
 
-验证：阶段文件齐全 + assets/cover.png 存在。
+验证：阶段文件齐全 + assets/cover.jpg 存在。
 """,
     )
     return run_dir
@@ -524,15 +524,34 @@ def cmd_check(args: argparse.Namespace) -> None:
     required = [
         "00_manifest.json",
         "01_topic.md",
+        "03_fact_check.md",
         "05_xhs_body.md",
         "11_oral_script.md",
         "13_publish.md",
     ]
     missing = [r for r in required if not (run_dir / r).exists()]
     assets = list((run_dir / "assets").glob("*")) if (run_dir / "assets").exists() else []
-    print(json.dumps({"run": args.run_id, "missing": missing, "assets": [a.name for a in assets]}, ensure_ascii=False, indent=2))
-    if missing:
+    publish_mode = None
+    if (run_dir / "00_manifest.json").exists():
+        publish_mode = load_json(run_dir / "00_manifest.json").get("publish_mode")
+    print(
+        json.dumps(
+            {
+                "run": args.run_id,
+                "missing": missing,
+                "assets": [a.name for a in assets],
+                "publish_mode": publish_mode,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    if missing or publish_mode not in (None, "local_only"):
+        if publish_mode not in (None, "local_only"):
+            raise SystemExit(f"unexpected publish_mode: {publish_mode}")
         raise SystemExit(1)
+    if not assets:
+        raise SystemExit("no assets in run package")
 
 
 def main() -> None:

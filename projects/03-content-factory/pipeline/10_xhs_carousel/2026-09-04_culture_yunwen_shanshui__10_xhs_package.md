@@ -3,8 +3,8 @@
 - [x] 标题
 - [x] 正文
 - [x] 话题标签
-- [x] 封面图 assets/cover.png
-- [x] 壁纸图 assets/wallpaper.png
+- [x] 封面图 assets/cover.jpg
+- [x] 壁纸图 assets/wallpaper.jpg
 - [ ] 发布（按用户要求：仅本地，不自动发）
 
 ## 评论区置顶草稿

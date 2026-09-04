@@ -6,7 +6,7 @@
 ## 打开顺序
 1. `05_xhs_body.md` 正文
 2. `11_oral_script.md` 口播
-3. `assets/cover.png` / `assets/wallpaper.png`
+3. `assets/cover.jpg` / `assets/wallpaper.jpg`
 4. `03_fact_check.md` 边界
 
 ## 验证

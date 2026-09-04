@@ -3,4 +3,4 @@
 方向：AI 资讯（厂商额度）
 状态：MVP 本地闭环完成（未发布）
 
-验证：阶段文件齐全 + assets/cover.png 存在。
+验证：阶段文件齐全 + assets/cover.jpg 存在。

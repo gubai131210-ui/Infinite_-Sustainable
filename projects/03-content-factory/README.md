@@ -23,12 +23,12 @@
 1. **文化优先**  
    `outputs/2026-09-04_culture_yunwen_shanshui/`  
    选题：云纹入画 · 山水「远」+ 壁纸创新  
-   资产：`assets/cover.png`、`assets/wallpaper.png`
+   资产：`assets/cover.jpg`、`assets/wallpaper.jpg`
 
 2. **AI 资讯**  
    `outputs/2026-09-04_ai_claude_code_limits/`  
    选题：Claude Code 周限额 +25% vs 相对今天 -17%  
-   资产：`assets/cover.png`
+   资产：`assets/cover.jpg`
 
 ## 怎么跑（请你本地执行）
 
