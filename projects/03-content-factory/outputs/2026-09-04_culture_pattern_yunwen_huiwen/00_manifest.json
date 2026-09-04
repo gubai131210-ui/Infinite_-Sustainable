@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-09-04_culture_pattern_yunwen_huiwen",
+  "direction": "culture_pattern",
+  "topic": "卷云纹 × 回纹：只做纹饰组合",
+  "status": "mvp_local_complete",
+  "publish_mode": "local_only",
+  "created": "2026-09-04",
+  "assets": ["assets/cover.jpg", "assets/wallpaper.jpg"],
+  "notes": "纯纹饰组合；禁止水墨山水混入。与 culture_painting 分轨。"
+}
