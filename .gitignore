@@ -1,0 +1,53 @@
+# Secrets & env
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+**/secrets/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+
+# Logs & caches
+*.log
+.cache/
+tmp/
+temp/
+
+# Godot
+.godot/
+*.translation
+
+# Local large / binary dumps
+*.zip
+*.7z
+*.rar
+knowledge/**/*.pdf
+knowledge/**/*.bin
+
+# Agent runtime artifacts (keep structure, ignore noise)
+projects/**/runs/
+projects/**/artifacts/
+*.token

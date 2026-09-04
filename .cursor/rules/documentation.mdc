@@ -1,0 +1,19 @@
+---
+description: 文档与知识沉淀规则
+globs: "**/*.{md,mdc}"
+alwaysApply: false
+---
+
+# Documentation Rules（精简）
+
+## 必须
+
+- 文档写清：目标、状态（未开工/进行中/已完成）、如何验证
+- 项目 README 必须包含「开工前必问」三问
+- 可复用规律写入 `memories/` 或 `knowledge/`，禁止流水账
+- Agent 间交接使用 `docs/handoff-template.md`
+
+## 禁止
+
+- 空洞的“已完成”而无验收标准
+- 把临时闲聊当知识保存

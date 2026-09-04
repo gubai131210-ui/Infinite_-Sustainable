@@ -1,0 +1,26 @@
+---
+description: 编码任务规则 — 最小风险修改并验证
+globs: "**/*.{cs,py,ts,tsx,js,jsx,gd,rs,go,java,cpp,h}"
+alwaysApply: false
+---
+
+# Coding Rules（精简）
+
+完整 Coder 提示词：`prompts/02-execution/coder.md`
+
+## 流程
+
+Understand → Inspect → Plan → Implement → Run → Test → Review → Report
+
+## 原则
+
+- 先读 README / 结构 / 相关源码，禁止盲写
+- 修改最少文件，复用现有架构
+- 重要改动必须做可执行验证；无法测试要说明原因
+- 失败时：Reproduce → Diagnose → Minimal Fix → Retest
+
+## 禁止
+
+- 改测试掩盖 Bug / 删除失败测试
+- 编造运行结果
+- 无解释的大规模重构

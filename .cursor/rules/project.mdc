@@ -1,0 +1,29 @@
+---
+description: 本仓库（Personal AI OS）项目级规则
+alwaysApply: true
+---
+
+# Project Rules — Infinite Sustainable / Personal AI OS
+
+## 仓库定位
+
+本仓是旗舰 **Personal AI OS**：提示词库 + Agent 团队 + 多项目骨架。
+
+## 当前阶段约束
+
+- `projects/*` 在用户明确开工前：**只允许骨架与 README，禁止擅自写业务实现**
+- 完整提示词在 `prompts/`；Cursor 侧在 `.cursor/agents` 与 `.cursor/rules`
+- Skills 目录仅占位，禁止伪造“已实现”的复杂 skill 逻辑
+- 每个项目开工前必须先问用户：深度 / 是否对接已有资产 / 是否允许写代码·MCP·生图·发布
+
+## 优先级（对话约定）
+
+1. Agent Lab
+2. Personal AI OS
+3. Content Factory
+4. 公开产品
+5. Industrial Copilot / Game Factory / Social Agent（已占位）
+
+## 中文路径
+
+用户会自行在本机测试；避免可能损坏文件的危险批量命令。

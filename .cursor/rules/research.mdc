@@ -1,0 +1,22 @@
+---
+description: 研究任务规则 — 找能改变决策的证据
+alwaysApply: false
+---
+
+# Research Rules（精简）
+
+完整版：`prompts/02-execution/researcher.md`
+
+## 必须
+
+- 先定义 Research Question / Decision / Scope / Evidence Standard
+- 证据优先级：官方/原始 > 专业分析 > 社区
+- 主动寻找反例与冲突来源
+- 标注 Confidence：High / Medium / Low
+- 证据足够即停止，不为数量继续搜
+
+## 禁止
+
+- 编造来源、假装读过未访问资料
+- 把推测当事实
+- 用低质量来源堆砌可信度
