@@ -1,67 +1,42 @@
 # 03 — AI Content Factory
 
-**状态：MVP 进行中（本地闭环已跑通，未自动发布）**  
-**优先级：第 3**
+**状态：MVP 迭代中（本地闭环；已按反馈修正视觉规则）**
 
-## 本次约定（已确认）
+## 最新纠正（2026-09-04）
+
+1. **AI 资讯图**：必须把人们关心的信息排进图（数字/口径/时间），使用 `scripts/render_ai_news_cover.py` 字体排版。  
+   见：`outputs/2026-09-04_ai_claude_code_limits/assets/cover.jpg`
+2. **传统文化**：画 与 纹饰 是两条线，一次只讲一个；图禁止画+纹饰混搭。  
+   讲画样例：`outputs/2026-09-04_culture_shanshui_yuan/`  
+   旧混搭：`outputs/2026-09-04_culture_yunwen_shanshui/`（已 DEPRECATED）
+
+## 本次约定
 
 | 项 | 选择 |
 |----|------|
-| 深度 | MVP：双方向各 1 条完整闭环 |
-| 已有资产 | 先不对接 |
-| 权限 | 写代码 + MCP/网页调研 + 生图；**生成到本地，不自动发** |
-| 优先 | ① 传统文化（水墨山水 + 纹饰创新） |
-| 形态 | 小红书图文 + 封面/壁纸方向 + 口播提纲 |
+| 深度 | MVP |
+| 发布 | 仅本地 |
+| 优先 | 传统文化讲画；纹饰另开 |
 
-## 闭环阶段
+## 请你本地打开验证
 
-`01_topic` → … → `14_analytics`（见 `pipeline/`）  
-成包输出在 `outputs/<run_id>/`。
+```text
+projects\03-content-factory\outputs\2026-09-04_ai_claude_code_limits\assets\cover.jpg
+projects\03-content-factory\outputs\2026-09-04_culture_shanshui_yuan\assets\cover.jpg
+projects\03-content-factory\outputs\2026-09-04_culture_shanshui_yuan\assets\wallpaper.jpg
+projects\03-content-factory\outputs\2026-09-04_culture_shanshui_yuan\05_xhs_body.md
+```
 
-## MVP 样例（请本地打开）
-
-1. **文化优先**  
-   `outputs/2026-09-04_culture_yunwen_shanshui/`  
-   选题：云纹入画 · 山水「远」+ 壁纸创新  
-   资产：`assets/cover.jpg`、`assets/wallpaper.jpg`
-
-2. **AI 资讯**  
-   `outputs/2026-09-04_ai_claude_code_limits/`  
-   选题：Claude Code 周限额 +25% vs 相对今天 -17%  
-   资产：`assets/cover.jpg`
-
-## 怎么跑（请你本地执行）
-
-因目录含中文空格，建议你在本机 PowerShell 自行测试：
+## 重渲染 AI 封面
 
 ```powershell
 cd "d:\Infinite_ Sustainable\projects\03-content-factory"
-$env:PYTHONPATH = (Resolve-Path ".\src").Path
-python -m content_factory init-mvp
-python -m content_factory list
-python -m content_factory check 2026-09-04_culture_yunwen_shanshui
-python -m content_factory check 2026-09-04_ai_claude_code_limits
+python scripts\render_ai_news_cover.py
 ```
-
-或运行：`scripts\run_mvp.ps1`
-
-## 关键目录
-
-- `config/sources_authority.json` — 权威信源（持续扩充，不止初始列表）
-- `config/directions.md` — 两大方向
-- `research/niche_expansion.md` — 小方向扩充池
-- `research/github_references.md` — 开源流程学习
-- `src/content_factory/` — 流水线代码
 
 ## 禁止偷懒
 
-- 禁止只交一篇文案就算 Factory
-- 禁止跳过 Fact Check（版权 / 额度口径）
-- 禁止 AI 图冒充馆藏原作
-- 禁止自动发布小红书
-- 禁止信源停在用户给的 6 个链接不再扩充
-- 禁止把所有能力堆成单页无结构文档
-
-## 开工前三问（下次迭代仍要问）
-
-1. 深度？ 2. 对接资产？ 3. 是否允许发内容/新权限？
+- 禁止 AI 资讯封面只有抽象装饰没有新闻信息
+- 禁止同篇把山水画和纹饰混讲、混生图
+- 禁止自动发布
+- 禁止继续使用已 DEPRECATED 的混搭样例当正稿

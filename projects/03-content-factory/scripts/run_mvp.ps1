@@ -2,7 +2,8 @@
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot\..
 $env:PYTHONPATH = (Resolve-Path ".\src").Path
+python -m pip install -r requirements.txt
 python -m content_factory init-mvp
 python -m content_factory list
-python -m content_factory check 2026-09-04_culture_yunwen_shanshui
+python -m content_factory check 2026-09-04_culture_shanshui_yuan
 python -m content_factory check 2026-09-04_ai_claude_code_limits

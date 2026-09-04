@@ -1,0 +1,15 @@
+{
+  "run_id": "2026-09-04_culture_shanshui_yuan",
+  "direction": "culture_painting",
+  "topic": "宋人山水的「远」：先学会看，再谈壁纸",
+  "status": "mvp_local_complete",
+  "publish_mode": "local_only",
+  "created": "2026-09-04",
+  "stages_completed": [
+    "01_topic", "02_research", "03_fact_check", "04_angle", "05_writer",
+    "06_title", "07_visual", "08_image_prompt", "09_image_gen",
+    "10_xhs_carousel", "11_short_video", "12_blog", "13_publish", "14_analytics"
+  ],
+  "assets": ["assets/cover.jpg", "assets/wallpaper.jpg"],
+  "notes": "本篇只讲山水画，不讲纹饰；图中禁止纹样边框/器物装饰混搭。旧样例 yunwen_shanshui 已废弃。"
+}
