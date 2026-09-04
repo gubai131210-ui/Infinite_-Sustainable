@@ -1,3 +1,10 @@
-# Image Prompt — Cover
+# Image / Cover（AI 资讯）
 
-Xiaohongshu cover 3:4 for tech news. Dark charcoal with soft blue gradient, abstract usage-meter gauge and subtle code brackets, empty center for title (no text rendered). No real brand logos.
+不要用「抽象装饰、中心留白无字」的文生图当封面。
+
+本方向封面由 `scripts/render_ai_news_cover.py` 字体排版生成，必须上图：
+- 标题
+- 涨 25%（相对基线）
+- 少约 17%（相对今天）
+- 三行对照（临时促销 / 永久调整 / 体感变化）
+- 生效日与免责声明
