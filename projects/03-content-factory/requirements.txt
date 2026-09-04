@@ -1,0 +1,7 @@
+# Content Factory 依赖
+
+MVP 仅使用 Python 标准库。保留此文件便于后续扩展（HTTP 抓取、YAML 等）。
+
+```text
+# 暂无第三方硬依赖
+```

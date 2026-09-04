@@ -1,0 +1,168 @@
+{
+  "culture": [
+    {
+      "name": "故宫博物院官网",
+      "url": "https://www.dpm.org.cn/",
+      "tier": "A",
+      "tags": ["官方", "书画", "综合"]
+    },
+    {
+      "name": "故宫数字文物库",
+      "url": "https://digicol.dpm.org.cn/",
+      "tier": "A",
+      "tags": ["官方", "高清", "检索"]
+    },
+    {
+      "name": "故宫名画记（书画超高清）",
+      "url": "https://minghuaji.dpm.org.cn/",
+      "tier": "A",
+      "tags": ["官方", "山水", "书画"]
+    },
+    {
+      "name": "数字多宝阁",
+      "url": "https://www.dpm.org.cn/",
+      "tier": "A",
+      "tags": ["官方", "三维", "器物"]
+    },
+    {
+      "name": "中国国家博物馆",
+      "url": "https://www.chnmuseum.cn/",
+      "tier": "A",
+      "tags": ["官方", "展览", "书画"]
+    },
+    {
+      "name": "国博数字展厅",
+      "url": "https://www.chnmuseum.cn/portals/0/web/vr/",
+      "tier": "A",
+      "tags": ["官方", "VR"]
+    },
+    {
+      "name": "上海博物馆",
+      "url": "https://www.shanghaimuseum.net/",
+      "tier": "A",
+      "tags": ["官方", "书画", "器物"]
+    },
+    {
+      "name": "南京博物院",
+      "url": "https://www.njmuseum.com/",
+      "tier": "A",
+      "tags": ["官方", "综合"]
+    },
+    {
+      "name": "陕西历史博物馆藏品/3D",
+      "url": "https://www.sxhm.com/collection/3d.html",
+      "tier": "A",
+      "tags": ["官方", "器物", "3D"]
+    },
+    {
+      "name": "敦煌研究院",
+      "url": "https://www.dha.ac.cn/",
+      "tier": "A",
+      "tags": ["官方", "壁画", "纹样"]
+    },
+    {
+      "name": "中国丝绸博物馆",
+      "url": "https://www.chinasilkmuseum.com/",
+      "tier": "A",
+      "tags": ["官方", "服饰", "纹样"]
+    },
+    {
+      "name": "台北故宫 Open Data",
+      "url": "https://theme.npm.edu.tw/opendata/",
+      "tier": "A",
+      "tags": ["开放数据", "高清", "书画"]
+    },
+    {
+      "name": "中华珍宝馆",
+      "url": "https://g2.ltfc.net/",
+      "tier": "B",
+      "tags": ["书画高清", "浏览"]
+    },
+    {
+      "name": "中国色 · 纹样/配色",
+      "url": "https://zhongguose.com/ai/patterns",
+      "tier": "B",
+      "tags": ["纹样", "配色", "工具"]
+    },
+    {
+      "name": "纹藏",
+      "url": "https://www.wenzang.cn/pattern",
+      "tier": "B",
+      "tags": ["纹样"]
+    },
+    {
+      "name": "中国古籍图典（国图出版社）",
+      "url": "https://tudian.nlcpress.com/",
+      "tier": "B",
+      "tags": ["古籍", "图典", "可能需登录"]
+    },
+    {
+      "name": "国家图书馆",
+      "url": "https://www.nlc.cn/",
+      "tier": "A",
+      "tags": ["官方", "文献"]
+    },
+    {
+      "name": "中国非物质文化遗产网",
+      "url": "https://www.ihchina.cn/",
+      "tier": "A",
+      "tags": ["官方", "非遗", "纹样工艺"]
+    }
+  ],
+  "ai_news": [
+    {
+      "name": "Anthropic News / 官方渠道",
+      "url": "https://www.anthropic.com/news",
+      "tier": "A",
+      "tags": ["厂商官方", "Claude"]
+    },
+    {
+      "name": "OpenAI Blog",
+      "url": "https://openai.com/blog/",
+      "tier": "A",
+      "tags": ["厂商官方"]
+    },
+    {
+      "name": "Google DeepMind Blog",
+      "url": "https://deepmind.google/discover/blog/",
+      "tier": "A",
+      "tags": ["厂商官方"]
+    },
+    {
+      "name": "Cursor Changelog / Blog",
+      "url": "https://cursor.com/changelog",
+      "tier": "A",
+      "tags": ["厂商官方", "额度", "产品"]
+    },
+    {
+      "name": "GitHub Blog (AI)",
+      "url": "https://github.blog/",
+      "tier": "A",
+      "tags": ["平台官方"]
+    },
+    {
+      "name": "BleepingComputer",
+      "url": "https://www.bleepingcomputer.com/",
+      "tier": "B",
+      "tags": ["二次报道", "需回链官方"]
+    }
+  ],
+  "github_workflows": [
+    {
+      "name": "cv-cat/XHS_ALL_IN_ONE",
+      "url": "https://github.com/cv-cat/XHS_ALL_IN_ONE",
+      "learn": "采集→内容库→改写→图片→发布全链路；本 MVP 只学结构，不自动发布"
+    },
+    {
+      "name": "alextangson/AutoCrew",
+      "url": "https://github.com/alextangson/AutoCrew",
+      "learn": "选题研究→平台文案→敏感词/去AI味→封面；本地优先"
+    },
+    {
+      "name": "Yice-AI/xhs-marketing-master",
+      "url": "https://github.com/Yice-AI/xhs-marketing-master",
+      "learn": "策略原子→多路线标题正文→封面 prompt→浏览器插件采集发布分离"
+    }
+  ],
+  "notes": "Tier A=博物馆/厂商/国家机构等权威优先；Tier B=高质量工具或媒体，引用时尽量回链 A 级。持续扩充，不允许停在用户初始列表。"
+}

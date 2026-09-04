@@ -1,28 +1,67 @@
 # 03 — AI Content Factory
 
-**状态：未开工（仅 pipeline 空目录）**  
-**优先级：第 3（影响力 / 商业能力）**
+**状态：MVP 进行中（本地闭环已跑通，未自动发布）**  
+**优先级：第 3**
 
-## 目标
+## 本次约定（已确认）
 
-一人 + 多 Agent 的内容工作室：Topic → Research → Fact Check → Angle → Writer → Title → Visual → Image Prompt → Image Gen → 小红书轮播 → 短视频脚本 → Blog → 发布 → Analytics → 优化下一篇。
+| 项 | 选择 |
+|----|------|
+| 深度 | MVP：双方向各 1 条完整闭环 |
+| 已有资产 | 先不对接 |
+| 权限 | 写代码 + MCP/网页调研 + 生图；**生成到本地，不自动发** |
+| 优先 | ① 传统文化（水墨山水 + 纹饰创新） |
+| 形态 | 小红书图文 + 封面/壁纸方向 + 口播提纲 |
 
-## Pipeline 目录
+## 闭环阶段
 
-见 `pipeline/01_topic` … `pipeline/14_analytics`。
+`01_topic` → … → `14_analytics`（见 `pipeline/`）  
+成包输出在 `outputs/<run_id>/`。
 
-## 建议绑定
+## MVP 样例（请本地打开）
 
-可与「读隙」小程序主题实验结合（需你确认）。
+1. **文化优先**  
+   `outputs/2026-09-04_culture_yunwen_shanshui/`  
+   选题：云纹入画 · 山水「远」+ 壁纸创新  
+   资产：`assets/cover.png`、`assets/wallpaper.png`
 
-## 开工前必问
+2. **AI 资讯**  
+   `outputs/2026-09-04_ai_claude_code_limits/`  
+   选题：Claude Code 周限额 +25% vs 相对今天 -17%  
+   资产：`assets/cover.png`
 
-1. 这次要做到什么深度？（骨架 / MVP / 可发布）
-2. 是否对接已有资产？（读隙、账号、素材库等）
-3. 是否允许写真实代码 / 接 MCP / 生图 / 发内容？
+## 怎么跑（请你本地执行）
+
+因目录含中文空格，建议你在本机 PowerShell 自行测试：
+
+```powershell
+cd "d:\Infinite_ Sustainable\projects\03-content-factory"
+$env:PYTHONPATH = (Resolve-Path ".\src").Path
+python -m content_factory init-mvp
+python -m content_factory list
+python -m content_factory check 2026-09-04_culture_yunwen_shanshui
+python -m content_factory check 2026-09-04_ai_claude_code_limits
+```
+
+或运行：`scripts\run_mvp.ps1`
+
+## 关键目录
+
+- `config/sources_authority.json` — 权威信源（持续扩充，不止初始列表）
+- `config/directions.md` — 两大方向
+- `research/niche_expansion.md` — 小方向扩充池
+- `research/github_references.md` — 开源流程学习
+- `src/content_factory/` — 流水线代码
 
 ## 禁止偷懒
 
-- 禁止只生成一篇文案就叫 Factory
-- 禁止跳过 Fact Check 与个人声音检查
-- 禁止把控件/能力全堆在一个页面（内容形态该拆就拆）
+- 禁止只交一篇文案就算 Factory
+- 禁止跳过 Fact Check（版权 / 额度口径）
+- 禁止 AI 图冒充馆藏原作
+- 禁止自动发布小红书
+- 禁止信源停在用户给的 6 个链接不再扩充
+- 禁止把所有能力堆成单页无结构文档
+
+## 开工前三问（下次迭代仍要问）
+
+1. 深度？ 2. 对接资产？ 3. 是否允许发内容/新权限？

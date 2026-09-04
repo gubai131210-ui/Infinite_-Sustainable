@@ -1,0 +1,29 @@
+{
+  "run_id": "2026-09-04_culture_yunwen_shanshui",
+  "direction": "culture",
+  "topic": "云纹入画：宋人山水的「远」做成壁纸",
+  "status": "mvp_local_complete",
+  "publish_mode": "local_only",
+  "created": "2026-09-04",
+  "stages_completed": [
+    "01_topic",
+    "02_research",
+    "03_fact_check",
+    "04_angle",
+    "05_writer",
+    "06_title",
+    "07_visual",
+    "08_image_prompt",
+    "09_image_gen",
+    "10_xhs_carousel",
+    "11_short_video",
+    "12_blog",
+    "13_publish",
+    "14_analytics"
+  ],
+  "assets": [
+    "assets/cover.png",
+    "assets/wallpaper.png"
+  ],
+  "notes": "传统文化优先样例；AI 图为创新组合，非馆藏翻制。"
+}
