@@ -378,6 +378,23 @@ def cmd_render_ai(_: argparse.Namespace) -> None:
     render_ai_news_cover()
 
 
+def cmd_build_prompt(args: argparse.Namespace) -> None:
+    from .prompt_builder import build_prompt, list_presets, load_preset
+
+    if args.list:
+        print("\n".join(list_presets()))
+        return
+    if args.raw:
+        print(load_preset(args.preset))
+        return
+    print(build_prompt(args.preset, index=args.index))
+
+
+def cmd_render_pattern(_: argparse.Namespace) -> None:
+    script = SCRIPTS / "render_pattern_yunwen_huiwen.py"
+    subprocess.check_call([sys.executable, str(script)])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Content Factory MVP")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -392,8 +409,18 @@ def main() -> None:
     p_check.add_argument("run_id")
     p_check.set_defaults(func=cmd_check)
 
-    p_render = sub.add_parser("render-ai-cover", help="Re-render AI news typography cover")
+    p_render = sub.add_parser("render-ai-cover", help="Re-render AI news data-card cover")
     p_render.set_defaults(func=cmd_render_ai)
+
+    p_pat = sub.add_parser("render-pattern", help="Re-render programmatic pattern assets")
+    p_pat.set_defaults(func=cmd_render_pattern)
+
+    p_prompt = sub.add_parser("build-prompt", help="Print a prompt library preset")
+    p_prompt.add_argument("preset", nargs="?", default="culture_painting_ink")
+    p_prompt.add_argument("--index", type=int, default=0)
+    p_prompt.add_argument("--list", action="store_true")
+    p_prompt.add_argument("--raw", action="store_true", help="print full markdown file")
+    p_prompt.set_defaults(func=cmd_build_prompt)
 
     args = parser.parse_args()
     args.func(args)

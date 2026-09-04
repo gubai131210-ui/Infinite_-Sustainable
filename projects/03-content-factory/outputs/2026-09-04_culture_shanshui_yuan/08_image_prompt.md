@@ -1,4 +1,9 @@
 # Image Prompts
 
-## Cover / Wallpaper（纯山水，无纹饰）
-Pure Chinese ink landscape only: misty layered mountains, near rocks / mid slopes / far peaks, soft fog, quiet scale cue. Ink and rice-paper tones. NO decorative patterns, NO cloud-scroll frames, NO textile motifs, NO ornament borders. No text, no logos.
+使用提示词库完整展开：
+
+```powershell
+python -m content_factory build-prompt culture_painting_ink
+```
+
+模板文件：`config/prompt_library/culture_painting_ink.md`

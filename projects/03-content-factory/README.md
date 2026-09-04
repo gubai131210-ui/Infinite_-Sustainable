@@ -1,36 +1,48 @@
 # 03 — AI Content Factory
 
-**状态：MVP 迭代中**
+**状态：MVP（已接入网研提示词库 + 数据卡排版）**
 
-## 本轮修正
+## 本轮升级
 
-1. **AI 资讯封面**：改为密排版（双栏对比 / 100→150→125 / 时间线 / 行动清单），保留深色蓝配色。  
-   `outputs/2026-09-04_ai_claude_code_limits/assets/cover.jpg`
-2. **传统文化分轨**  
-   - 只讲画：`outputs/2026-09-04_culture_shanshui_yuan/`  
-   - 只讲纹饰组合：`outputs/2026-09-04_culture_pattern_yunwen_huiwen/`（回纹×卷云，**无山水**）  
-   - 旧混搭：`culture_yunwen_shanshui` 仍为 DEPRECATED
+1. 新增提示词库：`config/prompt_library/`（6 槽公式、资讯数据卡、高密模块、水墨、纯纹饰）
+2. AI 资讯封面按 **Data Card** 契约重排：核心大数字区约占 30% 屏高 + 3 行数据 + 换算条 + 行动清单  
+   → `outputs/2026-09-04_ai_claude_code_limits/assets/cover_data_card.jpg`
+3. 用详细提示词重生成：
+   - 讲画：`culture_shanshui_yuan/assets/`（三远 + 留白 + 朱文印）
+   - 讲纹饰：`culture_pattern_yunwen_huiwen/assets/wallpaper.jpg`（纯纹样，无山水）
 
-## 本地请你打开看
+## 调研来源（摘要）
+
+- SurePrompts 6-Part Formula  
+- Apiyi 小红书 Data Visualization Card  
+- AJ OpenClaw 高密 6–7 模块  
+- YiceKit：资讯中文优先后期/程序排版  
+- AI Tools Guidebook 水墨山水 Prompt  
+
+完整链接见 `config/prompt_library/README.md`。
+
+## 本地请打开
 
 ```text
-outputs\2026-09-04_ai_claude_code_limits\assets\cover.jpg
-outputs\2026-09-04_culture_pattern_yunwen_huiwen\assets\cover.jpg
-outputs\2026-09-04_culture_pattern_yunwen_huiwen\assets\wallpaper.jpg
+config\prompt_library\
+outputs\2026-09-04_ai_claude_code_limits\assets\cover_data_card.jpg
 outputs\2026-09-04_culture_shanshui_yuan\assets\cover.jpg
+outputs\2026-09-04_culture_pattern_yunwen_huiwen\assets\wallpaper.jpg
 ```
 
-## 重渲染
+## 命令
 
 ```powershell
 cd "d:\Infinite_ Sustainable\projects\03-content-factory"
-python scripts\render_ai_news_cover.py
-python scripts\render_pattern_yunwen_huiwen.py
+$env:PYTHONPATH = (Resolve-Path .\src).Path
+python -m content_factory build-prompt --list
+python -m content_factory render-ai-cover
+python -m content_factory render-pattern
 ```
 
 ## 禁止偷懒
 
-- 禁止 AI 资讯大留白空洞图
-- 禁止纹饰篇混入山水
-- 禁止讲画篇加纹样边框当「高级感」
+- 禁止一句话空提示词出图
+- 禁止资讯封面大留白无数字
+- 禁止画/纹饰提示词混用
 - 禁止自动发布

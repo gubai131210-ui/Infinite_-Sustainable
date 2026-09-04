@@ -1,10 +1,12 @@
 # Image / Cover（AI 资讯）
 
-不要用「抽象装饰、中心留白无字」的文生图当封面。
+布局契约：`config/prompt_library/ai_news_data_card.md`
 
-本方向封面由 `scripts/render_ai_news_cover.py` 字体排版生成，必须上图：
-- 标题
-- 涨 25%（相对基线）
-- 少约 17%（相对今天）
-- 三行对照（临时促销 / 永久调整 / 体感变化）
-- 生效日与免责声明
+渲染：
+
+```powershell
+python -m content_factory render-ai-cover
+```
+
+产出：`assets/cover.jpg` / `assets/cover_data_card.jpg`  
+核心：**大数字区约占屏高 30%**，禁止空洞抽象装饰。
