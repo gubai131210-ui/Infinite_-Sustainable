@@ -1,0 +1,14 @@
+{
+  "run_id": "2026-09-04_culture_pattern_yunwen_objects",
+  "direction": "culture_pattern",
+  "topic": "卷雲紋：作用·象徵·常用·落在袍服與漆盒",
+  "status": "mvp_local_complete",
+  "publish_mode": "local_only",
+  "assets": [
+    "assets/cover.jpg",
+    "assets/wallpaper.jpg",
+    "assets/object_silk_robe.jpg",
+    "assets/object_lacquer_box.jpg"
+  ],
+  "notes": "纹饰落在生活器物上；写清作用/象征/常用；不混山水。"
+}

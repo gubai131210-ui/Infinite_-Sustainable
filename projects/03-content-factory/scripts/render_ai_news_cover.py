@@ -1,4 +1,4 @@
-"""Render AI news cover per prompt_library/ai_news_data_card.md layout contract."""
+"""Horizontal AI news poster: clear regional panels (not a crowded vertical stack)."""
 
 from __future__ import annotations
 
@@ -7,14 +7,14 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "outputs" / "2026-09-04_ai_claude_code_limits" / "assets" / "cover.jpg"
-OUT_V = ROOT / "outputs" / "2026-09-04_ai_claude_code_limits" / "assets" / "cover_data_card.jpg"
+OUT_DIR = ROOT / "outputs" / "2026-09-04_ai_claude_code_limits" / "assets"
+# 横版大图 16:9，适合桌面/长图；封面可再裁或作头图
+W, H = 1920, 1080
 
-W, H = 1080, 1440
 BG = "#0B1220"
-CARD = "#152033"
-CARD2 = "#1B2740"
-LINE = "#2A3B55"
+PANEL = "#152033"
+PANEL2 = "#1B2740"
+LINE = "#334155"
 BLUE = "#3B82F6"
 BLUE_SOFT = "#93C5FD"
 TEXT = "#F8FAFC"
@@ -32,89 +32,109 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     return ImageFont.truetype(str(path), size=size, index=0)
 
 
-def card(draw: ImageDraw.ImageDraw, xy, fill=CARD, outline=LINE, r=16) -> None:
+def panel(draw: ImageDraw.ImageDraw, xy, fill=PANEL, outline=LINE, r=20) -> None:
     draw.rounded_rectangle(xy, radius=r, fill=fill, outline=outline, width=2)
 
 
 def main() -> None:
     """
-    Layout contract (ai_news_data_card.md):
-    top bar ~6%, title ~10%, hook ~5%,
-    core number ~32%, 3 rows ~22%, formula ~8%, actions ~14%, footer ~5%
+    横向四区：
+    ① 事件说明  ② 宣传口径(+25%)  ③ 体感口径(-17%)  ④ 行动建议
+    顶栏一条标题，底栏一条免责。
     """
     img = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
-    draw.rectangle((0, 0, 12, H), fill=BLUE)
+    draw.rectangle((0, 0, W, 8), fill=BLUE)
 
     # top bar
-    card(draw, (36, 28, 300, 78), fill=CARD2)
-    draw.text((52, 40), "AI资讯·额度口径", font=font(26, True), fill=BLUE_SOFT)
-    draw.text((820, 40), "2026.09", font=font(26, True), fill=TEXT)
+    draw.text((48, 36), "AI 资讯", font=font(28, True), fill=BLUE_SOFT)
+    draw.text((180, 32), "Claude Code 周限额：同一公告，两种读法", font=font(42, True), fill=TEXT)
+    draw.text((1680, 40), "2026.09", font=font(28, True), fill=MUTED)
 
-    # title + hook
-    draw.text((36, 100), "Claude Code 周限额", font=font(48, True), fill=TEXT)
-    draw.text((36, 168), "别只看「涨 25%」这半句", font=font(34, True), fill=AMBER)
+    # four equal columns with gaps
+    margin, gap, top, bottom = 40, 24, 110, H - 70
+    usable = W - margin * 2 - gap * 3
+    col_w = usable // 4
+    cols = []
+    x = margin
+    for _ in range(4):
+        cols.append((x, top, x + col_w, bottom - 10))
+        x += col_w + gap
 
-    # CORE NUMBER ZONE (~32% height) — Apiyi data-card pattern
-    core = (36, 230, W - 36, 230 + int(H * 0.30))
-    card(draw, core, fill="#121C2E", outline=BLUE)
-    draw.text((60, 250), "体感主数字（相对今天）", font=font(26), fill=MUTED)
-    draw.text((60, 300), "少约 17%", font=font(110, True), fill=RED)
-    draw.text((60, 440), "对照宣传口径", font=font(26), fill=MUTED)
-    draw.text((60, 485), "涨 25%", font=font(64, True), fill=GREEN)
-    draw.text((320, 510), "相对原始基线", font=font(28), fill="#A7F3D0")
-    draw.text((620, 250), "读法", font=font(26, True), fill=BLUE_SOFT)
-    for i, line in enumerate(
-        [
-            "同一公告两种分母",
-            "基线↑ ≠ 今天额度↑",
-            "先问：相对谁？",
-            "再查自己 /usage",
-        ]
-    ):
-        draw.text((620, 300 + i * 48), f"• {line}", font=font(26), fill=TEXT)
-
-    # 3 supplementary rows
-    y = core[3] + 24
-    rows = [
-        ("临时促销", "+50%", "用到 9/13", AMBER),
-        ("永久调整", "+25%", "相对基线", GREEN),
-        ("体感变化", "-17%", "相对今天", RED),
+    # ① 事件
+    panel(draw, cols[0], fill=PANEL2)
+    x0, y0, x1, y1 = cols[0]
+    draw.text((x0 + 28, y0 + 28), "① 事件", font=font(28, True), fill=BLUE_SOFT)
+    draw.text((x0 + 28, y0 + 90), "发生了什么", font=font(36, True), fill=TEXT)
+    lines = [
+        "临时促销 +50%",
+        "用到 9/13",
+        "",
+        "9/14 起改为",
+        "永久 +25%",
+        "（相对原始基线）",
+        "",
+        "官方后来澄清：",
+        "相对今天约少 17%",
     ]
-    for label, val, note, color in rows:
-        card(draw, (36, y, W - 36, y + 78), fill=CARD)
-        draw.text((56, y + 22), label, font=font(28), fill=MUTED)
-        draw.text((320, y + 16), val, font=font(40, True), fill=color)
-        draw.text((560, y + 24), note, font=font(28), fill=TEXT)
-        y += 90
+    yy = y0 + 170
+    for line in lines:
+        draw.text((x0 + 28, yy), line, font=font(28), fill=TEXT if line else MUTED)
+        yy += 48
 
-    # formula strip
-    card(draw, (36, y, W - 36, y + 88), fill=CARD2)
-    draw.text((56, y + 12), "换算一眼看懂", font=font(24), fill=BLUE_SOFT)
-    draw.text((56, y + 44), "基线 100   →   临时 150   →   永久后 125", font=font(32, True), fill=TEXT)
-    y += 108
+    # ② 宣传口径
+    panel(draw, cols[1], fill="#123528", outline="#1F6B4A")
+    x0, y0, x1, y1 = cols[1]
+    draw.text((x0 + 28, y0 + 28), "② 宣传口径", font=font(28, True), fill=GREEN)
+    draw.text((x0 + 28, y0 + 100), "涨 25%", font=font(96, True), fill=GREEN)
+    draw.text((x0 + 28, y0 + 240), "相对：原始基线", font=font(32, True), fill="#A7F3D0")
+    draw.text((x0 + 28, y0 + 320), "好听的分母", font=font(28), fill=MUTED)
+    for i, t in enumerate(["官方常用这个说法", "相对「过去标准」是涨", "不等于手头额度变多"]):
+        draw.text((x0 + 28, y0 + 400 + i * 56), f"· {t}", font=font(28), fill=TEXT)
 
-    # actions
-    card(draw, (36, y, W - 36, H - 90), fill=CARD)
-    draw.text((56, y + 16), "看完马上做", font=font(28, True), fill=AMBER)
+    # ③ 体感口径
+    panel(draw, cols[2], fill="#3A1D24", outline="#7A3340")
+    x0, y0, x1, y1 = cols[2]
+    draw.text((x0 + 28, y0 + 28), "③ 体感口径", font=font(28, True), fill=RED)
+    draw.text((x0 + 28, y0 + 100), "少约 17%", font=font(88, True), fill=RED)
+    draw.text((x0 + 28, y0 + 240), "相对：今天额度", font=font(32, True), fill="#FECACA")
+    draw.text((x0 + 28, y0 + 320), "正在用的分母", font=font(28), fill=MUTED)
+    for i, t in enumerate(["临时 150 → 永久 125", "相对今天是下降", "重度用户体感最明显"]):
+        draw.text((x0 + 28, y0 + 400 + i * 56), f"· {t}", font=font(28), fill=TEXT)
+
+    # ④ 行动
+    panel(draw, cols[3], fill=PANEL)
+    x0, y0, x1, y1 = cols[3]
+    draw.text((x0 + 28, y0 + 28), "④ 你可以做什么", font=font(28, True), fill=AMBER)
+    draw.text((x0 + 28, y0 + 90), "行动区", font=font(36, True), fill=TEXT)
     actions = [
-        "打开用量面板 / 命令行查本周剩余",
-        "重任务尽量排在临时额度结束前",
-        "准备备用链路，避免单厂商卡死",
+        ("查", "先看本周剩余用量"),
+        ("排", "重任务尽量赶 9/13 前"),
+        ("备", "准备第二工具链路"),
+        ("问", "读公告先问「相对谁」"),
     ]
-    ay = y + 60
-    for a in actions:
-        card(draw, (56, ay, W - 56, ay + 48), fill=CARD2, r=12)
-        draw.text((76, ay + 10), a, font=font(26), fill=TEXT)
-        ay += 56
+    yy = y0 + 180
+    for tag, text in actions:
+        panel(draw, (x0 + 24, yy, x1 - 24, yy + 100), fill=PANEL2, r=14)
+        draw.text((x0 + 44, yy + 18), tag, font=font(32, True), fill=AMBER)
+        draw.text((x0 + 44, yy + 56), text, font=font(28), fill=TEXT)
+        yy += 120
 
-    draw.text((36, H - 70), "9月14日起生效 · 以官方最终公告为准 · 本地草稿", font=font(24), fill=MUTED)
+    # bottom formula strip + disclaimer
+    draw.rectangle((0, H - 64, W, H), fill="#070B14")
+    draw.text(
+        (48, H - 46),
+        "换算：基线 100  →  临时 150  →  永久后 125      |      9月14日起生效 · 以官方最终公告为准 · 本地草稿未发布",
+        font=font(26),
+        fill=MUTED,
+    )
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    img.save(OUT, format="JPEG", quality=94)
-    img.save(OUT_V, format="JPEG", quality=94)
-    print(f"wrote {OUT}")
-    print(f"wrote {OUT_V}")
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    landscape = OUT_DIR / "cover_landscape.jpg"
+    img.save(landscape, format="JPEG", quality=94)
+    # also keep as primary cover.jpg for this run (horizontal)
+    img.save(OUT_DIR / "cover.jpg", format="JPEG", quality=94)
+    print(f"wrote {landscape}")
 
 
 if __name__ == "__main__":

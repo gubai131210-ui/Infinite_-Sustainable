@@ -1,0 +1,9 @@
+{
+  "run_id": "2026-09-04_culture_shanshui_jiangzhou",
+  "direction": "culture_painting",
+  "topic": "孤舟一葉·煙水蒼茫（江景平遠）",
+  "status": "mvp_local_complete",
+  "publish_mode": "local_only",
+  "assets": ["assets/cover.jpg", "assets/wallpaper.jpg", "assets/wallpaper_plain.jpg"],
+  "notes": "换题：江舟孤影；封面叠古文竖题（楷体）；非白话。"
+}

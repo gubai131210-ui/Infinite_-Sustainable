@@ -23,12 +23,15 @@ TECHNICAL: ultra sharp edges, high detail repeats, seamless craft print look
 NEGATIVE: mountain landscape, shan-shui, ink wash scenery, trees, rocks, pavilion, fisherman, misty peaks, figurative painting, photoreal texture overload, watermark, text, logo, western baroque ornament
 ```
 
-## 封面模板（纹样展示 + 后期可叠字）
+## 器物应用模板（推荐）
 
-程序封面仍推荐 `scripts/render_pattern_yunwen_huiwen.py`（中文说明可控）。  
-若纯 AI 出图，用上壁纸模板后在上方留少量边距，文字用后期/程序叠加。
+纹饰必须落到生活可用物上（服飾、家具、漆盒、杯墊等），并在文案写清作用/象征/常用。
 
-## 本项目边界
-
-- 本预设 = `culture_pattern` only
-- 组合对象只能是纹饰母题，不能是「纹饰边 + 山水画心」
+```text
+SUBJECT: a practical daily-life object — [silk robe / lacquer jewelry box / wooden furniture panel / ceramic tea caddy], surface decorated with traditional Chinese [yunwen cloud-scroll / huiwen key-fret] pattern clearly readable
+STYLE: product photography + craft documentation, sharp material texture
+LIGHTING: soft studio light
+COMPOSITION: vertical 3:4, object fills frame, plain backdrop, pattern is the hero
+MOOD: wearable / usable culture, not museum flat pattern plate only
+NEGATIVE: mountain landscape, shan-shui, pavilion, misty peaks, ink wash scenery, watermark, logo, unreadable fake glyphs
+```
