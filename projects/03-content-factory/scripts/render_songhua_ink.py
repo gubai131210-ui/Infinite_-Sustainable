@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = Path(r"C:\Users\孤白赟悫\.cursor\projects\d-Infinite-Sustainable\assets\ink-songhua-niangjiu-base.png")
+SRC = ROOT / "assets" / "ink-songhua-niangjiu-base.png"
 OUT = ROOT / "outputs" / "2026-09-05_culture_songhua_niangjiu" / "assets"
 
 KAI = Path(r"C:\Windows\Fonts\simkai.ttf")
