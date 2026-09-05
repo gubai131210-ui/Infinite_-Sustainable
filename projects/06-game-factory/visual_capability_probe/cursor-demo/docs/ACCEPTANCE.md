@@ -1,31 +1,24 @@
-# ACCEPTANCE — visual_capability_probe / cursor_demo
+# ACCEPTANCE — Game MVP（在探针之上）
 
-Playbook: `docs/playbooks/PB-Game-Visual.md`  
-Engine: Godot 4.6 · GL Compatibility · 1280×720
-
-## Spec (grill locked)
-
-- 横版 + 重力 + 水平地面
-- 山间木屋前院 · 黄昏
-- 成年男性旅人 · 静止站立 + 平移
-- 远景 / 木屋中景 / 近景遮挡 / 角色
-- Cursor 生图 + 色键抠图（绿幕）+ 棋盘格 QA
+Playbook 基线：`PB-Game-Visual`  
+本阶段增量：美术 scrub、脚底对齐、门/山路交互、东侧小路占位、Verifier 文档
 
 ## Checklist
 
 | 项 | 结果 | 证据 |
 |----|------|------|
-| 主场景可运行无致命错误 | PASS | MCP `get_errors` → 0 |
-| ≥3 层分层 / 前景可遮挡 | PASS | Far 视差 + MidCabin 世界空间 + Foreground z=20；截图见分层 |
-| Player 独立 instance | PASS | `res://scenes/player.tscn` instanced in main |
-| 左右移动 + 地面 | PASS | x 360→720，y=420 稳定，velocity.y=0 |
-| HUD 与世界分离 | PASS | CanvasLayer HUD 显示 `pos:` |
-| 抠图棋盘格 | PASS | `assets/qa/checker_*.png` |
+| 探针项仍成立 | 见下轮 MCP | 分层 / instance / 移动 |
+| 前景绿边减轻 | PASS（色键+scrub） | `assets/qa/checker_fg_props.png` 重跑 |
+| 门交互 E | PASS | DoorZone + toast |
+| 山路交互 E | PASS | PathZone + 东侧小路占位 |
+| Verifier 步骤 | PASS | `docs/VERIFY_MCP.md` |
 
-## Layer notes
+## Controls
 
-- Far：`ParallaxBackground`（慢卷）
-- Mid cabin：世界空间 `MidCabin`（与角色 1:1，避免视差卷走木屋）
-- Foreground：高 `z_index` 遮挡
-- rembg 大模型下载过慢，本探针用绿幕色键 + 硬边 alpha；可选 `USE_REMBG=1` 再跑 `tools/cutout_pipeline.py`
-- 角色 `min_x/max_x` 限制在木屋前院可视范围
+- A/D 或方向键移动
+- E 交互（靠近门或山路标记时）
+
+## Notes
+
+- rembg 模型若已下载：`$env:USE_REMBG=1; python tools/cutout_pipeline.py`
+- 东侧小路为占位（Polygon2D），完整第二屏美术下一迭代

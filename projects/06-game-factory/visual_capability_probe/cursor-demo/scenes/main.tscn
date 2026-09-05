@@ -1,15 +1,24 @@
 [gd_scene format=3 uid="uid://c5mmytlm4ewq8"]
 
 [ext_resource type="Texture2D" uid="uid://bewhqxh4f4cv7" path="res://assets/processed/bg_far.png" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://b482myivin0l8" path="res://scripts/main.gd" id="1_tefeu"]
 [ext_resource type="Texture2D" uid="uid://cch5xejcwas4r" path="res://assets/processed/bg_mid.png" id="2_0wfyh"]
 [ext_resource type="Texture2D" uid="uid://fsytpcciawgd" path="res://assets/processed/fg_props.png" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://driuk652x16no" path="res://scenes/player.tscn" id="4_jyhfs"]
 [ext_resource type="Script" uid="uid://dkxrnbjdugt4" path="res://scripts/hud.gd" id="4_tbgi4"]
+[ext_resource type="Script" uid="uid://drv8wuofkca7n" path="res://scripts/interact_zone.gd" id="7_o6xl0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tbgi4"]
 size = Vector2(6000, 140)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o6xl0"]
+size = Vector2(140, 200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tipki"]
+size = Vector2(180, 160)
+
 [node name="Main" type="Node2D" unique_id=1531755658]
+script = ExtResource("1_tefeu")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=320664103]
 
@@ -24,7 +33,7 @@ centered = false
 [node name="Ground" type="StaticBody2D" parent="." unique_id=2052316511]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=228890669]
-position = Vector2(2500, 620)
+position = Vector2(2500, 600)
 shape = SubResource("RectangleShape2D_tbgi4")
 
 [node name="Foreground" type="Node2D" parent="." unique_id=121357325]
@@ -37,22 +46,63 @@ scale = Vector2(0.85, 0.85)
 texture = ExtResource("3_sugp2")
 centered = false
 
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1253255133]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1253255133 groups=["hud"]]
 script = ExtResource("4_tbgi4")
 
 [node name="Margin" type="MarginContainer" parent="HUD" unique_id=43372556]
 
-[node name="Label" type="Label" parent="HUD/Margin" unique_id=255717471]
+[node name="VBox" type="VBoxContainer" parent="HUD/Margin" unique_id=601342598]
+layout_mode = 2
+
+[node name="PosLabel" type="Label" parent="HUD/Margin/VBox" unique_id=100815042]
 layout_mode = 2
 text = "pos: —"
 
+[node name="PromptLabel" type="Label" parent="HUD/Margin/VBox" unique_id=1445570127]
+layout_mode = 2
+
+[node name="ToastLabel" type="Label" parent="HUD/Margin/VBox" unique_id=726648623]
+layout_mode = 2
+
 [node name="Player" parent="." unique_id=883428782 instance=ExtResource("4_jyhfs")]
-position = Vector2(360, 420)
+position = Vector2(340, 400)
 
 [node name="MidCabin" type="Node2D" parent="." unique_id=1136541947]
 z_index = -5
+position = Vector2(0, -20)
 
 [node name="MidSprite" type="Sprite2D" parent="MidCabin" unique_id=60289220]
 z_index = -5
 texture = ExtResource("2_0wfyh")
 centered = false
+
+[node name="DoorZone" type="Area2D" parent="." unique_id=722423284 groups=["interact_zone"]]
+position = Vector2(520, 500)
+monitorable = false
+script = ExtResource("7_o6xl0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorZone" unique_id=1771307910]
+shape = SubResource("RectangleShape2D_o6xl0")
+
+[node name="PathZone" type="Area2D" parent="." unique_id=1183348209 groups=["interact_zone"]]
+position = Vector2(980, 520)
+monitorable = false
+script = ExtResource("7_o6xl0")
+prompt_text = "按 E 查看山路"
+message = "小路通向林间——下一屏还在搭建。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PathZone" unique_id=1170156332]
+shape = SubResource("RectangleShape2D_tipki")
+
+[node name="Marker" type="Label" parent="PathZone" unique_id=448068989]
+offset_left = -30.0
+offset_top = -90.0
+offset_right = -30.0
+offset_bottom = -90.0
+text = "山路 →"
+
+[node name="EastPath" type="Polygon2D" parent="." unique_id=1706464340]
+z_index = -4
+position = Vector2(800, 555)
+color = Color(0.32, 0.26, 0.16, 1)
+polygon = PackedVector2Array(0, 0, 420, 0, 420, 70, 0, 70)

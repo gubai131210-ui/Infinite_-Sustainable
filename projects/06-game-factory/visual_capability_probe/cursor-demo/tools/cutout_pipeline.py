@@ -1,7 +1,4 @@
-"""Cutout pipeline: chroma-green key + checkerboard QA (fast path).
-
-Optional: set USE_REMBG=1 to also run rembg (downloads large models).
-"""
+"""Cutout pipeline: chroma key (+ optional rembg) + checkerboard QA + fringe scrub."""
 from __future__ import annotations
 
 import os
@@ -23,20 +20,40 @@ JOBS = [
 ]
 
 
-def chroma_key(img: Image.Image, threshold: int = 55) -> Image.Image:
+def chroma_key(img: Image.Image, threshold: int = 45) -> Image.Image:
     rgba = img.convert("RGBA")
     pixels = rgba.load()
     w, h = rgba.size
     for y in range(h):
         for x in range(w):
             r, g, b, a = pixels[x, y]
-            if g > 85 and g >= r + threshold and g >= b + threshold:
+            # strong green-screen key
+            if g > 70 and g >= r + threshold and g >= b + threshold:
                 pixels[x, y] = (0, 0, 0, 0)
-            elif a < 32:
+            elif g > 140 and r < 120 and b < 120 and g > r and g > b:
                 pixels[x, y] = (0, 0, 0, 0)
-            elif a < 200:
-                # hard-ish edge for game composite (reduce halo)
-                pixels[x, y] = (r, g, b, 255 if a >= 128 else 0)
+            elif a < 40:
+                pixels[x, y] = (0, 0, 0, 0)
+            elif a < 210:
+                pixels[x, y] = (r, g, b, 255 if a >= 140 else 0)
+    return rgba
+
+
+def scrub_fringe(img: Image.Image) -> Image.Image:
+    """Zero RGB on transparent pixels; pull green fringe toward neighbor opaque."""
+    rgba = img.convert("RGBA")
+    px = rgba.load()
+    w, h = rgba.size
+    # pass 1: clear RGB where transparent
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = px[x, y]
+            if a == 0:
+                px[x, y] = (0, 0, 0, 0)
+            elif a > 0 and g > r + 25 and g > b + 25 and g > 100:
+                # desaturate leftover green fringe
+                gray = int(0.3 * r + 0.4 * g + 0.3 * b)
+                px[x, y] = (gray, gray, min(gray, b), a)
     return rgba
 
 
@@ -56,7 +73,8 @@ def maybe_rembg(img: Image.Image) -> Image.Image:
         return img
     from rembg import remove, new_session
 
-    session = new_session("u2net")
+    model = os.environ.get("REMBG_MODEL", "u2net")
+    session = new_session(model)
     rgb = Image.new("RGB", img.size, (0, 255, 0))
     rgb.paste(img.convert("RGB"), mask=img.split()[-1])
     return remove(rgb, session=session).convert("RGBA")
@@ -74,7 +92,8 @@ def process_one(src_name: str, dst_name: str, use_chroma: bool) -> None:
         out = chroma_key(img) if use_chroma else img
         out = maybe_rembg(out)
         if use_chroma:
-            out = chroma_key(out, threshold=50)
+            out = chroma_key(out, threshold=40)
+        out = scrub_fringe(out)
 
     OUT.mkdir(parents=True, exist_ok=True)
     QA.mkdir(parents=True, exist_ok=True)
@@ -85,11 +104,11 @@ def process_one(src_name: str, dst_name: str, use_chroma: bool) -> None:
     board.alpha_composite(out)
     qa_path = QA / f"checker_{dst_name}"
     board.convert("RGB").save(qa_path, quality=92)
-    # crude QA: count non-near-green opaque pixels ratio
     print(f"OK {src_name} -> {out_path.name} qa={qa_path.name} size={out.size}")
 
 
 def main() -> int:
+    print(f"USE_REMBG={os.environ.get('USE_REMBG', '0')} model={os.environ.get('REMBG_MODEL', 'u2net')}")
     for job in JOBS:
         process_one(*job)
     return 0
