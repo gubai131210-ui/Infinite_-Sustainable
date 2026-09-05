@@ -1,16 +1,26 @@
-"""Cutout pipeline: chroma key (+ optional rembg) + checkerboard QA + fringe scrub."""
+"""Cutout pipeline: chroma key (+ optional rembg) + checkerboard QA + fringe scrub.
+
+Models live on D: under tools/rembg_models/ (NOT user profile / C:).
+"""
 from __future__ import annotations
 
 import os
 import sys
 from pathlib import Path
 
-from PIL import Image
-
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "assets" / "raw"
 OUT = ROOT / "assets" / "processed"
 QA = ROOT / "assets" / "qa"
+REMBG_HOME = ROOT / "tools" / "rembg_models"
+
+# Force rembg/pooch off C: before importing rembg
+os.environ.setdefault("U2NET_HOME", str(REMBG_HOME))
+os.environ.setdefault("REMBG_HOME", str(REMBG_HOME))
+# Some builds also honor XDG_DATA_HOME for ~/.rembg layout
+os.environ.setdefault("XDG_DATA_HOME", str(REMBG_HOME))
+
+from PIL import Image
 
 JOBS = [
     ("bg_far_dusk_mountains.png", "bg_far.png", False),
