@@ -46,6 +46,7 @@ projects/
 - [docs/15-day-bootcamp.md](docs/15-day-bootcamp.md) — Day1–15 检查清单
 - [docs/agent-team-v2.md](docs/agent-team-v2.md) — 多 Agent 团队 v2
 - [docs/routing-table.md](docs/routing-table.md) — 路由 × Cursor Task
+- [docs/playbooks/](docs/playbooks/) — Playbook（Game / Content / Industrial / Learn / OS）
 - [docs/handoff-v2.md](docs/handoff-v2.md) — 交接协议 v2
 - [docs/handoff-template.md](docs/handoff-template.md) — 短交接（兼容）
 

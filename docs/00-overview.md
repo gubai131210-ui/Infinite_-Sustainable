@@ -40,6 +40,11 @@
 
 Industrial Copilot / Game Factory / Social Agent 已占位，按需插入。
 
+## Agent Team v2
+
+编排与验收见：[agent-team-v2.md](agent-team-v2.md) · [routing-table.md](routing-table.md) · [playbooks/](playbooks/)  
+语义角色含 Conductor / Scout / Builder / Verifier / Critic / Game / Asset；Cursor Task 仅作执行载体。
+
 ## 无限 Token 正确用法
 
 用 Token 换经验，不是换代码量：
