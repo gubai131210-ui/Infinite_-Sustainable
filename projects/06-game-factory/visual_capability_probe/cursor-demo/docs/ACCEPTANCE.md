@@ -16,7 +16,7 @@ Engine: Godot 4.6 · GL Compatibility · 1280×720
 | 项 | 结果 | 证据 |
 |----|------|------|
 | 主场景可运行无致命错误 | PASS | MCP `get_errors` → 0 |
-| ≥3 层分层 / 前景可遮挡 | PASS | Far/Mid parallax + Foreground z=20；截图见分层 |
+| ≥3 层分层 / 前景可遮挡 | PASS | Far 视差 + MidCabin 世界空间 + Foreground z=20；截图见分层 |
 | Player 独立 instance | PASS | `res://scenes/player.tscn` instanced in main |
 | 左右移动 + 地面 | PASS | x 360→720，y=420 稳定，velocity.y=0 |
 | HUD 与世界分离 | PASS | CanvasLayer HUD 显示 `pos:` |
