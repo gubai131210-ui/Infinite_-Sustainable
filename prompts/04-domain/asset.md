@@ -10,6 +10,14 @@
 4. 说明 Godot 导入建议（写实：Linear + Fix Alpha Border；勿当像素风 Nearest）
 5. 把文件放到约定 `assets/` 并列出 `res://` 路径给 Builder
 
+## 抠图（本仓约定）
+
+写实 / 绿幕精灵：优先 `knowledge/godot/rembg-d-drive.md`。
+
+- 权重在 **D 盘** `…/cursor-demo/tools/rembg_models/`（禁止 C: 用户目录）
+- `$env:USE_REMBG=1` + `python tools/cutout_pipeline.py`
+- 棋盘格 QA：`assets/qa/checker_*.png`
+
 ## 不做
 
 - 不搭玩法场景逻辑（交 Builder）

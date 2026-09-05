@@ -15,9 +15,16 @@
 - Playbook：[`docs/playbooks/PB-Game-Visual.md`](../../docs/playbooks/PB-Game-Visual.md)
 - 角色：Game / Asset / Builder / Verifier（见 Agent Team v2）
 
+## 下次开发可直接用
+
+- **rembg 抠图（D 盘已下好 u2net）** → [`knowledge/godot/rembg-d-drive.md`](../../knowledge/godot/rembg-d-drive.md)
+- 下载脚本：`visual_capability_probe/cursor-demo/tools/download_rembg_u2net.py`
+- 抠图：`$env:USE_REMBG=1; python tools/cutout_pipeline.py`（在 cursor-demo 目录下）
+- MCP 验收环：`visual_capability_probe/cursor-demo/docs/VERIFY_MCP.md`
+
 ## 关联
 
-- Knowledge: `knowledge/godot/`（待沉淀）
+- Knowledge: `knowledge/godot/`（含 rembg D 盘约定）
 - Agent ops: `knowledge/agent-ops/`
 - Skill 占位: image-generation
 

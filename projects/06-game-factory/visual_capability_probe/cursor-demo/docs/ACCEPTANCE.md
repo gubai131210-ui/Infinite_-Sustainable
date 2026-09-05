@@ -20,5 +20,6 @@ Playbook 基线：`PB-Game-Visual`
 
 ## Notes
 
-- rembg 模型若已下载：`$env:USE_REMBG=1; python tools/cutout_pipeline.py`
+- **rembg（D 盘已就绪）**：见仓库 `knowledge/godot/rembg-d-drive.md`
+- 重跑抠图：`$env:USE_REMBG=1; python tools/cutout_pipeline.py`（在 cursor-demo 下）
 - 东侧小路为占位（Polygon2D），完整第二屏美术下一迭代

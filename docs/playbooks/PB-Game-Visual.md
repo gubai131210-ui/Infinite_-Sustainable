@@ -33,3 +33,4 @@ Conductor → Scout(MCP/工程) → Game(场景规格)
 - 禁止跳过 Asset 棋盘格验收
 - 禁止用纯 ColorRect 冒充写实分层（规格要求写实时）
 - 禁止未启用 MCP 时假装完成 Verifier 截图项（应降级为用户本机证据）
+- 禁止把 rembg 模型下到 C:；使用 `knowledge/godot/rembg-d-drive.md`

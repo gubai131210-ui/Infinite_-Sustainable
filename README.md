@@ -24,7 +24,7 @@ projects/
   03-content-factory     优先级3
   04-public-product      优先级4
   05-industrial-copilot  占位
-  06-game-factory        占位
+  06-game-factory        探针就绪；抠图见 knowledge/godot/rembg-d-drive.md
   07-social-agent        占位
 ```
 
