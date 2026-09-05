@@ -1,5 +1,8 @@
 # TASK HANDOFF
 
+> **默认请用 v2：** [handoff-v2.md](handoff-v2.md)（跨 Agent / 需验收时强制）。  
+> 下列短模板仅用于单跳、无证据要求的轻量交接。
+
 Agent 之间不要直接扔一大坨自然语言。统一使用本模板。
 
 ## TASK HANDOFF

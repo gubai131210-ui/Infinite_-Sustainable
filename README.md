@@ -30,31 +30,35 @@ projects/
 
 ## 提示词层次
 
-见 [prompts/README.md](prompts/README.md)。
+见 [prompts/README.md](prompts/README.md) 与 **[docs/agent-team-v2.md](docs/agent-team-v2.md)**。
 
 | 层 | 内容 |
 |----|------|
 | L0 | Core Operating Rules |
-| L1 | Orchestrator |
-| L2 | Researcher / Planner / Coder / Reviewer |
+| L1 | Conductor（原 Orchestrator） |
+| L2 | Scout / Researcher / Planner / Builder / Verifier / Critic |
 | L3 | Teacher / Memory / Reflection |
-| L4 | Content / Industrial / Experiment |
+| L4 | Content / Industrial / Experiment / Game / Asset |
 
 ## 文档
 
 - [docs/00-overview.md](docs/00-overview.md) — 价值层级与四大系统
 - [docs/15-day-bootcamp.md](docs/15-day-bootcamp.md) — Day1–15 检查清单
-- [docs/handoff-template.md](docs/handoff-template.md) — Agent 交接格式
+- [docs/agent-team-v2.md](docs/agent-team-v2.md) — 多 Agent 团队 v2
+- [docs/routing-table.md](docs/routing-table.md) — 路由 × Cursor Task
+- [docs/handoff-v2.md](docs/handoff-v2.md) — 交接协议 v2
+- [docs/handoff-template.md](docs/handoff-template.md) — 短交接（兼容）
 
 ## 如何开工
 
-1. 告诉 Agent：从 `projects/01-agent-lab`（或其它）开工
+1. 告诉 Agent：从 `projects/01-agent-lab`（或其它）开工；复杂任务走 Conductor + Playbook
 2. 回答三问：深度 / 已有资产 / 是否允许代码·MCP·生图·发布
 3. 本地自行打开目录检查（中文路径，避免危险批量命令）
 
 ## 禁止偷懒（仓库级）
 
 - 禁止未确认就写业务实现
-- 禁止把 11 个 Agent 糊成单文件
+- 禁止把多个 Agent 糊成单文件；`.cursor/agents` 必须薄适配
 - 禁止 Skills 假实现
 - 禁止改完不推 GitHub、不复查
+- 禁止无 Verifier 证据就宣称游戏/运行时「完成」

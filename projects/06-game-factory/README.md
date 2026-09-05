@@ -1,7 +1,7 @@
 # 06 — AI Game Factory（Godot）
 
-**状态：未开工**  
-**优先级：占位**
+**状态：探针工程已建；团队走 v2 Playbook**  
+**优先级：占位 → 可用 PB-Game-Visual 开工**
 
 ## 目标
 
@@ -9,9 +9,16 @@
 
 不是“生成一张猫走路图”，而是可重复的资产与代码流水线。
 
+## 当前探针
+
+- 工程根：`visual_capability_probe/cursor-demo/`
+- Playbook：[`docs/playbooks/PB-Game-Visual.md`](../../docs/playbooks/PB-Game-Visual.md)
+- 角色：Game / Asset / Builder / Verifier（见 Agent Team v2）
+
 ## 关联
 
-- Knowledge: `knowledge/godot/`
+- Knowledge: `knowledge/godot/`（待沉淀）
+- Agent ops: `knowledge/agent-ops/`
 - Skill 占位: image-generation
 
 ## 开工前必问
@@ -23,5 +30,6 @@
 ## 禁止偷懒
 
 - 禁止只生成散图不接入 Godot
-- 禁止无 Test Agent / 截图验证的“做完了”
+- 禁止无 Verifier 截图/runtime 证据的“做完了”
 - 禁止把所有关卡/UI/系统堆在一个场景文件应付
+- 禁止伪造未实现的 Quest/NPC 全流水线
