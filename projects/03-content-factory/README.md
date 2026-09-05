@@ -7,8 +7,10 @@
 - `overview_16x9.jpg` / `overview_3x4.jpg`  
 - `deepdive_16x9.jpg` / `deepdive_3x4.jpg`
 
-### 水墨曲词
-`outputs/2026-09-05_culture_songhua_niangjiu/assets/cover.jpg`  
+### 水墨曲词（彩色 + 黑白）
+`outputs/2026-09-05_culture_songhua_niangjiu/assets/`  
+- `color_cover.jpg` — 浅绛彩色  
+- `ink_cover.jpg` — 黑白水墨  
 松花釀酒 · 春水煎茶
 
 ### 纹饰词典
