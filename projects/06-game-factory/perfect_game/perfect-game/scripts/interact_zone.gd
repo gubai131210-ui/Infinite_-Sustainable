@@ -2,11 +2,12 @@ extends Area2D
 ## Reusable interact prompt zone.
 
 @export var prompt_text: String = "按 E 交互"
-@export var mode: String = "toast"  # toast|chest|fish|dialogue|house|bed|exit_house|shop_sell|shop_buy|quest_zone
+@export var mode: String = "toast"  # toast|chest|fish|dialogue|house|bed|exit_house|shop_sell|shop_buy|quest_zone|stamina_sip
 @export var message: String = ""
 @export var speaker: String = ""
 @export var interior_id: String = "farmhouse"
 @export var quest_step_id: String = ""
+@export var stamina_restore: int = 0
 
 signal interacted(message: String)
 
@@ -82,6 +83,11 @@ func _do_interact() -> void:
 				QuestLog.mark(quest_step_id)
 			GameBus.show_toast(message if message != "" else "到访打卡")
 			interacted.emit(quest_step_id)
+		"stamina_sip":
+			var amt := stamina_restore if stamina_restore > 0 else 10
+			Stamina.restore(amt)
+			GameBus.show_toast(message if message != "" else ("恢复精力 +%d" % amt))
+			interacted.emit("sip")
 		_:
 			GameBus.show_toast(message)
 			interacted.emit(message)

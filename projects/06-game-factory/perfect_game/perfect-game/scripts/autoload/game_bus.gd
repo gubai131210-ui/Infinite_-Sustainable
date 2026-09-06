@@ -24,12 +24,12 @@ var gold: int = 120
 const SAVE_PATH := "user://oakhaven_save.json"
 
 const INTERIORS := {
-	"farmhouse": {"scene": "res://scenes/interiors/interior.tscn", "title": "米勒农舍"},
-	"barn": {"scene": "res://scenes/interiors/interior.tscn", "title": "谷仓工坊"},
-	"shop": {"scene": "res://scenes/interiors/interior.tscn", "title": "杂货店"},
-	"cafe": {"scene": "res://scenes/interiors/interior.tscn", "title": "橡木咖啡馆"},
-	"station": {"scene": "res://scenes/interiors/interior.tscn", "title": "火车站厅"},
-	"lighthouse": {"scene": "res://scenes/interiors/interior.tscn", "title": "灯塔底层"},
+	"farmhouse": {"scene": "res://scenes/interiors/farmhouse.tscn", "title": "米勒农舍"},
+	"barn": {"scene": "res://scenes/interiors/barn.tscn", "title": "谷仓工坊"},
+	"shop": {"scene": "res://scenes/interiors/shop.tscn", "title": "杂货店"},
+	"cafe": {"scene": "res://scenes/interiors/cafe.tscn", "title": "橡木咖啡馆"},
+	"station": {"scene": "res://scenes/interiors/station.tscn", "title": "火车站厅"},
+	"lighthouse": {"scene": "res://scenes/interiors/lighthouse.tscn", "title": "灯塔底层"},
 }
 
 func _ready() -> void:
