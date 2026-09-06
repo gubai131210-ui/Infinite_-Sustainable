@@ -20,6 +20,12 @@ const T_SAND := 10
 const T_BRIDGE := 11
 const T_GRASS2 := 12
 const T_DEEP := 13
+const T_WE_E := 14
+const T_WE_W := 15
+const T_WE_N := 16
+const T_WE_S := 17
+const T_GRASS3 := 18
+const T_GRASS4 := 19
 
 # Zone rects from R5_WORLD_BLUEPRINT
 const ZONES := {
@@ -74,7 +80,7 @@ func _setup_tileset() -> void:
 	var src := TileSetAtlasSource.new()
 	src.texture = tex
 	src.texture_region_size = Vector2i(TS, TS)
-	for i in range(16):
+	for i in range(32):
 		var atlas_coords := Vector2i(i % 8, int(i / 8))
 		if not src.has_tile(atlas_coords):
 			src.create_tile(atlas_coords)
@@ -96,27 +102,40 @@ func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
 			_set_cell(layer, x, y, tid)
 
 func _paint_base() -> void:
-	# Full grass
-	_fill_rect(_ground, Rect2i(0, 0, W, H), T_GRASS)
+	# Full grass with variants for less flat look
+	for y in range(H):
+		for x in range(W):
+			var g := T_GRASS
+			var m := (x * 3 + y * 7) % 5
+			if m == 1:
+				g = T_GRASS2
+			elif m == 2:
+				g = T_GRASS3
+			elif m == 3:
+				g = T_GRASS4
+			_set_cell(_ground, x, y, g)
 	# North hills
 	_fill_rect(_ground, Rect2i(0, 0, W, 14), T_HILL)
 	_fill_rect(_ground, Rect2i(0, 14, W, 4), T_CLIFF)
 
-	# Z1 farm soil
+	# Z1 farm soil + crop rows
 	_fill_rect(_ground, ZONES["Z1_FARM"], T_DIRT)
-	_fill_rect(_ground, Rect2i(16, 80, 40, 24), T_FARM)
+	for row in range(8):
+		_fill_rect(_ground, Rect2i(16, 80 + row * 3, 40, 2), T_FARM)
 
-	# Z2 river winding
+	# Z2 river winding + banks + edges
 	for y in range(16, 100):
 		var cx := 28 + int(6.0 * sin(y * 0.18))
 		for dx in range(-2, 3):
 			_set_cell(_water, cx + dx, y, T_WATER)
 			_set_cell(_ground, cx + dx, y, T_WATER)
-		_set_cell(_ground, cx - 3, y, T_DIRT)
-		_set_cell(_ground, cx + 3, y, T_DIRT)
+		_set_cell(_ground, cx - 3, y, T_WE_E)
+		_set_cell(_ground, cx + 3, y, T_WE_W)
+		_set_cell(_ground, cx - 4, y, T_DIRT)
+		_set_cell(_ground, cx + 4, y, T_DIRT)
 	# Waterfall head
-	_fill_rect(_ground, Rect2i(18, 16, 8, 6), T_CLIFF)
-	for x in range(20, 26):
+	_fill_rect(_ground, Rect2i(16, 14, 14, 8), T_CLIFF)
+	for x in range(20, 28):
 		_set_cell(_water, x, 22, T_WATER)
 		_set_cell(_ground, x, 22, T_WATER)
 	# Bridges
@@ -133,26 +152,37 @@ func _paint_base() -> void:
 
 	# Z3 plaza
 	_fill_rect(_ground, Rect2i(72, 36, 40, 28), T_PLAZA)
-	# paths into plaza
-	for x in range(40, 72):
+	# winding paths farm→plaza→station→lake
+	for t in range(0, 55):
+		var px := 48 + int(t * 0.7)
+		var py := 90 - int(t * 0.7)
+		_set_cell(_ground, px, py, T_PATH)
+		_set_cell(_ground, px, py + 1, T_PATH)
+	for x in range(40, 120):
 		_set_cell(_ground, x, 50, T_PATH)
 		_set_cell(_ground, x, 51, T_PATH)
-	for y in range(50, 90):
+	for y in range(22, 90):
 		_set_cell(_ground, 48, y, T_PATH)
 		_set_cell(_ground, 49, y, T_PATH)
+	for x in range(90, 155):
+		_set_cell(_ground, x, 28, T_PATH)
+		_set_cell(_ground, x, 29, T_PATH)
+	for y in range(50, 110):
+		_set_cell(_ground, 100, y, T_PATH)
+		_set_cell(_ground, 101, y, T_PATH)
 
 	# Z4 rails
 	for x in range(120, 184):
 		_set_cell(_ground, x, 20, T_RAIL)
 		_set_cell(_ground, x, 21, T_RAIL)
-	_fill_rect(_ground, Rect2i(140, 16, 20, 12), T_PLAZA)
+	_fill_rect(_ground, Rect2i(140, 14, 24, 14), T_PLAZA)
 
 	# Z5 terrace bands
-	for band in range(3):
-		var y0 := 44 + band * 10
-		_fill_rect(_ground, Rect2i(124, y0, 36, 4), T_FARM)
-		_fill_rect(_ground, Rect2i(124, y0 + 4, 36, 2), T_CLIFF)
-		for x in range(130, 136):
+	for band in range(4):
+		var y0 := 42 + band * 9
+		_fill_rect(_ground, Rect2i(124, y0, 40, 4), T_FARM)
+		_fill_rect(_ground, Rect2i(124, y0 + 4, 40, 2), T_CLIFF)
+		for x in range(130, 138):
 			_set_cell(_ground, x, y0 + 4, T_STAIRS)
 			_set_cell(_ground, x, y0 + 5, T_STAIRS)
 
@@ -166,15 +196,13 @@ func _paint_base() -> void:
 				_set_cell(_ground, x, y, T_DEEP if dx * dx + dy * dy * 2 < 400 else T_WATER)
 			elif dx * dx + dy * dy * 2 < 1100:
 				_set_cell(_ground, x, y, T_SAND)
-	# Lighthouse peninsula (must be above water paint)
+	# Lighthouse peninsula
 	_fill_rect(_ground, Rect2i(168, 98, 10, 12), T_CLIFF)
 	_fill_rect(_ground, Rect2i(170, 100, 6, 8), T_SAND)
 	for x in range(168, 178):
-		_water.erase_cell(Vector2i(x, 100))
-		_water.erase_cell(Vector2i(x, 101))
-		_water.erase_cell(Vector2i(x, 102))
-		_water.erase_cell(Vector2i(x, 103))
-	# Wooden pier into lake
+		for yy in range(100, 108):
+			_water.erase_cell(Vector2i(x, yy))
+	# Wooden pier
 	for x in range(158, 166):
 		_set_cell(_ground, x, 110, T_BRIDGE)
 		_water.erase_cell(Vector2i(x, 110))

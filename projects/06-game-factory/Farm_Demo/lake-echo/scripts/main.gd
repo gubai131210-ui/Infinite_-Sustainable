@@ -34,10 +34,16 @@ func _capture_goldens(player: Node2D) -> void:
 		["06_lake", Vector2(165 * 16, 105 * 16)],
 		["00_overview", Vector2(90 * 16, 70 * 16)],
 	]
+	var cam := player.get_node("Camera2D") as Camera2D
 	for s in shots:
 		player.global_position = s[1]
+		# Overview needs pull-back to show six-zone topology
+		if str(s[0]) == "00_overview":
+			cam.zoom = Vector2(0.45, 0.45)
+		else:
+			cam.zoom = Vector2(2, 2)
 		await get_tree().process_frame
-		await get_tree().create_timer(0.15).timeout
+		await get_tree().create_timer(0.2).timeout
 		var img: Image = get_viewport().get_texture().get_image()
 		var path := "res://assets/qa/golden_r5/%s.png" % str(s[0])
 		img.save_png(path)
