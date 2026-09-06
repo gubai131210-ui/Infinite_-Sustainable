@@ -183,19 +183,59 @@ func _set_bob(delta: float, moving: bool) -> void:
 
 func _use_tool() -> void:
 	_busy = 0.18
-	if _farm == null:
-		return
 	var cell := target_cell()
 	match tool:
 		Tool.HOE:
-			_farm.call("hoe", cell)
+			if _farm == null:
+				return
+			if not Stamina.spend(4, "hoe"):
+				return
+			if not _farm.call("hoe", cell):
+				Stamina.restore(4)
 		Tool.CAN:
+			if _farm == null:
+				return
+			if not Stamina.spend(2, "water"):
+				return
 			if _farm.call("water", cell):
 				GameBus.show_toast("浇水了")
+			else:
+				Stamina.restore(2)
 		Tool.AXE:
-			GameBus.show_toast("暂无枯枝")
+			_try_chop_tree()
 		Tool.ROD:
-			GameBus.show_toast("去河边按 E 钓鱼（Wave2）")
+			GameBus.show_toast("去湖边/河边钓鱼点按 E（需装备钓竿）")
+
+func _try_chop_tree() -> void:
+	if not Stamina.spend(5, "axe"):
+		return
+	var best: Node2D = null
+	var best_d := 36.0
+	for n in get_tree().get_nodes_in_group("choppable"):
+		if not (n is Node2D):
+			continue
+		var d := global_position.distance_to((n as Node2D).global_position)
+		if d < best_d:
+			best_d = d
+			best = n as Node2D
+	if best == null:
+		Stamina.restore(5)
+		GameBus.show_toast("附近没有可砍的树（农庄边的树可砍）")
+		return
+	var hp := int(best.get_meta("chop_hp", 2)) - 1
+	best.set_meta("chop_hp", hp)
+	var tw := create_tween()
+	tw.tween_property(best, "rotation_degrees", randf_range(-8.0, 8.0), 0.08)
+	tw.tween_property(best, "rotation_degrees", 0.0, 0.08)
+	if hp > 0:
+		GameBus.show_toast("咔嚓…再砍一下")
+		return
+	Inventory.add("wood", 2)
+	GameBus.show_toast("获得木头 x2")
+	best.remove_from_group("choppable")
+	var fall := create_tween()
+	fall.tween_property(best, "modulate:a", 0.0, 0.25)
+	fall.tween_callback(best.queue_free)
 
 func _try_farm_interact() -> void:
 	if _farm == null:
@@ -207,6 +247,11 @@ func _try_farm_interact() -> void:
 		GameBus.show_toast("收获：" + ItemDB.display_name(str(got)))
 		return
 	var seed_id := Inventory.selected_seed
-	if Inventory.has(seed_id) and _farm.call("plant", cell, seed_id):
-		Inventory.remove(seed_id, 1)
-		GameBus.show_toast("播种：" + ItemDB.display_name(seed_id))
+	if Inventory.has(seed_id):
+		if not Stamina.spend(1, "plant"):
+			return
+		if _farm.call("plant", cell, seed_id):
+			Inventory.remove(seed_id, 1)
+			GameBus.show_toast("播种：" + ItemDB.display_name(seed_id))
+		else:
+			Stamina.restore(1)

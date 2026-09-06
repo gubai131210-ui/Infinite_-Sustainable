@@ -27,6 +27,9 @@ const ITEMS := {
 	"feed": {"name": "饲料", "icon": "res://assets/processed/item_feed.png", "kind": "feed", "buy": 5},
 	"fish": {"name": "鱼", "icon": "res://assets/processed/item_fish.png", "kind": "loot", "sell": 18},
 	"wood": {"name": "木头", "icon": "res://assets/processed/item_wood.png", "kind": "loot", "sell": 8},
+	"egg": {"name": "鸡蛋", "icon": "res://assets/processed/item_egg.png", "kind": "loot", "sell": 12},
+	"wool": {"name": "羊毛", "icon": "res://assets/processed/item_wool.png", "kind": "loot", "sell": 20},
+	"milk": {"name": "牛奶", "icon": "res://assets/processed/item_milk.png", "kind": "loot", "sell": 25},
 }
 
 func display_name(id: String) -> String:

@@ -42,7 +42,7 @@ func _atlas_frame(path: String, frame: int = 0, fw: int = -1, fh: int = -1) -> T
 	at.region = Rect2(frame * fw, 0, fw, fh)
 	return at
 
-func _spr(path: String, tile: Vector2, z: int = 5) -> Sprite2D:
+func _spr(path: String, tile: Vector2, z: int = 5, choppable: bool = false) -> Sprite2D:
 	var tex := _load_tex(path)
 	if tex == null:
 		return null
@@ -57,6 +57,9 @@ func _spr(path: String, tile: Vector2, z: int = 5) -> Sprite2D:
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	if "tree" in path:
 		s.set_meta("sway", true)
+	if choppable:
+		s.add_to_group("choppable")
+		s.set_meta("chop_hp", 2)
 	add_child(s)
 	return s
 
@@ -86,13 +89,14 @@ func _trees() -> void:
 	for x in range(60, 120, 2):
 		for y in range(4, 18, 2):
 			spots.append(Vector2(x + (y % 2), y))
-	# Farm edges + river corridor
-	for p in [
+	# Farm edges + river corridor (choppable for axe wood)
+	var farm_chop: Array[Vector2] = [
 		Vector2(10, 70), Vector2(14, 74), Vector2(8, 88), Vector2(12, 100),
 		Vector2(8, 110), Vector2(58, 70), Vector2(62, 78), Vector2(60, 90),
 		Vector2(64, 100), Vector2(58, 110), Vector2(20, 66), Vector2(30, 68),
 		Vector2(42, 66), Vector2(52, 68), Vector2(16, 62), Vector2(56, 62),
-	]:
+	]
+	for p in farm_chop:
 		spots.append(p)
 	for y in range(26, 95, 4):
 		spots.append(Vector2(12 + (y % 4), y))
@@ -118,10 +122,11 @@ func _trees() -> void:
 		var p: Vector2 = spots[i]
 		var pine := "res://assets/processed/tree_pine.png"
 		var path := "res://assets/processed/tree_%d.png" % (i % 3)
+		var can_chop := p in farm_chop
 		if p.y < 22 and _load_tex(pine) != null:
-			_spr(pine, p, 6)
+			_spr(pine, p, 6, can_chop)
 		else:
-			_spr(path, p, 6)
+			_spr(path, p, 6, can_chop)
 
 func _props_fill() -> void:
 	for p in [
@@ -196,29 +201,33 @@ func _crops_on_fields() -> void:
 			i += 1
 
 func _npcs() -> void:
-	# 12 named interactive NPCs across zones (CharacterBody2D + dialogue)
+	# 12 NPCs — lines/schedule from CharacterDB (docs/content/characters.json)
 	var roster := [
-		{"id": "he", "name": "阿禾", "line": "米勒农庄的地，锄透了才肯长苗。", "pos": Vector2(44, 94), "spr": "npc_01.png"},
-		{"id": "man", "name": "小满", "line": "镇上市集今天来了新鲜番茄苗！", "pos": Vector2(86, 48), "spr": "npc_02.png"},
-		{"id": "yu", "name": "青渔", "line": "回声湖的鱼最肥，记得带钓竿。", "pos": Vector2(158, 108), "spr": "npc_03.png"},
-		{"id": "lin", "name": "林婶", "line": "杂货店进了新饲料，别忘了喂鸡。", "pos": Vector2(74, 46), "spr": "npc_04.png"},
-		{"id": "zhou", "name": "石匠周", "line": "梯田挡墙要常修，雨季最怕塌。", "pos": Vector2(140, 52), "spr": "npc_05.png"},
-		{"id": "tie", "name": "铁轨老张", "line": "橡木火车站正点到站，别站得太近。", "pos": Vector2(148, 20), "spr": "npc_06.png"},
-		{"id": "ka", "name": "咖啡豆豆", "line": "咖啡馆的热可可能暖一天。", "pos": Vector2(100, 52), "spr": "npc_07.png"},
-		{"id": "ta", "name": "灯塔阿白", "line": "夜里灯塔亮着，渔船才找得到岸。", "pos": Vector2(170, 100), "spr": "npc_08.png"},
-		{"id": "qiao", "name": "桥边阿桥", "line": "橡木河涨水时，记得走木桥。", "pos": Vector2(30, 42), "spr": "npc_09.png"},
-		{"id": "hua", "name": "花贩小菊", "line": "广场花坛要是没花，镇子就少了颜色。", "pos": Vector2(92, 44), "spr": "npc_10.png"},
-		{"id": "mu", "name": "木匠老木", "line": "谷仓里工具齐全，缺什么跟我说。", "pos": Vector2(48, 100), "spr": "npc_11.png"},
-		{"id": "shan", "name": "山风", "line": "北崖瀑布旁风大，帽子戴牢。", "pos": Vector2(26, 26), "spr": "npc_12.png"},
+		{"id": "he", "spr": "npc_01.png"},
+		{"id": "man", "spr": "npc_02.png"},
+		{"id": "yu", "spr": "npc_03.png"},
+		{"id": "lin", "spr": "npc_04.png"},
+		{"id": "zhou", "spr": "npc_05.png"},
+		{"id": "tie", "spr": "npc_06.png"},
+		{"id": "ka", "spr": "npc_07.png"},
+		{"id": "ta", "spr": "npc_08.png"},
+		{"id": "qiao", "spr": "npc_09.png"},
+		{"id": "hua", "spr": "npc_10.png"},
+		{"id": "mu", "spr": "npc_11.png"},
+		{"id": "shan", "spr": "npc_12.png"},
 	]
 	var npc_scene := preload("res://scenes/npc.tscn")
 	for info in roster:
+		var nid := str(info["id"])
 		var n := npc_scene.instantiate()
-		n.npc_id = str(info["id"])
-		n.display_name = str(info["name"])
-		n.line = str(info["line"])
+		n.npc_id = nid
+		n.display_name = CharacterDB.display_name(nid)
+		n.line = CharacterDB.line_for(nid)
 		n.sprite_path = "res://assets/processed/%s" % str(info["spr"])
-		n.position = info["pos"] * TS
+		var tile := CharacterDB.schedule_tile(nid, TimeClock.period)
+		if tile == Vector2.ZERO:
+			tile = Vector2(44, 94)
+		n.position = tile * TS
 		n.z_index = 7
 		add_child(n)
 
@@ -321,6 +330,11 @@ func _door_and_chest() -> void:
 	fish.mode = "fish"
 	fish.position = Vector2(160, 112) * TS
 	add_child(fish)
+	var fish_river := preload("res://scenes/interact_zone.tscn").instantiate()
+	fish_river.prompt_text = "按 E 在河边钓鱼"
+	fish_river.mode = "fish"
+	fish_river.position = Vector2(34, 50) * TS
+	add_child(fish_river)
 
 func _quest_zone(step_id: String, label: String, tile: Vector2) -> void:
 	var z := preload("res://scenes/interact_zone.tscn").instantiate()

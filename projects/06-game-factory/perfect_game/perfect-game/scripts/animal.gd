@@ -1,5 +1,5 @@
 extends CharacterBody2D
-## Wandering farm animal with walk cycle + bob. Feed with E.
+## Wandering farm animal — feed then collect egg/wool/milk.
 
 @export var animal_kind: String = "chicken"
 @export var display_name: String = "鸡"
@@ -15,6 +15,8 @@ var _speed: float = 28.0
 var _home: Vector2 = Vector2.ZERO
 var _bob_t: float = 0.0
 var _anim_base_y: float = -6.0
+var _product_ready: bool = false
+var _fed_today: bool = false
 
 func _ready() -> void:
 	add_to_group("animal")
@@ -36,6 +38,22 @@ func _ready() -> void:
 			_speed = 18.0
 			display_name = "牛"
 	anim.play("walk")
+	if not TimeClock.day_changed.is_connected(_on_new_day):
+		TimeClock.day_changed.connect(_on_new_day)
+
+func _on_new_day(_day: int) -> void:
+	_fed_today = false
+	# Uncollected product stays; new day can still feed again after collect
+
+func _product_id() -> String:
+	match animal_kind:
+		"chicken":
+			return "egg"
+		"sheep":
+			return "wool"
+		"cow":
+			return "milk"
+	return "egg"
 
 func _cell_size() -> int:
 	match animal_kind:
@@ -68,7 +86,6 @@ func _setup_sprite() -> void:
 	frames.set_animation_speed("walk", 9.0)
 	frames.set_animation_loop("walk", true)
 	var cell := _cell_size()
-	# Horizontal strip: frame height = sheet height if not square
 	var fh := tex.get_height()
 	var fw := cell
 	if fh > 0 and fh < cell:
@@ -108,18 +125,40 @@ func _physics_process(delta: float) -> void:
 		anim.position.y = _anim_base_y + sin(_bob_t) * 0.4
 	move_and_slide()
 
+func _prompt_text() -> String:
+	if _product_ready:
+		return "按 E 收取%s产出" % display_name
+	return "按 E 喂%s" % display_name
+
+func _refresh_prompt() -> void:
+	if _player_inside != null and _player_inside.has_method("set_interact_prompt"):
+		_player_inside.set_interact_prompt(_prompt_text(), Callable(self, "_interact"))
+
 func _on_enter(body: Node2D) -> void:
 	if body.is_in_group("player") and body.has_method("set_interact_prompt"):
 		_player_inside = body
-		body.set_interact_prompt("按 E 喂%s" % display_name, Callable(self, "_feed"))
+		_refresh_prompt()
 
 func _on_exit(body: Node2D) -> void:
 	if body == _player_inside and body.has_method("clear_interact_prompt"):
 		body.clear_interact_prompt()
 		_player_inside = null
 
-func _feed() -> void:
+func _interact() -> void:
+	if _product_ready:
+		var pid := _product_id()
+		Inventory.add(pid, 1)
+		_product_ready = false
+		GameBus.show_toast("获得%s！" % ItemDB.display_name(pid))
+		_refresh_prompt()
+		return
+	if _fed_today:
+		GameBus.show_toast("%s今天已经喂过了" % display_name)
+		return
 	if Inventory.remove("feed", 1):
-		GameBus.show_toast("%s吃得很开心！" % display_name)
+		_fed_today = true
+		_product_ready = true
+		GameBus.show_toast("%s吃得很开心，可以收取了！" % display_name)
+		_refresh_prompt()
 	else:
 		GameBus.show_toast("没有饲料了")

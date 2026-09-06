@@ -17,4 +17,4 @@
 | mu | 木匠老木 | 谷仓 | 工具坏了跟我说。 |
 | shan | 山风 | 北崖 | 瀑布边风大，帽子戴牢。 |
 
-后续 Pack P06/P07：拆成 `content/characters/<id>.md` + 昼夜台词差 + 日程。
+后续 Pack：已落地 `docs/content/characters/*.md` + `characters.json`（CharacterDB 读表；NPC 昼夜台词与日程）。

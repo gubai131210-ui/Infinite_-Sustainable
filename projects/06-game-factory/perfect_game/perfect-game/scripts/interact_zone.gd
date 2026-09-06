@@ -41,9 +41,20 @@ func _do_interact() -> void:
 			if player != null and int(player.get("tool")) != 3:
 				GameBus.show_toast("装备钓竿（按 4）后再钓")
 				return
-			Inventory.add("fish", 1)
-			GameBus.show_toast("钓到一条鱼！")
-			interacted.emit("fish")
+			if not Stamina.spend(3, "fish"):
+				return
+			# Mini bite roll — cozy daily, not arcade timing yet
+			var roll := randi() % 100
+			if roll < 18:
+				GameBus.show_toast("跑掉了…再试一次")
+			elif roll < 85:
+				Inventory.add("fish", 1)
+				GameBus.show_toast("钓到一条鱼！")
+				interacted.emit("fish")
+			else:
+				Inventory.add("fish", 2)
+				GameBus.show_toast("大鱼！鱼 x2")
+				interacted.emit("fish_big")
 		"dialogue":
 			GameBus.show_dialogue(speaker, message)
 			interacted.emit(message)
@@ -55,6 +66,7 @@ func _do_interact() -> void:
 			interacted.emit(interior_id)
 		"bed":
 			TimeClock.sleep_to_morning()
+			Stamina.restore_full()
 			GameBus.save_game()
 			interacted.emit("bed")
 		"exit_house":

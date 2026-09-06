@@ -82,15 +82,25 @@ func consume_spawn() -> Vector2:
 	return Vector2.ZERO
 
 func save_game() -> void:
+	var plots_out: Dictionary = {}
+	for k in farm_plots_data.keys():
+		var cell: Vector2i
+		if k is Vector2i:
+			cell = k
+		else:
+			cell = _parse_cell_key(str(k))
+		plots_out["%d,%d" % [cell.x, cell.y]] = farm_plots_data[k]
 	var data := {
 		"gold": gold,
 		"day": TimeClock.day,
 		"hour": TimeClock.hour,
 		"chest_claimed": chest_claimed,
-		"farm_plots": farm_plots_data,
+		"farm_plots": plots_out,
 		"inventory": Inventory.stacks.duplicate(true),
 		"quest_done": QuestLog.done.duplicate(true),
 		"quest_idx": QuestLog._idx,
+		"energy": Stamina.energy,
+		"save_version": 2,
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f == null:
@@ -98,6 +108,14 @@ func save_game() -> void:
 		return
 	f.store_string(JSON.stringify(data))
 	f.close()
+
+func _parse_cell_key(s: String) -> Vector2i:
+	## Accept "x,y" or Godot-ish "(x, y)" from older saves.
+	var t := s.strip_edges().replace("(", "").replace(")", "").replace(" ", "")
+	var parts := t.split(",")
+	if parts.size() >= 2:
+		return Vector2i(int(parts[0]), int(parts[1]))
+	return Vector2i.ZERO
 
 func load_game() -> void:
 	if not FileAccess.file_exists(SAVE_PATH):
@@ -113,7 +131,11 @@ func load_game() -> void:
 	gold = int(data.get("gold", gold))
 	chest_claimed = bool(data.get("chest_claimed", false))
 	if data.has("farm_plots") and typeof(data["farm_plots"]) == TYPE_DICTIONARY:
-		farm_plots_data = data["farm_plots"]
+		var raw: Dictionary = data["farm_plots"]
+		var normalized: Dictionary = {}
+		for k in raw.keys():
+			normalized[_parse_cell_key(str(k))] = raw[k]
+		farm_plots_data = normalized
 	if data.has("inventory") and typeof(data["inventory"]) == TYPE_DICTIONARY:
 		Inventory.stacks = data["inventory"]
 		Inventory.changed.emit()
@@ -126,4 +148,7 @@ func load_game() -> void:
 		QuestLog.done = data["quest_done"]
 	if data.has("quest_idx"):
 		QuestLog._idx = int(data["quest_idx"])
+	if data.has("energy"):
+		Stamina.energy = clampi(int(data["energy"]), 0, Stamina.MAX_ENERGY)
+		Stamina.energy_changed.emit(Stamina.energy, Stamina.MAX_ENERGY)
 	gold_changed.emit(gold)

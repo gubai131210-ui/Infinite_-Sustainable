@@ -169,12 +169,26 @@ func _refresh() -> void:
 		_start_sway(root, stage)
 
 func _add_wet_tile(cell: Vector2i) -> void:
-	var img := Image.create(TS, TS, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0.22, 0.42, 0.72, 0.38))
 	var spr := Sprite2D.new()
-	spr.texture = ImageTexture.create_from_image(img)
+	var path := "res://assets/processed/tile_wet_soil.png"
+	var tex: Texture2D = null
+	if ResourceLoader.exists(path):
+		var res := load(path)
+		if res is Texture2D:
+			tex = res
+	if tex == null:
+		var abs_path := ProjectSettings.globalize_path(path)
+		var img := Image.new()
+		if img.load(abs_path) == OK:
+			tex = ImageTexture.create_from_image(img)
+	if tex == null:
+		var fallback := Image.create(TS, TS, false, Image.FORMAT_RGBA8)
+		fallback.fill(Color(0.22, 0.42, 0.72, 0.38))
+		tex = ImageTexture.create_from_image(fallback)
+	spr.texture = tex
 	spr.centered = false
 	spr.position = Vector2(cell.x * TS, cell.y * TS)
+	spr.modulate = Color(1, 1, 1, 0.85)
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_wet_overlay.add_child(spr)
 

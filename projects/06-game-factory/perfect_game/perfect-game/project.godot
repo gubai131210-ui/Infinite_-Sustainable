@@ -23,6 +23,8 @@ ItemDB="*res://scripts/autoload/item_db.gd"
 Inventory="*res://scripts/autoload/inventory.gd"
 TimeClock="*res://scripts/autoload/time_clock.gd"
 QuestLog="*res://scripts/autoload/quest_log.gd"
+CharacterDB="*res://scripts/autoload/character_db.gd"
+Stamina="*res://scripts/autoload/stamina.gd"
 GameBus="*res://scripts/autoload/game_bus.gd"
 MCPRuntime="*res://addons/godot_mcp/runtime/mcp_runtime.gd"
 

@@ -13,6 +13,7 @@ func _ready() -> void:
 	GameBus.quest_hint.connect(_on_quest)
 	GameBus.gold_changed.connect(_on_gold)
 	TimeClock.hour_changed.connect(_on_hour)
+	Stamina.energy_changed.connect(func(_c, _m): pass)
 	toast_label.text = ""
 	quest.text = QuestLog.current_hint()
 	_clock_line = TimeClock.clock_text()
@@ -40,8 +41,8 @@ func _process(delta: float) -> void:
 		var prompt := ""
 		if player.has_method("get_interact_prompt"):
 			prompt = str(player.call("get_interact_prompt"))
-		info.text = "%s  金币:%d  (%.0f,%.0f)  工具:%s  %s" % [
-			_clock_line, GameBus.gold,
+		info.text = "%s  金:%d  精力:%d/%d  (%.0f,%.0f)  工具:%s  %s" % [
+			_clock_line, GameBus.gold, Stamina.energy, Stamina.MAX_ENERGY,
 			player.global_position.x, player.global_position.y, tool_name, prompt
 		]
 	if _toast_left > 0.0:
