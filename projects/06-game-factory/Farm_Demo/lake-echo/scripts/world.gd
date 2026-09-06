@@ -101,6 +101,20 @@ func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
 		for x in range(r.position.x, r.position.x + r.size.x):
 			_set_cell(layer, x, y, tid)
 
+func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
+	for i in range(steps + 1):
+		var t: float = float(i) / float(maxi(steps, 1))
+		var wobble_x: float = 2.5 * sin(t * PI * 4.0 + float(a.x) * 0.1)
+		var wobble_y: float = 1.8 * sin(t * PI * 3.0 + float(a.y) * 0.07)
+		var x: int = int(lerpf(float(a.x), float(b.x), t) + wobble_x)
+		var y: int = int(lerpf(float(a.y), float(b.y), t) + wobble_y)
+		_set_cell(_ground, x, y, T_PATH)
+		_set_cell(_ground, x + 1, y, T_PATH)
+		_set_cell(_ground, x, y + 1, T_PATH)
+		if i % 3 == 0:
+			_set_cell(_ground, x - 1, y, T_DIRT)
+			_set_cell(_ground, x + 2, y, T_DIRT)
+
 func _paint_base() -> void:
 	# Full grass with variants for less flat look
 	for y in range(H):
@@ -150,26 +164,18 @@ func _paint_base() -> void:
 		_water.erase_cell(Vector2i(x, 62))
 		_water.erase_cell(Vector2i(x, 63))
 
-	# Z3 plaza
+	# Z3 plaza (slightly irregular edge)
 	_fill_rect(_ground, Rect2i(72, 36, 40, 28), T_PLAZA)
-	# winding paths farm→plaza→station→lake
-	for t in range(0, 55):
-		var px := 48 + int(t * 0.7)
-		var py := 90 - int(t * 0.7)
-		_set_cell(_ground, px, py, T_PATH)
-		_set_cell(_ground, px, py + 1, T_PATH)
-	for x in range(40, 120):
-		_set_cell(_ground, x, 50, T_PATH)
-		_set_cell(_ground, x, 51, T_PATH)
-	for y in range(22, 90):
-		_set_cell(_ground, 48, y, T_PATH)
-		_set_cell(_ground, 49, y, T_PATH)
-	for x in range(90, 155):
-		_set_cell(_ground, x, 28, T_PATH)
-		_set_cell(_ground, x, 29, T_PATH)
-	for y in range(50, 110):
-		_set_cell(_ground, 100, y, T_PATH)
-		_set_cell(_ground, 101, y, T_PATH)
+	for x in range(72, 112):
+		if (x + 3) % 7 == 0:
+			_set_cell(_ground, x, 35, T_PLAZA)
+		if (x + 5) % 6 == 0:
+			_set_cell(_ground, x, 64, T_PLAZA)
+	# Organic winding dirt paths (sine wobble, 2-wide)
+	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 70)
+	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 55)
+	_paint_path_winding(Vector2i(90, 55), Vector2i(155, 105), 60)
+	_paint_path_winding(Vector2i(48, 88), Vector2i(48, 30), 40)
 
 	# Z4 rails
 	for x in range(120, 184):
@@ -177,14 +183,27 @@ func _paint_base() -> void:
 		_set_cell(_ground, x, 21, T_RAIL)
 	_fill_rect(_ground, Rect2i(140, 14, 24, 14), T_PLAZA)
 
-	# Z5 terrace bands
-	for band in range(4):
-		var y0 := 42 + band * 9
-		_fill_rect(_ground, Rect2i(124, y0, 40, 4), T_FARM)
-		_fill_rect(_ground, Rect2i(124, y0 + 4, 40, 2), T_CLIFF)
-		for x in range(130, 138):
-			_set_cell(_ground, x, y0 + 4, T_STAIRS)
+	# Z5 real terraces: cliff face + inset farm ledge + stairs per band
+	for band in range(5):
+		var y0 := 40 + band * 8
+		var inset := band % 2  # slight stagger like video terraces
+		# retaining cliff wall (taller face)
+		_fill_rect(_ground, Rect2i(122 + inset, y0 + 5, 44, 3), T_CLIFF)
+		# farm ledge above cliff
+		_fill_rect(_ground, Rect2i(124 + inset, y0, 40, 5), T_FARM)
+		# crop row texture alternate
+		for x in range(126 + inset, 160, 2):
+			_set_cell(_ground, x, y0 + 2, T_DIRT)
+		# stone stairs connecting bands
+		for x in range(132, 138):
 			_set_cell(_ground, x, y0 + 5, T_STAIRS)
+			_set_cell(_ground, x, y0 + 6, T_STAIRS)
+			_set_cell(_ground, x, y0 + 7, T_STAIRS)
+		# side stairs alternate
+		if band % 2 == 1:
+			for x in range(150, 156):
+				_set_cell(_ground, x, y0 + 5, T_STAIRS)
+				_set_cell(_ground, x, y0 + 6, T_STAIRS)
 
 	# Z6 lake
 	for y in range(88, 120):
