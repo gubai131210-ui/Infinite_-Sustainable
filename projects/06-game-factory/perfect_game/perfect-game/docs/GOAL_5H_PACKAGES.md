@@ -116,3 +116,20 @@
 - [x] P33（中空填充 + 烟囱剪影）  
 - [x] P34（信箱/告示进度文 + 遗迹旧箱）  
 - [x] P35（golden + Critic + push）  
+
+## 店面视觉续跑（瀑布气势 / 蜿蜒路 / 屋顶 · ≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P36 | 35m | 宽崖瀑布素材重绘 + 推送 | golden river |
+| P37 | 30m | 更强蜿蜒土路联网 | overview 路径可读 |
+| P38 | 35m | 红/石板/茅草屋顶变体 | town/farm golden |
+| P39 | 30m | 全套 golden 重抓 + Critic | qa/golden |
+| P40 | 25m | smoke + push + review | 0 error |
+
+### 店面进度
+- [x] P36（宽崖瀑布重绘）  
+- [x] P37（更强蜿蜒土路）  
+- [x] P38（屋顶变体 shop/cafe/townhouse/farm）  
+- [x] P39（全套 golden + Critic）  
+- [x] P40（smoke + push + review）  

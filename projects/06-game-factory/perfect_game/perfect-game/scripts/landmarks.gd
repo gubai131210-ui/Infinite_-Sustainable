@@ -118,13 +118,16 @@ func _river() -> void:
 	_spr("res://assets/processed/prop_hills.png", Vector2(28, 14), 3, 1.2)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(19, 15), 5, 1.2)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(29, 15), 5, 1.15)
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.2, Vector2(36, 48))
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.35, Vector2(44, 56))
 	_spr("res://assets/processed/prop_rocks.png", Vector2(21, 19), 9, 1.05)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(27, 19), 9, 1.0)
 	for p in [Vector2(17, 17), Vector2(31, 17), Vector2(19, 20), Vector2(29, 20), Vector2(22, 21), Vector2(26, 21)]:
 		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 11, 1.0)
 	_spr("res://assets/processed/bush.png", Vector2(20, 22), 10, 1.0)
 	_spr("res://assets/processed/bush.png", Vector2(28, 22), 10, 1.0)
+	# Wooden climb toward cliff shelf (elevation read)
+	for yy in range(18, 24):
+		_spr("res://assets/processed/prop_fence.png", Vector2(33, yy), 6, 0.85)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)
@@ -157,11 +160,12 @@ func _process(delta: float) -> void:
 		_lighthouse_sprite.modulate = Color(pulse, pulse, 0.95 + 0.05 * sin(_lh_t * 2.0), 1.0)
 
 func _farm() -> void:
-	_spr("res://assets/processed/prop_farmhouse.png", Vector2(40, 88), 8, 1.05, Vector2(48, 28))
+	_spr("res://assets/processed/prop_farmhouse_darkroof.png", Vector2(40, 88), 8, 1.05, Vector2(48, 28))
 	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 8, 1.05, Vector2(70, 36))
 	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 8, 1.0, Vector2(64, 34))
 	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 8, 1.1, Vector2(22, 48))
 	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 8, 1.1, Vector2(22, 48))
+	_spr("res://assets/processed/prop_chimney.png", Vector2(41, 86), 9, 1.1)
 	for x in range(24, 46, 2):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 112), 4, 1.0, Vector2(14, 10))
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 122), 4, 1.0, Vector2(14, 10))
@@ -183,33 +187,40 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(110, 48), 6, 1.05, Vector2(28, 16))
 	for p in [Vector2(82, 44), Vector2(98, 44), Vector2(82, 52), Vector2(98, 52)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
-	_spr("res://assets/processed/prop_shop.png", Vector2(72, 32), 8, 1.05, Vector2(48, 28))
-	_spr("res://assets/processed/prop_cafe.png", Vector2(108, 32), 8, 1.05, Vector2(48, 28))
+	_spr("res://assets/processed/prop_shop_redroof.png", Vector2(72, 32), 8, 1.05, Vector2(48, 28))
+	_spr("res://assets/processed/prop_cafe_tealroof.png", Vector2(108, 32), 8, 1.05, Vector2(48, 28))
 	var houses := [
-		[Vector2(66, 38), "brown", Color(1.08, 0.95, 0.88)],
-		[Vector2(66, 54), "green", Color(0.9, 1.06, 0.92)],
-		[Vector2(114, 38), "blue", Color(0.9, 0.95, 1.1)],
-		[Vector2(114, 54), "brown", Color(1.12, 0.9, 0.85)],
-		[Vector2(74, 64), "blue", Color(0.95, 0.98, 1.08)],
-		[Vector2(90, 66), "brown", Color(1.05, 0.92, 0.86)],
-		[Vector2(106, 64), "green", Color(0.88, 1.08, 0.95)],
-		[Vector2(82, 28), "green", Color(0.92, 1.04, 0.9)],
-		[Vector2(98, 28), "brown", Color(1.1, 0.88, 0.82)],
-		[Vector2(70, 70), "brown", Color(1.0, 0.94, 0.9)],
-		[Vector2(110, 70), "blue", Color(0.88, 0.94, 1.12)],
-		[Vector2(58, 48), "blue", Color(0.92, 0.96, 1.06)],
-		[Vector2(122, 48), "green", Color(0.94, 1.05, 0.9)],
+		[Vector2(66, 38), "red", Color(1.05, 0.95, 0.92)],
+		[Vector2(66, 54), "thatch", Color(0.95, 1.02, 0.9)],
+		[Vector2(114, 38), "slate", Color(0.92, 0.96, 1.08)],
+		[Vector2(114, 54), "red", Color(1.08, 0.92, 0.88)],
+		[Vector2(74, 64), "slate", Color(0.95, 0.98, 1.06)],
+		[Vector2(90, 66), "brown", Color(1.02, 0.94, 0.9)],
+		[Vector2(106, 64), "thatch", Color(0.92, 1.05, 0.92)],
+		[Vector2(82, 28), "thatch", Color(0.94, 1.02, 0.9)],
+		[Vector2(98, 28), "red", Color(1.06, 0.9, 0.86)],
+		[Vector2(70, 70), "brown", Color(1.0, 0.95, 0.9)],
+		[Vector2(110, 70), "slate", Color(0.9, 0.95, 1.1)],
+		[Vector2(58, 48), "slate", Color(0.93, 0.97, 1.05)],
+		[Vector2(122, 48), "thatch", Color(0.96, 1.04, 0.9)],
 	]
 	for h in houses:
-		var path := "res://assets/processed/prop_townhouse_blue.png"
+		var path := "res://assets/processed/prop_townhouse_brown.png"
 		match str(h[1]):
+			"red":
+				path = "res://assets/processed/prop_townhouse_redroof.png"
+			"slate":
+				path = "res://assets/processed/prop_townhouse_slateroof.png"
+			"thatch":
+				path = "res://assets/processed/prop_townhouse_thatch.png"
 			"brown":
 				path = "res://assets/processed/prop_townhouse_brown.png"
 			"green":
 				path = "res://assets/processed/prop_townhouse_green.png"
+			"blue":
+				path = "res://assets/processed/prop_townhouse_blue.png"
 		var tint: Color = h[2] if h.size() > 2 else Color(1, 1, 1, 1)
 		_spr(path, h[0], 8, 1.0, Vector2(40, 30), tint)
-		# Roof chimney silhouette (Critic: roof variety)
 		_spr("res://assets/processed/prop_chimney.png", h[0] + Vector2(0.6, -1.2), 9, 1.0)
 	for x in range(68, 114, 3):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(12, 8))

@@ -125,18 +125,23 @@ func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
 			_set_cell(layer, x, y, tid)
 
 func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
+	## Stronger sine wobble so farm↔town↔lake reads as winding dirt (overview parity)
 	for i in range(steps + 1):
 		var t: float = float(i) / float(maxi(steps, 1))
-		var wobble_x: float = 2.5 * sin(t * PI * 4.0 + float(a.x) * 0.1)
-		var wobble_y: float = 1.8 * sin(t * PI * 3.0 + float(a.y) * 0.07)
+		var wobble_x: float = 5.5 * sin(t * PI * 5.0 + float(a.x) * 0.11)
+		var wobble_y: float = 3.8 * sin(t * PI * 3.5 + float(a.y) * 0.09)
 		var x: int = int(lerpf(float(a.x), float(b.x), t) + wobble_x)
 		var y: int = int(lerpf(float(a.y), float(b.y), t) + wobble_y)
+		x = clampi(x, 2, W - 4)
+		y = clampi(y, 2, H - 4)
 		_set_cell(_ground, x, y, T_PATH)
 		_set_cell(_ground, x + 1, y, T_PATH)
 		_set_cell(_ground, x, y + 1, T_PATH)
-		if i % 3 == 0:
+		_set_cell(_ground, x + 1, y + 1, T_PATH)
+		if i % 2 == 0:
 			_set_cell(_ground, x - 1, y, T_DIRT)
 			_set_cell(_ground, x + 2, y, T_DIRT)
+			_set_cell(_ground, x, y - 1, T_DIRT)
 
 func _paint_base() -> void:
 	# Full grass with noisy variants (avoid diagonal stripe modulo)
@@ -221,11 +226,14 @@ func _paint_base() -> void:
 			_set_cell(_ground, x, 35, T_PLAZA)
 		if (x + 5) % 6 == 0:
 			_set_cell(_ground, x, 64, T_PLAZA)
-	# Organic winding dirt paths (sine wobble, 2-wide)
-	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 70)
-	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 55)
-	_paint_path_winding(Vector2i(90, 55), Vector2i(155, 105), 60)
-	_paint_path_winding(Vector2i(48, 88), Vector2i(48, 30), 40)
+	# Organic winding dirt paths (stronger wobble + more links)
+	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 85)
+	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 70)
+	_paint_path_winding(Vector2i(90, 55), Vector2i(155, 105), 75)
+	_paint_path_winding(Vector2i(48, 88), Vector2i(48, 30), 50)
+	_paint_path_winding(Vector2i(40, 90), Vector2i(82, 20), 55)  # farm → ruins
+	_paint_path_winding(Vector2i(110, 48), Vector2i(168, 100), 65)  # town → lake
+	_paint_path_winding(Vector2i(70, 70), Vector2i(130, 70), 40)  # mid crosslink
 
 	# Z4 rails + wider platform
 	for x in range(118, 186):
