@@ -177,6 +177,15 @@ func _bushes() -> void:
 		for y in range(62, 74, 3):
 			if ((x * 3 + y) % 5) != 0:
 				_spr("res://assets/processed/bush.png", Vector2(x + (y % 2), y), 4)
+	# Mid-map void fill (Critic: empty grass between zones)
+	for x in range(48, 118, 2):
+		for y in range(48, 64, 2):
+			if ((x * 2 + y * 3) % 7) == 0:
+				continue
+			if ((x + y) % 2) == 0:
+				_spr("res://assets/processed/bush.png", Vector2(x + (y % 2), y), 4)
+			else:
+				_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x, y), 3)
 	for p in [
 		Vector2(24, 82), Vector2(44, 84), Vector2(86, 46), Vector2(94, 52),
 		Vector2(132, 55), Vector2(150, 60), Vector2(168, 95), Vector2(155, 100),
@@ -260,17 +269,26 @@ func _npcs() -> void:
 		{"id": "shan", "spr": "npc_12.png"},
 	]
 	var npc_scene := preload("res://scenes/npc.tscn")
+	var cdb := get_node_or_null("/root/CharacterDB")
+	var tc := get_node_or_null("/root/TimeClock")
+	var period := str(tc.get("period")) if tc != null else "day"
 	for info in roster:
 		var nid := str(info["id"])
 		var n := npc_scene.instantiate()
 		n.npc_id = nid
-		n.display_name = CharacterDB.display_name(nid)
-		n.line = CharacterDB.line_for(nid)
+		if cdb != null:
+			n.display_name = str(cdb.call("display_name", nid))
+			n.line = str(cdb.call("line_for", nid))
+			var tile: Vector2 = cdb.call("schedule_tile", nid, period)
+			if tile != Vector2.ZERO:
+				n.position = tile * TS
+			else:
+				n.position = Vector2(90, 48) * TS
+		else:
+			n.display_name = nid
+			n.line = "……"
+			n.position = Vector2(90, 48) * TS
 		n.sprite_path = "res://assets/processed/%s" % str(info["spr"])
-		var tile := CharacterDB.schedule_tile(nid, TimeClock.period)
-		if tile == Vector2.ZERO:
-			tile = Vector2(44, 94)
-		n.position = tile * TS
 		n.z_index = 7
 		add_child(n)
 
@@ -322,6 +340,11 @@ func _door_and_chest() -> void:
 	mail.mode = "mail"
 	mail.position = Vector2(44, 88) * TS
 	add_child(mail)
+	var ruin_chest := preload("res://scenes/interact_zone.tscn").instantiate()
+	ruin_chest.prompt_text = "按 E 查看遗迹旧箱"
+	ruin_chest.mode = "ruin_loot"
+	ruin_chest.position = Vector2(82, 18) * TS
+	add_child(ruin_chest)
 	# Chinese wood placards (layout labels)
 	var signs := [
 		{"t": "米勒农庄", "pos": Vector2(42, 76)},

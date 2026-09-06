@@ -79,5 +79,7 @@ func eat(id: String) -> bool:
 		restore = int(ItemDB.get_item(id)["stamina"])
 	Inventory.remove(id, 1)
 	Stamina.restore(restore)
-	GameBus.show_toast("吃了%s，精力 +%d" % [ItemDB.display_name(id), restore])
+	var bus := get_node_or_null("/root/GameBus")
+	if bus != null and bus.has_method("show_toast"):
+		bus.call("show_toast", "吃了%s，精力 +%d" % [ItemDB.display_name(id), restore])
 	return true

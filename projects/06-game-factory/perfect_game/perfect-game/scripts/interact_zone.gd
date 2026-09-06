@@ -2,7 +2,7 @@ extends Area2D
 ## Reusable interact prompt zone.
 
 @export var prompt_text: String = "按 E 交互"
-@export var mode: String = "toast"  # toast|chest|fish|dialogue|house|bed|exit_house|shop_sell|shop_buy|quest_zone|stamina_sip|cook|eat|bulletin|mail
+@export var mode: String = "toast"  # toast|chest|fish|dialogue|house|bed|exit_house|shop_sell|shop_buy|quest_zone|stamina_sip|cook|eat|bulletin|mail|ruin_loot
 @export var message: String = ""
 @export var speaker: String = ""
 @export var interior_id: String = "farmhouse"
@@ -100,16 +100,22 @@ func _do_interact() -> void:
 			_show_bulletin()
 		"mail":
 			_show_mail()
+		"ruin_loot":
+			_ruin_loot()
 		_:
 			GameBus.show_toast(message)
 			interacted.emit(message)
 
 func _do_cook() -> void:
+	var cooking := get_node_or_null("/root/Cooking")
+	if cooking == null:
+		GameBus.show_toast("厨房还没准备好")
+		return
 	var r: Dictionary
 	if recipe_id != "":
-		r = Cooking.try_cook(recipe_id)
+		r = cooking.call("try_cook", recipe_id)
 	else:
-		r = Cooking.try_cook_any()
+		r = cooking.call("try_cook_any")
 	if bool(r.get("ok", false)):
 		GameBus.save_game()
 		GameBus.show_toast(str(r.get("msg", "烹饪完成")))
@@ -119,6 +125,7 @@ func _do_cook() -> void:
 		GameBus.show_toast(str(r.get("msg", "做不了")))
 
 func _do_eat() -> void:
+	var cooking := get_node_or_null("/root/Cooking")
 	var fid := food_id
 	if fid == "":
 		for cand in ["salad", "omelette", "fish_soup", "pumpkin_pie"]:
@@ -128,18 +135,28 @@ func _do_eat() -> void:
 	if fid == "" or Inventory.count(fid) <= 0:
 		GameBus.show_toast("没有可吃的料理（先在灶台烹饪）")
 		return
-	if Cooking.eat(fid):
+	if cooking != null and bool(cooking.call("eat", fid)):
 		GameBus.save_game()
 		SFX.play("ui")
 		interacted.emit("eat_" + fid)
 
 func _show_bulletin() -> void:
+	var weather := "晴"
+	var season := "春"
+	var w := get_node_or_null("/root/Weather")
+	if w != null and w.has_method("weather_cn"):
+		weather = str(w.call("weather_cn"))
+	var sc := get_node_or_null("/root/SeasonClock")
+	if sc != null and sc.has_method("season_cn"):
+		season = str(sc.call("season_cn"))
+	var hint := QuestLog.current_hint()
 	var lines: PackedStringArray = PackedStringArray([
 		"【镇告示栏】",
-		"· 春季市集即将举办，欢迎上交新鲜作物。",
+		"· 春季市集筹备中：买种子、卖货、送小礼物。",
 		"· 码头渔获不错，可去海边试竿。",
-		"· 遗迹区请注意安全，结伴而行。",
-		"· 今日天气：" + Weather.weather_cn() + " · " + SeasonClock.season_cn(),
+		"· 北缘遗迹有人看见闪光，结伴前往更安全。",
+		"· 今日：" + season + " · " + weather,
+		"· 你的当前事项：" + hint,
 	])
 	GameBus.show_dialogue("告示栏", "\n".join(lines))
 	QuestLog.mark("mkt_board")
@@ -147,13 +164,31 @@ func _show_bulletin() -> void:
 
 func _show_mail() -> void:
 	var day := TimeClock.day
-	var body := "亲爱的农场主：\n\n欢迎来到橡木湾。\n种点作物，去市集卖出第一笔，\n再去码头吹吹风吧。\n\n—— 镇长"
-	if day >= 2:
-		body = "亲爱的农场主：\n\n市集筹备顺利！\n若你已卖出货物，记得去咖啡馆坐坐。\n\n—— 玛贝尔"
-	if day >= 3:
-		body = "亲爱的农场主：\n\n遗迹那边有人看见闪光。\n有空可以去看看，也许藏着小秘密。\n\n—— 伊莱"
+	var body := "亲爱的农场主：\n\n欢迎来到橡木湾。\n先在米勒农庄锄地播种，\n再去广场看看告示栏吧。\n\n—— 镇长"
+	if bool(QuestLog.done.get("explore_farm", false)):
+		body = "亲爱的农场主：\n\n听说你已经下田了！\n浇水过夜后作物会长大。\n记得睡在农舍床上。\n\n—— 玛贝尔"
+	if bool(QuestLog.done.get("harvest_one", false)):
+		body = "亲爱的农场主：\n\n第一批收获真棒。\n去杂货店卖掉，顺便买点种子礼包。\n\n—— 店主"
+	if day >= 2 or bool(QuestLog.done.get("done", false)):
+		body = "亲爱的农场主：\n\n市集日开始啦！\n买种子、卖货、找花贩小菊聊聊，\n再去咖啡馆暖暖手。\n\n—— 玛贝尔"
+	if day >= 3 or bool(QuestLog.done.get("visit_ruins", false)):
+		body = "亲爱的农场主：\n\n遗迹那边有人看见闪光。\n若你已路过瀑布，去旧木箱看看纸条，\n再去灯塔看一眼灯火吧。\n\n—— 伊莱"
+	if bool(QuestLog.done.get("visit_lighthouse", false)):
+		body = "亲爱的农场主：\n\n灯塔的灯火还亮着。\n橡木湾的日常会一直继续——\n种地、交友、赶集、听雨。\n\n—— 镇长"
 	GameBus.show_dialogue("信箱", body)
 	interacted.emit("mail")
+
+func _ruin_loot() -> void:
+	if bool(QuestLog.done.get("ruin_loot", false)):
+		GameBus.show_toast("旧木箱已经空了")
+		return
+	QuestLog.mark("ruin_loot")
+	QuestLog.mark("visit_ruins")
+	GameBus.add_gold(15)
+	GameBus.save_game()
+	GameBus.show_dialogue("旧木箱", "箱子里只有一张发黄的纸条：\n「若你听见瀑布的回声，就去灯塔看一眼灯火。」\n\n（获得 15 金币的旧铜币）")
+	SFX.play("chest")
+	interacted.emit("ruin_loot")
 
 func _sell_all_crops() -> void:
 	var earned := 0

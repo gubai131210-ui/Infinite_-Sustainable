@@ -74,40 +74,57 @@ func _mountains() -> void:
 		_spr("res://assets/processed/prop_hills.png", Vector2(x, 15), 2, 1.2)
 
 func _ruins() -> void:
-	## Dense nested mossy arches in forest north of plaza (overview parity)
+	## Irregular mossy arches woven with canopy (break flat grid rows)
 	var arches := [
-		Vector2(62, 10), Vector2(70, 8), Vector2(78, 10), Vector2(86, 8), Vector2(94, 10), Vector2(102, 9),
-		Vector2(66, 14), Vector2(74, 12), Vector2(82, 14), Vector2(90, 12), Vector2(98, 14),
-		Vector2(64, 18), Vector2(72, 16), Vector2(80, 18), Vector2(88, 16), Vector2(96, 18), Vector2(104, 17),
-		Vector2(68, 20), Vector2(76, 22), Vector2(84, 20), Vector2(92, 22), Vector2(100, 21),
-		Vector2(70, 24), Vector2(78, 26), Vector2(86, 24), Vector2(94, 26),
+		Vector2(63, 11), Vector2(71, 9), Vector2(79, 13), Vector2(88, 8), Vector2(96, 12), Vector2(104, 10),
+		Vector2(67, 15), Vector2(75, 17), Vector2(83, 14), Vector2(91, 16), Vector2(99, 15),
+		Vector2(65, 19), Vector2(73, 21), Vector2(81, 19), Vector2(89, 22), Vector2(97, 20),
+		Vector2(69, 24), Vector2(77, 25), Vector2(85, 23), Vector2(93, 26), Vector2(101, 24),
+		Vector2(72, 12), Vector2(86, 18), Vector2(94, 14),
 	]
+	var grove := [
+		Vector2(61, 10), Vector2(69, 8), Vector2(77, 11), Vector2(85, 9), Vector2(93, 11), Vector2(101, 8),
+		Vector2(66, 16), Vector2(74, 14), Vector2(82, 17), Vector2(90, 15), Vector2(98, 17),
+		Vector2(64, 22), Vector2(78, 20), Vector2(92, 23), Vector2(106, 16), Vector2(70, 26),
+		Vector2(88, 27), Vector2(100, 22), Vector2(76, 8), Vector2(84, 24),
+	]
+	for i in range(grove.size()):
+		var gp: Vector2 = grove[i]
+		var tpath := "res://assets/processed/tree_pine.png" if (i % 3) == 0 else ("res://assets/processed/tree_%d.png" % (i % 3))
+		_spr(tpath, gp, 5 if (i % 2) == 0 else 8, 0.95 + float(i % 3) * 0.08)
 	for i in range(arches.size()):
 		var p: Vector2 = arches[i]
 		var path := "res://assets/processed/prop_ruin_arch.png" if (i % 2) == 0 else "res://assets/processed/prop_ruins.png"
-		_spr(path, p, 7, 0.82 + float(i % 4) * 0.1, Vector2(34, 16))
-	for x in range(60, 108, 3):
-		_spr("res://assets/processed/prop_stonewall.png", Vector2(x, 28), 6, 1.05)
-	for x in range(64, 104, 4):
-		_spr("res://assets/processed/prop_stonewall.png", Vector2(x, 30), 6, 0.95)
+		var z := 6 if (i % 3) == 0 else 7
+		_spr(path, p, z, 0.8 + float(i % 4) * 0.1, Vector2(32, 16))
+	for x in range(60, 108, 4):
+		_spr("res://assets/processed/prop_stonewall.png", Vector2(x, 29), 6, 1.0)
 	for p in [
 		Vector2(66, 22), Vector2(80, 28), Vector2(94, 22), Vector2(72, 28), Vector2(88, 26),
-		Vector2(76, 12), Vector2(90, 14), Vector2(100, 24), Vector2(64, 26),
+		Vector2(76, 12), Vector2(90, 14), Vector2(100, 24), Vector2(64, 26), Vector2(84, 28),
 	]:
 		_spr("res://assets/processed/prop_rocks.png", p, 5, 1.0)
+	_spr("res://assets/processed/chest.png", Vector2(82, 18), 6, 0.9)
 
 func _river() -> void:
-	## Cliff shelf bowl + one tall nested waterfall (avoid floating stacks)
+	## Cliff bowl + canopy framing so fall reads nested in forest (not floating)
+	for p in [Vector2(16, 9), Vector2(20, 8), Vector2(28, 8), Vector2(32, 9), Vector2(18, 11), Vector2(30, 11)]:
+		_spr("res://assets/processed/tree_pine.png", p, 3, 1.05)
+	for dx in range(-5, 6, 2):
+		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 9), 2, 1.45)
 	for dx in range(-4, 5, 2):
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 10), 2, 1.4)
-	for dx in range(-3, 4, 2):
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 13), 3, 1.25)
+		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 12), 3, 1.3)
+	_spr("res://assets/processed/prop_hills.png", Vector2(20, 14), 3, 1.2)
+	_spr("res://assets/processed/prop_hills.png", Vector2(28, 14), 3, 1.2)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(19, 15), 5, 1.2)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(29, 15), 5, 1.15)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(21, 18), 5, 1.0)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(27, 18), 5, 1.0)
-	# Single primary fall seated in the bowl
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 16), 9, 1.35, Vector2(40, 52))
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.2, Vector2(36, 48))
+	_spr("res://assets/processed/prop_rocks.png", Vector2(21, 19), 9, 1.05)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(27, 19), 9, 1.0)
+	for p in [Vector2(17, 17), Vector2(31, 17), Vector2(19, 20), Vector2(29, 20), Vector2(22, 21), Vector2(26, 21)]:
+		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 11, 1.0)
+	_spr("res://assets/processed/bush.png", Vector2(20, 22), 10, 1.0)
+	_spr("res://assets/processed/bush.png", Vector2(28, 22), 10, 1.0)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)
@@ -192,6 +209,8 @@ func _town() -> void:
 				path = "res://assets/processed/prop_townhouse_green.png"
 		var tint: Color = h[2] if h.size() > 2 else Color(1, 1, 1, 1)
 		_spr(path, h[0], 8, 1.0, Vector2(40, 30), tint)
+		# Roof chimney silhouette (Critic: roof variety)
+		_spr("res://assets/processed/prop_chimney.png", h[0] + Vector2(0.6, -1.2), 9, 1.0)
 	for x in range(68, 114, 3):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(12, 8))
 

@@ -53,7 +53,9 @@ func mark(step_id: String) -> void:
 		active_line = "market"
 	_emit_hint()
 	if current_hint() != before_hint:
-		GameBus.show_toast("任务进度更新")
+		var bus := get_node_or_null("/root/GameBus")
+		if bus != null and bus.has_method("show_toast"):
+			bus.call("show_toast", "任务进度更新")
 
 func _advance_main() -> void:
 	while _main_idx < MAIN.size() - 1 and done.get(str(MAIN[_main_idx]["id"]), false):
