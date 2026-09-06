@@ -1,7 +1,9 @@
 # SPEC — 橡木湾 Oakhaven
 
-**状态：Grill 锁定 · 执行中**  
-**参考：** `docs/ref/oakhaven_overview.jpg`
+**状态：Grill 锁定 · 执行中 → 类星露谷竖切（见 WAVE_ROADMAP）**  
+**参考：** `docs/ref/oakhaven_overview.jpg`  
+**风格锁：** `docs/VISUAL_BIBLE.md`  
+**Goal 执行：** `docs/GOAL_EXECUTE_STARDEW.md`
 
 ## 世界
 
@@ -19,9 +21,10 @@
 ## 玩法
 
 - 锄→种→浇→收 + 背包
-- 12 具名 NPC 中文对话；动物可摸
+- 12 具名 NPC 中文对话；动物可摸/喂
 - 可进：农舍、谷仓、杂货店、咖啡馆、火车站厅、灯塔底层
+- （目标）日夜 tick、商店经济、主线任务 — 见 WAVE_ROADMAP
 
 ## 禁止偷懒
 
-同 README / GOAL。
+同 `GOAL_EXECUTE_STARDEW.md` Do-Not；有 BLOCKER 先问用户。
