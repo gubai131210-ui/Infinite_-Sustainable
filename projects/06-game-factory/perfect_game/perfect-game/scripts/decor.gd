@@ -83,21 +83,21 @@ func _spr_atlas(path: String, tile: Vector2, z: int = 5, frame: int = 0, flip: b
 func _trees() -> void:
 	var spots: Array[Vector2] = []
 	# North belt: sparse accents only — skyline/mountains/clouds must read through
-	for x in range(2, 68, 4):
-		for y in range(18, 28, 3):
-			if ((x * 3 + y * 5) % 7) < 3:
+	for x in range(2, 68, 5):
+		for y in range(22, 30, 4):
+			if ((x * 3 + y * 5) % 7) < 4:
 				continue
-			if x >= 14 and x <= 36:
+			if x >= 12 and x <= 38:
 				continue  # wide waterfall sky corridor
 			spots.append(Vector2(x + (y % 2) * 0.5, y + (x % 2) * 0.5))
-	for x in range(72, 128, 4):
-		for y in range(18, 26, 3):
+	for x in range(72, 128, 5):
+		for y in range(22, 28, 4):
 			if ((x + y * 2) % 5) == 0:
 				continue
 			spots.append(Vector2(x + (y % 2), y))
-	# Ruins grove — sparse weave, keep arch skyline open
-	for x in range(64, 100, 4):
-		for y in range(16, 26, 4):
+	# Ruins grove — sparse weave below skyline
+	for x in range(64, 100, 5):
+		for y in range(20, 28, 4):
 			if ((x + y) % 3) == 0:
 				continue
 			spots.append(Vector2(x + (y % 2), y + (x % 2)))
@@ -125,18 +125,13 @@ func _trees() -> void:
 		Vector2(64, 44), Vector2(118, 44), Vector2(64, 60), Vector2(118, 60),
 	]:
 		spots.append(p)
-	# Station / terrace / lake rings — keep station ridge sparse so skyline reads
-	for x in range(118, 190, 5):
-		for y in range(10, 14, 2):
-			if ((x + y) % 3) == 0:
-				continue
-			spots.append(Vector2(x + (y % 2), y))
+	# Station ridge: NO tree wall — leave sky/mountain/cliff readable
 	for x in range(118, 188, 2):
 		for y in [86, 90, 94, 98, 112, 116, 120]:
 			if ((x + y) % 3) != 0:
 				spots.append(Vector2(x + (y % 2), y))
 	for p in [
-		Vector2(125, 14), Vector2(135, 12), Vector2(165, 14), Vector2(175, 16),
+		Vector2(125, 18), Vector2(135, 20), Vector2(165, 18), Vector2(175, 20),
 		Vector2(180, 28), Vector2(120, 40), Vector2(168, 45), Vector2(175, 55),
 		Vector2(120, 88), Vector2(125, 100), Vector2(128, 115), Vector2(180, 90),
 		Vector2(185, 105), Vector2(180, 118), Vector2(140, 120), Vector2(155, 122),

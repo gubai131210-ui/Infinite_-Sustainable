@@ -59,34 +59,41 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## Broken skyline: peaks + gaps + soft sky/clouds (kill solid pine-wall read)
-	for x in range(-4, 200, 8):
-		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, -2), -1, 2.4)
-	for i in range(0, 14):
-		var cx := 4 + i * 14 + (i % 3) * 2
-		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(cx, 0 + (i % 2)), 0, 1.5 + float(i % 3) * 0.15)
-	# Mountain peaks with intentional gaps (waterfall corridor + ruins window)
-	for x in range(-6, 202, 6):
+	## Sky must sit in POSITIVE tile Y so overview framing (center ~y48) can see it
+	for x in range(-8, 208, 5):
+		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, -10), -2, 2.6)
+	for x in range(-4, 204, 6):
+		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, -4), -2, 2.5)
+	for x in range(-2, 200, 6):
+		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, 1), -2, 2.3)
+	for i in range(0, 18):
+		var cx := 1 + i * 11 + (i % 4) * 2
+		var cy := -8 + (i % 3) * 2
+		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(cx, cy), -1, 1.9 + float(i % 3) * 0.15)
+	for i in range(0, 10):
+		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(8 + i * 18, 2 + (i % 2)), -1, 1.6)
+	# Far peaks — wide waterfall + ruins sky windows
+	for x in range(-6, 202, 7):
+		if x >= 14 and x <= 36:
+			continue
+		if x >= 68 and x <= 104 and (x % 14) < 6:
+			continue
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 4), 0, 2.0)
+	for x in range(-2, 198, 8):
 		if x >= 16 and x <= 34:
-			continue  # leave waterfall sky open
-		if x >= 70 and x <= 100 and (x % 12) < 4:
-			continue  # thin ruins ridge gaps
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, -3), 0, 2.35)
-	for x in range(-2, 198, 7):
+			continue
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 7), 0, 1.55)
+	for x in range(0, 192, 5):
 		if x >= 18 and x <= 32:
+			_spr("res://assets/processed/prop_cliff.png", Vector2(x, 9), 1, 1.3)
 			continue
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 1), 0, 1.85)
-	for x in range(0, 192, 4):
-		if x >= 18 and x <= 30:
-			_spr("res://assets/processed/prop_cliff.png", Vector2(x, 6), 1, 1.5)
+		_spr("res://assets/processed/prop_cliff.png", Vector2(x, 8), 1, 1.2)
+	for x in range(1, 191, 6):
+		if x >= 18 and x <= 34:
 			continue
-		_spr("res://assets/processed/prop_cliff.png", Vector2(x, 5), 1, 1.4)
-	for x in range(1, 191, 5):
-		if x >= 20 and x <= 28:
-			continue
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 10), 1, 1.45)
-	for x in range(2, 190, 6):
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 14), 2, 1.15)
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 12), 1, 1.3)
+	for x in range(2, 190, 7):
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 16), 2, 1.05)
 
 func _ruins() -> void:
 	## Irregular mossy arches woven with canopy (break flat grid rows)
@@ -97,11 +104,11 @@ func _ruins() -> void:
 		Vector2(69, 24), Vector2(77, 25), Vector2(85, 23), Vector2(93, 26), Vector2(101, 24),
 		Vector2(72, 12), Vector2(86, 18), Vector2(94, 14),
 	]
+	# Keep grove below ridge so skyline stays open
 	var grove := [
-		Vector2(61, 10), Vector2(69, 8), Vector2(77, 11), Vector2(85, 9), Vector2(93, 11), Vector2(101, 8),
-		Vector2(66, 16), Vector2(74, 14), Vector2(82, 17), Vector2(90, 15), Vector2(98, 17),
-		Vector2(64, 22), Vector2(78, 20), Vector2(92, 23), Vector2(106, 16), Vector2(70, 26),
-		Vector2(88, 27), Vector2(100, 22), Vector2(76, 8), Vector2(84, 24),
+		Vector2(66, 18), Vector2(74, 16), Vector2(82, 19), Vector2(90, 17), Vector2(98, 19),
+		Vector2(64, 24), Vector2(78, 22), Vector2(92, 25), Vector2(106, 18), Vector2(70, 26),
+		Vector2(88, 27), Vector2(100, 24), Vector2(84, 24),
 	]
 	for i in range(grove.size()):
 		var gp: Vector2 = grove[i]
@@ -122,27 +129,28 @@ func _ruins() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(82, 18), 6, 0.9)
 
 func _river() -> void:
-	## Cliff bowl + canopy framing so fall reads nested in forest (not floating)
-	for p in [Vector2(16, 9), Vector2(20, 8), Vector2(28, 8), Vector2(32, 9), Vector2(18, 11), Vector2(30, 11)]:
-		_spr("res://assets/processed/tree_pine.png", p, 3, 1.05)
+	## Nest waterfall in cliff bowl with OPEN sky above (no pine lid)
+	for p in [Vector2(14, 10), Vector2(34, 10), Vector2(16, 12), Vector2(32, 12)]:
+		_spr("res://assets/processed/tree_pine.png", p, 3, 1.0)
+	for dx in range(-6, 7, 2):
+		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 8), 2, 1.55)
 	for dx in range(-5, 6, 2):
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 9), 2, 1.45)
-	for dx in range(-4, 5, 2):
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 12), 3, 1.3)
-	_spr("res://assets/processed/prop_hills.png", Vector2(20, 14), 3, 1.2)
-	_spr("res://assets/processed/prop_hills.png", Vector2(28, 14), 3, 1.2)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(19, 15), 5, 1.2)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(29, 15), 5, 1.15)
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.35, Vector2(44, 56))
-	_spr("res://assets/processed/prop_rocks.png", Vector2(21, 19), 9, 1.05)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(27, 19), 9, 1.0)
-	for p in [Vector2(17, 17), Vector2(31, 17), Vector2(19, 20), Vector2(29, 20), Vector2(22, 21), Vector2(26, 21)]:
+		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 11), 3, 1.4)
+	_spr("res://assets/processed/prop_hills.png", Vector2(18, 13), 3, 1.25)
+	_spr("res://assets/processed/prop_hills.png", Vector2(30, 13), 3, 1.25)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 15), 5, 1.25)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 15), 5, 1.2)
+	# Dual-layer fall for spectacle
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 16), 7, 1.55, Vector2(48, 64))
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 18), 8, 1.25, Vector2(36, 48), Color(0.92, 0.96, 1.0, 0.85))
+	_spr("res://assets/processed/prop_rocks.png", Vector2(20, 20), 9, 1.1)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(28, 20), 9, 1.05)
+	for p in [Vector2(15, 18), Vector2(33, 18), Vector2(17, 22), Vector2(31, 22)]:
 		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 11, 1.0)
-	_spr("res://assets/processed/bush.png", Vector2(20, 22), 10, 1.0)
-	_spr("res://assets/processed/bush.png", Vector2(28, 22), 10, 1.0)
-	# Wooden climb toward cliff shelf (elevation read)
-	for yy in range(18, 24):
-		_spr("res://assets/processed/prop_fence.png", Vector2(33, yy), 6, 0.85)
+	_spr("res://assets/processed/bush.png", Vector2(20, 23), 10, 1.0)
+	_spr("res://assets/processed/bush.png", Vector2(28, 23), 10, 1.0)
+	for yy in range(17, 24):
+		_spr("res://assets/processed/prop_fence.png", Vector2(34, yy), 6, 0.85)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)
@@ -202,8 +210,8 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(110, 48), 6, 1.05, Vector2(28, 16))
 	for p in [Vector2(82, 44), Vector2(98, 44), Vector2(82, 52), Vector2(98, 52)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
-	_spr("res://assets/processed/prop_shop_awning.png", Vector2(72, 32), 8, 1.15, Vector2(48, 28))
-	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(108, 32), 8, 1.15, Vector2(48, 28))
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(72, 32), 8, 1.25, Vector2(52, 32))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(108, 32), 8, 1.25, Vector2(52, 32))
 	var houses := [
 		[Vector2(66, 38), "red"],
 		[Vector2(66, 54), "thatch"],
@@ -230,7 +238,7 @@ func _town() -> void:
 				path = "res://assets/processed/prop_house_thatch.png"
 			"green":
 				path = "res://assets/processed/prop_house_greenroof.png"
-		_spr(path, h[0], 8, 1.05, Vector2(36, 28))
+		_spr(path, h[0], 8, 1.15, Vector2(40, 32))
 	for x in range(68, 114, 3):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(12, 8))
 

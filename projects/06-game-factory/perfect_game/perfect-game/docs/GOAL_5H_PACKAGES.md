@@ -146,3 +146,16 @@
 
 ### 北缘进度
 - [x] P41 · P42 · P43 · P44 · P45  
+
+## 天际线可读续跑（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P46 | 40m | 高对比天空+云；相机允许负Y | overview 北缘见天 |
+| P47 | 35m | 双层瀑布 + `07_waterfall` golden | qa/golden |
+| P48 | 35m | 更密屋顶立面/遮阳棚 | town golden |
+| P49 | 25m | 对话心形行 UI | `08_dialogue` |
+| P50 | 30m | day-lock + Critic + push | origin/main |
+
+### 天际线进度
+- [x] P46 · P47 · P48 · P49 · P50  

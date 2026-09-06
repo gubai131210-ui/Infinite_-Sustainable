@@ -10,6 +10,8 @@ signal gold_changed(amount: int)
 var chest_claimed: bool = false
 var inventory_open: bool = false
 var dialogue_open: bool = false
+## -1 = hide hearts row; 0..5 = show friendship meter in DialogueUI
+var dialogue_hearts: int = -1
 
 var outdoor_return_pos: Vector2 = Vector2(40 * 16, 90 * 16)
 var pending_spawn: Vector2 = Vector2.ZERO
@@ -42,7 +44,8 @@ func _deferred_load() -> void:
 func show_toast(text: String) -> void:
 	toast.emit(text)
 
-func show_dialogue(speaker: String, text: String) -> void:
+func show_dialogue(speaker: String, text: String, hearts: int = -1) -> void:
+	dialogue_hearts = hearts
 	dialogue_open = true
 	dialogue.emit(speaker, text)
 	var ql := get_node_or_null("/root/QuestLog")

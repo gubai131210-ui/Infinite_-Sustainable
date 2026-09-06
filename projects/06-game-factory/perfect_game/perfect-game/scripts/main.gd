@@ -11,7 +11,8 @@ func _ready() -> void:
 		var sz: Vector2 = world.world_size()
 		var cam := player.get_node("Camera2D") as Camera2D
 		cam.limit_left = 0
-		cam.limit_top = 0
+		## Negative top so north sky/clouds (y < 0) survive overview zoom
+		cam.limit_top = -480
 		cam.limit_right = int(sz.x)
 		cam.limit_bottom = int(sz.y)
 		cam.zoom = Vector2(2, 2)
@@ -101,26 +102,31 @@ func _capture_goldens(player: Node2D) -> void:
 		tc.set("hour", 10)
 		if tc.has_method("_refresh_period"):
 			tc.call("_refresh_period")
+		if tc.has_signal("hour_changed"):
+			tc.emit_signal("hour_changed", 1, 10)
 		_refresh_modulate()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/qa/golden"))
 	var shots := [
 		["01_farm", Vector2(40 * 16, 98 * 16)],
 		["02_river", Vector2(28 * 16, 28 * 16)],
+		["07_waterfall", Vector2(24 * 16, 20 * 16)],
 		["03_town", Vector2(90 * 16, 48 * 16)],
 		["04_station", Vector2(155 * 16, 18 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(168 * 16, 105 * 16)],
-		["00_overview", Vector2(100 * 16, 64 * 16)],
+		["00_overview", Vector2(100 * 16, 48 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
 	for s in shots:
 		player.global_position = s[1]
 		if str(s[0]) == "00_overview":
 			cam.zoom = Vector2(0.38, 0.38)
+		elif str(s[0]) == "07_waterfall":
+			cam.zoom = Vector2(1.35, 1.35)
 		else:
 			cam.zoom = Vector2(2, 2)
 		await get_tree().process_frame
-		await get_tree().create_timer(0.2).timeout
+		await get_tree().create_timer(0.25).timeout
 		var img: Image = get_viewport().get_texture().get_image()
 		var path := "res://assets/qa/golden/%s.png" % str(s[0])
 		img.save_png(path)

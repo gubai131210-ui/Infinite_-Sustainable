@@ -161,7 +161,7 @@ func _talk() -> void:
 			var react := Friendship.gift_line(npc_id, gift)
 			var h := Friendship.hearts_of(npc_id)
 			Inventory.selected_gift = ""
-			GameBus.show_dialogue(display_name, "友谊心 %d/5\n%s" % [h, react])
+			GameBus.show_dialogue(display_name, react, h)
 			if _player_inside != null and _player_inside.has_method("set_interact_prompt"):
 				_player_inside.set_interact_prompt("按 E 与%s交谈" % display_name, Callable(self, "_talk"))
 			return
@@ -171,6 +171,6 @@ func _talk() -> void:
 		spoken = str(cdb.call("line_for", npc_id))
 	spoken += Friendship.warm_line_suffix(npc_id)
 	var hearts := Friendship.hearts_of(npc_id)
-	GameBus.show_dialogue(display_name, "友谊心 %d/5\n%s" % [hearts, spoken])
+	GameBus.show_dialogue(display_name, spoken, hearts)
 	if npc_id == "hua":
 		QuestLog.mark("mkt_talk_hua")
