@@ -1,6 +1,6 @@
 # Perfect Game — 橡木湾 Oakhaven
 
-**状态：可发布试玩 Demo（像素一比一布局）**  
+**状态：编辑器可玩竖切 Demo（六区/种地/对话/进出建筑）**  
 **工程：** `perfect-game/`（Godot 4.6）
 
 ## Grill 锁定

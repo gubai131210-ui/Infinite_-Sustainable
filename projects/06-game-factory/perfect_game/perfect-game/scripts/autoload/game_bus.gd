@@ -15,6 +15,8 @@ var pending_spawn: Vector2 = Vector2.ZERO
 var has_pending_spawn: bool = false
 var current_interior_id: String = "farmhouse"
 var current_interior_title: String = "农舍"
+## Persist farm plots across interior scene swaps.
+var farm_plots_data: Dictionary = {}
 
 const INTERIORS := {
 	"farmhouse": {"scene": "res://scenes/interiors/interior.tscn", "title": "米勒农舍"},

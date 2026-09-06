@@ -16,9 +16,14 @@ func _ready() -> void:
 	_crops.name = "Crops"
 	_crops.z_index = 3
 	world.add_child(_crops)
+	plots = GameBus.farm_plots_data.duplicate(true)
+	_refresh()
 	var player := get_tree().get_first_node_in_group("player")
 	if player != null and player.has_method("set_farm"):
 		player.set_farm(self)
+
+func _persist() -> void:
+	GameBus.farm_plots_data = plots.duplicate(true)
 
 func is_farmland(cell: Vector2i) -> bool:
 	if _ground == null:
@@ -34,6 +39,7 @@ func hoe(cell: Vector2i) -> bool:
 		return false
 	plots[cell] = {"crop": "", "stage": 0, "waters_done": 0}
 	_ground.set_cell(cell, 0, Vector2i(0, 1))  # keep farmland look; tilled = id 8 still
+	_persist()
 	GameBus.show_toast("锄地完成")
 	return true
 
@@ -48,6 +54,7 @@ func plant(cell: Vector2i, seed_id: String) -> bool:
 	plots[cell]["crop"] = crop
 	plots[cell]["stage"] = 0
 	plots[cell]["waters_done"] = 0
+	_persist()
 	_refresh()
 	return true
 
@@ -67,6 +74,7 @@ func water(cell: Vector2i) -> bool:
 	else:
 		p["stage"] = clampi(int(float(p["waters_done"]) / float(need) * 3.0), 0, 2)
 	plots[cell] = p
+	_persist()
 	_refresh()
 	return true
 
@@ -79,6 +87,7 @@ func harvest(cell: Vector2i) -> String:
 		return ""
 	var item := str(ItemDB.CROPS[crop]["item"])
 	plots.erase(cell)
+	_persist()
 	_refresh()
 	return item
 
