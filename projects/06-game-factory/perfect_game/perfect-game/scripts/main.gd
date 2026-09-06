@@ -105,6 +105,9 @@ func _capture_goldens(player: Node2D) -> void:
 		if tc.has_signal("hour_changed"):
 			tc.emit_signal("hour_changed", 1, 10)
 		_refresh_modulate()
+	var hud := get_node_or_null("HUD")
+	if hud != null and hud.has_method("_on_hour"):
+		hud.call("_on_hour", 1, 10)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/qa/golden"))
 	var shots := [
 		["01_farm", Vector2(40 * 16, 98 * 16)],
@@ -131,6 +134,17 @@ func _capture_goldens(player: Node2D) -> void:
 		var path := "res://assets/qa/golden/%s.png" % str(s[0])
 		img.save_png(path)
 		print("GOLDEN_SAVED ", path)
+	# Dialogue hearts golden (wired into capture path)
+	player.global_position = Vector2(90 * 16, 48 * 16)
+	cam.zoom = Vector2(2, 2)
+	var bus := get_node_or_null("/root/GameBus")
+	if bus != null and bus.has_method("show_dialogue"):
+		bus.call("show_dialogue", "阿禾", "瀑布那边的云今天堆得真高。", 3)
+	await get_tree().process_frame
+	await get_tree().create_timer(0.3).timeout
+	var dlg_img: Image = get_viewport().get_texture().get_image()
+	dlg_img.save_png("res://assets/qa/golden/08_dialogue.png")
+	print("GOLDEN_SAVED res://assets/qa/golden/08_dialogue.png")
 	print("GOLDEN_CAPTURE_DONE")
 	await get_tree().create_timer(0.3).timeout
 	get_tree().quit()

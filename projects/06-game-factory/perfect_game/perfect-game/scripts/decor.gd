@@ -111,8 +111,8 @@ func _trees() -> void:
 	]
 	for p in farm_chop:
 		spots.append(p)
-	# River west bank denser
-	for y in range(24, 100, 2):
+	# River west bank denser (start lower so north skyline stays open)
+	for y in range(36, 100, 2):
 		spots.append(Vector2(8 + (y % 3), y))
 		spots.append(Vector2(14 + (y % 2), y + 1))
 		spots.append(Vector2(44 + (y % 4), y))
@@ -372,11 +372,13 @@ func _door_and_chest() -> void:
 	pier.position = Vector2(155, 110) * TS
 	add_child(pier)
 	var fall := preload("res://scenes/interact_zone.tscn").instantiate()
-	fall.prompt_text = "按 E 看瀑布"
-	fall.mode = "toast"
-	fall.message = "橡木河源头瀑布轰鸣，水雾扑面。"
-	fall.position = Vector2(24, 22) * TS
+	fall.prompt_text = "按 E 倾听瀑布"
+	fall.mode = "quest_zone"
+	fall.quest_step_id = "visit_waterfall"
+	fall.message = "瀑布回声里有人说：去灯塔看一眼灯火。"
+	fall.position = Vector2(24, 20) * TS
 	add_child(fall)
+	_quest_zone("visit_waterfall", "瀑布源头", Vector2(26, 18))
 	var stall := preload("res://scenes/interact_zone.tscn").instantiate()
 	stall.prompt_text = "按 E 看看摊位"
 	stall.mode = "dialogue"

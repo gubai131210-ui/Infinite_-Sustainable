@@ -159,3 +159,16 @@
 
 ### 天际线进度
 - [x] P46 · P47 · P48 · P49 · P50  
+
+## 云松瀑与试玩证据（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P51 | 40m | 打碎平齐山脊；云→松→瀑层次 | overview |
+| P52 | 35m | hero 店面立面 + `08_dialogue` 接入捕获 | town/dialogue |
+| P53 | 25m | 瀑布打卡→信箱故事拍 | visit_waterfall |
+| P54 | 25m | PLAYTEST_EVIDENCE + itch 更新 | docs |
+| P55 | 30m | golden + Critic + push | origin/main |
+
+### 云松瀑进度
+- [x] P51 · P52 · P53 · P54 · P55  

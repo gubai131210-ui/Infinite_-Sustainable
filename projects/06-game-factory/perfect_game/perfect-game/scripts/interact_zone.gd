@@ -154,7 +154,7 @@ func _show_bulletin() -> void:
 		"【镇告示栏】",
 		"· 春季市集筹备中：买种子、卖货、送小礼物。",
 		"· 码头渔获不错，可去海边试竿。",
-		"· 北缘遗迹有人看见闪光，结伴前往更安全。",
+		"· 北缘瀑布回声清亮；遗迹旧箱里或许有纸条。",
 		"· 今日：" + season + " · " + weather,
 		"· 你的当前事项：" + hint,
 	])
@@ -173,6 +173,8 @@ func _show_mail() -> void:
 		body = "亲爱的农场主：\n\n市集日开始啦！\n买种子、卖货、找花贩小菊聊聊，\n再去咖啡馆暖暖手。\n\n—— 玛贝尔"
 	if day >= 3 or bool(QuestLog.done.get("visit_ruins", false)):
 		body = "亲爱的农场主：\n\n遗迹那边有人看见闪光。\n若你已路过瀑布，去旧木箱看看纸条，\n再去灯塔看一眼灯火吧。\n\n—— 伊莱"
+	if bool(QuestLog.done.get("visit_waterfall", false)):
+		body = "亲爱的农场主：\n\n你听见瀑布的回声了。\n纸条说得对——灯塔灯火还亮着，\n去回声湖边看看吧。\n\n—— 伊莱"
 	if bool(QuestLog.done.get("visit_lighthouse", false)):
 		body = "亲爱的农场主：\n\n灯塔的灯火还亮着。\n橡木湾的日常会一直继续——\n种地、交友、赶集、听雨。\n\n—— 镇长"
 	GameBus.show_dialogue("信箱", body)
