@@ -26,13 +26,13 @@ func _capture_goldens(player: Node2D) -> void:
 	await get_tree().process_frame
 	DirAccess.make_dir_recursive_absolute("res://assets/qa/golden_r5")
 	var shots := [
-		["01_farm", Vector2(40 * 16, 90 * 16)],
-		["02_river", Vector2(30 * 16, 45 * 16)],
+		["01_farm", Vector2(40 * 16, 98 * 16)],
+		["02_river", Vector2(28 * 16, 28 * 16)],
 		["03_town", Vector2(90 * 16, 48 * 16)],
-		["04_station", Vector2(150 * 16, 22 * 16)],
-		["05_terrace", Vector2(140 * 16, 55 * 16)],
-		["06_lake", Vector2(165 * 16, 105 * 16)],
-		["00_overview", Vector2(90 * 16, 70 * 16)],
+		["04_station", Vector2(150 * 16, 20 * 16)],
+		["05_terrace", Vector2(140 * 16, 52 * 16)],
+		["06_lake", Vector2(168 * 16, 105 * 16)],
+		["00_overview", Vector2(96 * 16, 68 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
 	for s in shots:
