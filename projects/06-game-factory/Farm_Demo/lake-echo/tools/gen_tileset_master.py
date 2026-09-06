@@ -42,16 +42,23 @@ def grass(variant: int = 0) -> Image.Image:
     bases = [(70, 140, 58), (78, 152, 64), (62, 128, 52), (84, 158, 70)]
     b = bases[variant % 4]
     img = Image.new("RGBA", (TS, TS), (*b, 255))
-    for _ in range(18):
+    # mottled patches (break flat fill / stripe look)
+    for _ in range(40):
         x, y = rng.randrange(TS), rng.randrange(TS)
-        bright = (min(255, b[0] + 22), min(255, b[1] + 28), min(255, b[2] + 18), 255)
-        dark = (max(0, b[0] - 18), max(0, b[1] - 22), max(0, b[2] - 14), 255)
-        px(img, x, y, bright if rng.random() > 0.45 else dark)
-    # blade tufts
-    for _ in range(4):
+        bright = (min(255, b[0] + 28), min(255, b[1] + 34), min(255, b[2] + 22), 255)
+        dark = (max(0, b[0] - 24), max(0, b[1] - 28), max(0, b[2] - 18), 255)
+        mid = (b[0] + 8, b[1] + 10, b[2] + 4, 255)
+        px(img, x, y, [dark, bright, mid][rng.randrange(3)])
+    for _ in range(6):
         x, y = rng.randrange(1, 14), rng.randrange(2, 14)
         px(img, x, y, (48, 110, 40, 255))
         px(img, x, y - 1, (96, 170, 78, 255))
+        if rng.random() > 0.5:
+            px(img, x + 1, y, (55, 120, 45, 255))
+    # occasional flower speck
+    if variant % 2 == 0 and rng.random() > 0.55:
+        fx, fy = rng.randrange(2, 14), rng.randrange(2, 14)
+        px(img, fx, fy, (220, 90, 120, 255) if rng.random() > 0.5 else (240, 220, 90, 255))
     return img
 
 

@@ -6,7 +6,7 @@ const TS := 16
 func _ready() -> void:
 	_place()
 
-func _spr(path: String, tile: Vector2, z: int = 6) -> void:
+func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0) -> void:
 	if not ResourceLoader.exists(path):
 		push_warning("missing landmark: %s" % path)
 		return
@@ -15,6 +15,7 @@ func _spr(path: String, tile: Vector2, z: int = 6) -> void:
 	s.centered = true
 	s.position = tile * TS + Vector2(0, -8)
 	s.z_index = z
+	s.scale = Vector2(scale_mul, scale_mul)
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	s.y_sort_enabled = true
 	add_child(s)
@@ -28,12 +29,11 @@ func _place() -> void:
 	_lake()
 
 func _farm() -> void:
-	# Z1 — barns east of river, silos, farmhouse, fence pen
-	_spr("res://assets/processed/prop_barn.png", Vector2(38, 100), 8)
-	_spr("res://assets/processed/prop_barn2.png", Vector2(50, 102), 8)
-	_spr("res://assets/processed/prop_silo.png", Vector2(34, 96), 8)
-	_spr("res://assets/processed/prop_silo.png", Vector2(54, 96), 8)
-	_spr("res://assets/processed/prop_farmhouse.png", Vector2(40, 88), 8)
+	_spr("res://assets/processed/prop_barn.png", Vector2(38, 100), 8, 1.25)
+	_spr("res://assets/processed/prop_barn2.png", Vector2(50, 102), 8, 1.2)
+	_spr("res://assets/processed/prop_silo.png", Vector2(34, 96), 8, 1.35)
+	_spr("res://assets/processed/prop_silo.png", Vector2(54, 96), 8, 1.35)
+	_spr("res://assets/processed/prop_farmhouse.png", Vector2(40, 88), 8, 1.3)
 	# Pen fence — spaced posts, not every tile (avoids “crowd” noise)
 	for x in range(20, 54, 2):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 78), 4)
@@ -43,45 +43,42 @@ func _farm() -> void:
 		_spr("res://assets/processed/prop_fence.png", Vector2(52, y), 4)
 
 func _river() -> void:
-	# Z2 — waterfall + bridges
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 20), 9)
-	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5)
-	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5)
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 20), 9, 1.4)
+	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.15)
+	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.15)
 
 func _town() -> void:
-	# Z3 — plaza statue, stalls, half-timber houses (≥6)
-	_spr("res://assets/processed/prop_statue.png", Vector2(90, 48), 7)
-	_spr("res://assets/processed/prop_stall.png", Vector2(80, 42), 6)
-	_spr("res://assets/processed/prop_stall_blue.png", Vector2(100, 42), 6)
-	_spr("res://assets/processed/prop_stall.png", Vector2(80, 56), 6)
-	_spr("res://assets/processed/prop_stall_blue.png", Vector2(100, 56), 6)
-	_spr("res://assets/processed/prop_stall.png", Vector2(90, 40), 6)
-	_spr("res://assets/processed/prop_stall_blue.png", Vector2(90, 58), 6)
-	_spr("res://assets/processed/prop_townhouse_blue.png", Vector2(72, 34), 8)
-	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(108, 34), 8)
-	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(72, 62), 8)
-	_spr("res://assets/processed/prop_townhouse_blue.png", Vector2(108, 62), 8)
-	_spr("res://assets/processed/prop_farmhouse.png", Vector2(84, 32), 8)
-	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(98, 64), 8)
-	_spr("res://assets/processed/prop_townhouse_blue.png", Vector2(68, 48), 8)
-	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(112, 48), 8)
+	_spr("res://assets/processed/prop_statue.png", Vector2(90, 48), 7, 1.2)
+	_spr("res://assets/processed/prop_stall.png", Vector2(80, 42), 6, 1.15)
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(100, 42), 6, 1.15)
+	_spr("res://assets/processed/prop_stall.png", Vector2(80, 56), 6, 1.15)
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(100, 56), 6, 1.15)
+	_spr("res://assets/processed/prop_stall.png", Vector2(90, 40), 6, 1.1)
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(90, 58), 6, 1.1)
+	_spr("res://assets/processed/prop_townhouse_blue.png", Vector2(72, 34), 8, 1.2)
+	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(108, 34), 8, 1.2)
+	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(72, 62), 8, 1.2)
+	_spr("res://assets/processed/prop_townhouse_blue.png", Vector2(108, 62), 8, 1.2)
+	_spr("res://assets/processed/prop_farmhouse.png", Vector2(84, 32), 8, 1.15)
+	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(98, 64), 8, 1.15)
+	_spr("res://assets/processed/prop_townhouse_blue.png", Vector2(68, 48), 8, 1.15)
+	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(112, 48), 8, 1.15)
 
 func _station() -> void:
-	# Z4 — train + station house + platform props
-	_spr("res://assets/processed/prop_train.png", Vector2(150, 20), 7)
-	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(142, 14), 8)
-	_spr("res://assets/processed/prop_stall.png", Vector2(158, 16), 6)
+	_spr("res://assets/processed/prop_train.png", Vector2(150, 20), 7, 1.35)
+	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(142, 14), 8, 1.25)
+	_spr("res://assets/processed/prop_stall.png", Vector2(158, 16), 6, 1.1)
 	_spr("res://assets/processed/prop_fence.png", Vector2(138, 18), 4)
 	_spr("res://assets/processed/prop_fence.png", Vector2(162, 18), 4)
 
 func _terrace() -> void:
-	# Z5 — small shed markers on terrace bands
-	_spr("res://assets/processed/prop_stall.png", Vector2(148, 48), 5)
+	_spr("res://assets/processed/prop_stall.png", Vector2(148, 48), 5, 1.1)
 	_spr("res://assets/processed/prop_fence.png", Vector2(128, 52), 4)
 	_spr("res://assets/processed/prop_fence.png", Vector2(158, 52), 4)
 
 func _lake() -> void:
-	# Z6 — lighthouse, pier boat
-	_spr("res://assets/processed/prop_lighthouse.png", Vector2(173, 103), 10)
-	_spr("res://assets/processed/prop_boat.png", Vector2(160, 110), 6)
-	_spr("res://assets/processed/prop_bridge.png", Vector2(162, 110), 5)
+	_spr("res://assets/processed/prop_lighthouse.png", Vector2(173, 103), 10, 1.45)
+	_spr("res://assets/processed/prop_boat.png", Vector2(160, 110), 6, 1.3)
+	_spr("res://assets/processed/prop_bridge.png", Vector2(162, 110), 5, 1.1)
+	_spr("res://assets/processed/prop_townhouse_blue.png", Vector2(178, 92), 8, 1.1)
+	_spr("res://assets/processed/prop_farmhouse.png", Vector2(150, 98), 8, 1.1)

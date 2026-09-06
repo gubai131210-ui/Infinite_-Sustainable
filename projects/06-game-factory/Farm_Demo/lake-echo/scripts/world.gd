@@ -116,17 +116,21 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 			_set_cell(_ground, x + 2, y, T_DIRT)
 
 func _paint_base() -> void:
-	# Full grass with variants for less flat look
+	# Full grass with noisy variants (avoid diagonal stripe modulo)
 	for y in range(H):
 		for x in range(W):
+			var h := (x * 374761393 + y * 668265263) ^ (x * y * 127)
+			h = abs(h)
 			var g := T_GRASS
-			var m := (x * 3 + y * 7) % 5
-			if m == 1:
+			var m := h % 11
+			if m <= 2:
 				g = T_GRASS2
-			elif m == 2:
+			elif m <= 5:
 				g = T_GRASS3
-			elif m == 3:
+			elif m <= 7:
 				g = T_GRASS4
+			elif m == 8:
+				g = T_DIRT if (h % 17) == 0 else T_GRASS
 			_set_cell(_ground, x, y, g)
 	# North hills
 	_fill_rect(_ground, Rect2i(0, 0, W, 14), T_HILL)
