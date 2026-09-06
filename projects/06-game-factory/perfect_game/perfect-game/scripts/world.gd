@@ -142,20 +142,29 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 			_set_cell(_ground, x, y + 1, T_PATH)
 		if i % 4 == 0:
 			_set_cell(_ground, x + 1, y + 1, T_DIRT)
-		# Irregular fringe offsets (break 2x2 brick read)
-		var ox := (i % 3) - 1
-		var oy := ((i * 2) % 3) - 1
+		# Organic fringe: dirt nubs + grass dither (less brick corridor)
+		var ox := (i % 5) - 2
+		var oy := ((i * 3) % 5) - 2
 		if i % 2 == 0:
 			_set_cell(_ground, x - 1 + ox, y + oy, T_DIRT)
 			_set_cell(_ground, x + 2 - ox, y, T_DIRT)
 		if i % 3 == 0:
 			_set_cell(_ground, x + ox, y - 1, T_DIRT)
+			_set_cell(_ground, x + 1 + ox, y + 2, T_DIRT)
+		if i % 4 == 0:
+			_set_cell(_ground, x - 1, y + 1 + oy, T_GRASS2)
+			_set_cell(_ground, x + 2, y - 1, T_GRASS3)
 		if i % 5 == 0:
 			_set_cell(_ground, x + 1, y - 1 + oy, T_GRASS3)
 			_set_cell(_ground, x - 1, y + 1, T_GRASS2)
+			_set_cell(_ground, x + 3, y + oy, T_GRASS4)
+		if i % 6 == 0:
+			_set_cell(_ground, x + ox, y + 2, T_GRASS)
+			_set_cell(_ground, x + 2 + ox, y + 1, T_DIRT)
 		if i % 7 == 0:
 			_set_cell(_ground, x + 2, y + 1, T_GRASS4)
 			_set_cell(_ground, x - 1, y - 1, T_DIRT)
+			_set_cell(_ground, x - 2, y + oy, T_GRASS3)
 
 func _paint_base() -> void:
 	# Full grass with noisy variants (avoid diagonal stripe modulo)

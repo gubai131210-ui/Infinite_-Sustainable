@@ -197,3 +197,15 @@
 
 ### 连续天际线进度
 - [x] P61 · P62 · P63 · P64  
+
+## 参考图层次对齐（云→峰→丘 · ≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P65 | 40m | 脊带改天空/蓝峰/绿丘；可见于 overview | golden 00 |
+| P66 | 35m | 更深店面（石基/木板/花箱） | town golden |
+| P67 | 25m | 路径 pebble+tuft+fringe dither | farm/overview |
+| P68 | 30m | 晴天锁定 golden + Critic + push | origin/main |
+
+### 参考图层次进度
+- [x] P65 · P66 · P67 · P68  

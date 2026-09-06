@@ -63,3 +63,7 @@ func weather_cn() -> String:
 func force_rain_for_test(hours: int = 4) -> void:
 	_hours_left = hours
 	_set_weather("rain")
+
+func force_clear_for_test() -> void:
+	_hours_left = 99
+	_set_weather("clear")

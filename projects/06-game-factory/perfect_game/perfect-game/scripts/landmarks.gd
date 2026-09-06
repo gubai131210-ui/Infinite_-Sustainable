@@ -59,26 +59,30 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## Continuous rocky skyline (overlapping ridge tiles, tall sky, sparse pines)
-	for x in range(-6, 198, 14):
-		_spr("res://assets/processed/prop_ridge_organic.png", Vector2(x, -8), -2, 1.2)
-	for i in range(0, 12):
-		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(6 + i * 15, -10 + (i % 2)), -1, 1.7)
-	# Far soft peaks only away from waterfall / ruins windows
-	for x in range(0, 192, 18):
-		if x >= 12 and x <= 42:
+	## Ref layers: tall sky + blue peaks + green hills (not grey rock wall)
+	## Anchor near y=0 so overview zoom (top≈-179) still catches sky band
+	for x in range(-10, 202, 16):
+		_spr("res://assets/processed/prop_ridge_organic.png", Vector2(x, 1), -3, 1.2)
+	for i in range(0, 14):
+		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(4 + i * 14, -6 + (i % 3)), -2, 1.85)
+	# Extra far blue peaks only outside waterfall / ruins windows
+	for x in range(0, 192, 22):
+		if x >= 10 and x <= 44:
 			continue
-		if x >= 64 and x <= 112:
+		if x >= 60 and x <= 118:
 			continue
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 7), 0, 1.25)
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 6), -1, 1.15, Vector2(48, 24), Color(0.75, 0.82, 1.05, 0.9))
+	# Waterfall cliff posts only (local rock, not full-width ridge)
 	for dx in [-5, -3, -1, 1, 3, 5]:
 		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 10), 1, 1.3)
-	for p in [Vector2(8, 10), Vector2(52, 9), Vector2(122, 10), Vector2(184, 9)]:
-		_spr("res://assets/processed/tree_pine.png", p, 2, 0.8)
-	for x in range(8, 184, 15):
-		if x >= 14 and x <= 38:
+	# Sparse landmark pines — never a north tree wall
+	for p in [Vector2(6, 12), Vector2(50, 11), Vector2(126, 12), Vector2(186, 11)]:
+		_spr("res://assets/processed/tree_pine.png", p, 2, 0.85)
+	# Soft green hill base under ridge (read as rolling highland)
+	for x in range(6, 186, 12):
+		if x >= 14 and x <= 40:
 			continue
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 15), 2, 1.0)
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 14), 2, 1.05)
 
 func _ruins() -> void:
 	## Irregular mossy arches woven with canopy (break flat grid rows)
@@ -190,8 +194,8 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(110, 48), 6, 1.05, Vector2(28, 16))
 	for p in [Vector2(82, 44), Vector2(98, 44), Vector2(82, 52), Vector2(98, 52)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
-	_spr("res://assets/processed/prop_shop_awning.png", Vector2(72, 32), 8, 1.4, Vector2(58, 40))
-	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(108, 32), 8, 1.4, Vector2(58, 40))
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(72, 30), 8, 1.45, Vector2(64, 44))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(108, 30), 8, 1.45, Vector2(64, 44))
 	var houses := [
 		[Vector2(66, 38), "red"],
 		[Vector2(66, 54), "thatch"],

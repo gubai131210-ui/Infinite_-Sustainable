@@ -92,7 +92,12 @@ func _on_period(_p: String) -> void:
 		var tw := create_tween()
 		tw.tween_property(_modulate, "color", _world_modulate(), 1.2)
 
-func _capture_goldens(player: Node2D) -> void:
+func _capture_goldens(player: Node2D = null) -> void:
+	if player == null:
+		player = $Player as Node2D
+	if player == null:
+		push_error("GOLDEN_CAPTURE_ABORT no Player")
+		return
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var tc := get_node_or_null("/root/TimeClock")
@@ -105,9 +110,17 @@ func _capture_goldens(player: Node2D) -> void:
 		if tc.has_signal("hour_changed"):
 			tc.emit_signal("hour_changed", 1, 10)
 		_refresh_modulate()
+	# Force clear day for storefront-readable goldens (avoid rain modulate grey sky)
+	var wx := get_node_or_null("/root/Weather")
+	if wx != null and wx.has_method("force_clear_for_test"):
+		wx.call("force_clear_for_test")
+		_on_weather("clear")
 	var hud := get_node_or_null("HUD")
 	if hud != null and hud.has_method("_on_hour"):
 		hud.call("_on_hour", 1, 10)
+	# Refresh weather label if HUD listens
+	if hud != null and wx != null and hud.has_method("_on_weather"):
+		hud.call("_on_weather", "clear")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/qa/golden"))
 	var shots := [
 		["01_farm", Vector2(40 * 16, 98 * 16)],
@@ -117,7 +130,7 @@ func _capture_goldens(player: Node2D) -> void:
 		["04_station", Vector2(155 * 16, 18 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(168 * 16, 105 * 16)],
-		["00_overview", Vector2(100 * 16, 48 * 16)],
+		["00_overview", Vector2(100 * 16, 40 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
 	for s in shots:
