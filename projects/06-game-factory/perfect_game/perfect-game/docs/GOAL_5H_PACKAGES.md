@@ -62,4 +62,23 @@
 - [x] P17（SeasonClock 春夏秋冬色调 / HUD 季节）  
 - [x] P18（save_version 3 + 回归清单）  
 
-> 关闭 Goal 仍需：本机 golden 对照 overview 的 Critic 证据 + 可运行导出包实测。竖切可玩 ≠ complete。
+## 续跑 Pack（≥4h 完善，竖切仍 ≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P19 | 30m | D 盘导出模板 + Windows exe 冒烟 | `build/Oakhaven.exe` |
+| P20 | 40m | 水体重绘 + 中地图填充 + 北缘可读 | golden 河/overview |
+| P21 | 40m | 天气（雨）+ 雨天过夜作物加成 | HUD 天气；雨天生长 |
+| P22 | 40m | 厨房烹饪最小环（菜谱→料理） | 农舍灶台交互 |
+| P23 | 35m | 广场告示板 + 轻松故事邮件 | 告示/邮件文本 |
+| P24 | 35m | 环境音乐循环 + 雨声 SFX | 可听到 BGM |
+| P25 | 40m | 重抓 golden + Critic + 推送 | qa/golden 更新 |
+
+### 续跑进度
+- [x] P19（D 盘模板 junction + `build/Oakhaven.exe` ≈103.8MB）  
+- [x] P20（水体波浪重绘 tileset + 中地图灌木/花带走廊）  
+- [x] P21（Weather 雨/晴 + 雨粒子 + 过夜湿土/加成生长）  
+- [x] P22（Cooking 四菜谱 + 农舍灶台/餐桌）  
+- [x] P23（镇告示栏 bulletin + 农舍旁信箱 mail）  
+- [x] P24（AmbientMusic BGM + rain_loop + ui/rain SFX）  
+- [x] P25（重抓 golden + Critic + push）  

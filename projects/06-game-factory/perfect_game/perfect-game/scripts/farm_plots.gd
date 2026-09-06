@@ -112,6 +112,8 @@ func harvest(cell: Vector2i) -> String:
 
 func _on_new_day(_day: int) -> void:
 	## Overnight: wet planted crops advance one stage (Stardew-like).
+	## Rain auto-wets all planted plots and gives +1 extra chance.
+	var raining := Weather.is_raining()
 	for key in plots.keys():
 		var p: Dictionary = plots[key]
 		var crop := str(p.get("crop", ""))
@@ -119,15 +121,23 @@ func _on_new_day(_day: int) -> void:
 			p["wet"] = false
 			plots[key] = p
 			continue
+		if raining:
+			p["wet"] = true
 		var stage := int(p.get("stage", 0))
 		if bool(p.get("wet", false)) and stage < 3:
 			p["stage"] = mini(stage + 1, 3)
 			p["waters_done"] = int(p.get("waters_done", 0)) + 1
+			# Rain bonus: chance to advance another stage
+			if raining and int(p["stage"]) < 3 and randf() < 0.45:
+				p["stage"] = mini(int(p["stage"]) + 1, 3)
 		p["wet"] = false
 		plots[key] = p
 	_persist()
 	_refresh()
-	GameBus.show_toast("新的一天，作物又长高了些")
+	if raining:
+		GameBus.show_toast("雨夜过后，田里喝饱了水")
+	else:
+		GameBus.show_toast("新的一天，作物又长高了些")
 
 func _pop_crop_at(cell: Vector2i) -> void:
 	for c in _crops.get_children():

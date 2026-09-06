@@ -4,7 +4,7 @@ extends Node
 var _players: Dictionary = {}
 
 func _ready() -> void:
-	for id in ["footstep", "water", "chest", "sell", "hoe"]:
+	for id in ["footstep", "water", "chest", "sell", "hoe", "ui", "rain"]:
 		var p := AudioStreamPlayer.new()
 		p.name = "SFX_%s" % id
 		p.volume_db = -6.0

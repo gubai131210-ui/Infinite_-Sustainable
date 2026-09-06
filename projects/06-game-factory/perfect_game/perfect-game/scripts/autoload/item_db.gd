@@ -30,7 +30,17 @@ const ITEMS := {
 	"egg": {"name": "鸡蛋", "icon": "res://assets/processed/item_egg.png", "kind": "loot", "sell": 12},
 	"wool": {"name": "羊毛", "icon": "res://assets/processed/item_wool.png", "kind": "loot", "sell": 20},
 	"milk": {"name": "牛奶", "icon": "res://assets/processed/item_milk.png", "kind": "loot", "sell": 25},
+	"salad": {"name": "田园沙拉", "icon": "res://assets/processed/item_salad.png", "kind": "food", "sell": 45, "stamina": 25},
+	"omelette": {"name": "农家蛋饼", "icon": "res://assets/processed/item_omelette.png", "kind": "food", "sell": 55, "stamina": 35},
+	"fish_soup": {"name": "回声湖鱼汤", "icon": "res://assets/processed/item_fish_soup.png", "kind": "food", "sell": 48, "stamina": 30},
+	"pumpkin_pie": {"name": "南瓜派", "icon": "res://assets/processed/item_pumpkin_pie.png", "kind": "food", "sell": 70, "stamina": 40},
 }
+
+func get_item(id: String) -> Dictionary:
+	if ITEMS.has(id):
+		return ITEMS[id]
+	return {}
+
 
 func display_name(id: String) -> String:
 	if ITEMS.has(id):

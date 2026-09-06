@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import math
 import random
 
 from PIL import Image, ImageDraw
@@ -96,15 +97,21 @@ def plaza() -> Image.Image:
 
 
 def water(deep: bool = False) -> Image.Image:
-    base = (42, 96, 168, 255) if deep else (58, 128, 192, 255)
-    light = (110, 180, 230, 255)
+    base = (36, 92, 168, 255) if deep else (52, 124, 198, 255)
+    foam = (150, 210, 240, 255)
+    dark = (28, 70, 130, 255)
     img = Image.new("RGBA", (TS, TS), base)
-    for y in (3, 7, 11):
-        for x in range(2, 14, 3):
-            px(img, x + (y % 2), y, light)
-    if deep:
-        for _ in range(6):
-            px(img, rng.randrange(TS), rng.randrange(TS), (30, 70, 130, 255))
+    for y in range(TS):
+        for x in range(TS):
+            wave = math.sin((x + y * 0.6) * 0.9)
+            if wave > 0.55:
+                px(img, x, y, foam if not deep else (90, 150, 210, 255))
+            elif wave < -0.65 and deep:
+                px(img, x, y, dark)
+    for y in (2, 6, 10, 14):
+        for x in range(1, 15, 4):
+            xx = (x + y // 2) % 15
+            px(img, xx, y, foam)
     return img
 
 

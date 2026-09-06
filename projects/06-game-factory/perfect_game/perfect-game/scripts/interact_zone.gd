@@ -2,12 +2,14 @@ extends Area2D
 ## Reusable interact prompt zone.
 
 @export var prompt_text: String = "按 E 交互"
-@export var mode: String = "toast"  # toast|chest|fish|dialogue|house|bed|exit_house|shop_sell|shop_buy|quest_zone|stamina_sip
+@export var mode: String = "toast"  # toast|chest|fish|dialogue|house|bed|exit_house|shop_sell|shop_buy|quest_zone|stamina_sip|cook|eat|bulletin|mail
 @export var message: String = ""
 @export var speaker: String = ""
 @export var interior_id: String = "farmhouse"
 @export var quest_step_id: String = ""
 @export var stamina_restore: int = 0
+@export var recipe_id: String = ""
+@export var food_id: String = ""
 
 signal interacted(message: String)
 
@@ -90,9 +92,68 @@ func _do_interact() -> void:
 			GameBus.show_toast(message if message != "" else ("恢复精力 +%d" % amt))
 			QuestLog.mark("mkt_cafe")
 			interacted.emit("sip")
+		"cook":
+			_do_cook()
+		"eat":
+			_do_eat()
+		"bulletin":
+			_show_bulletin()
+		"mail":
+			_show_mail()
 		_:
 			GameBus.show_toast(message)
 			interacted.emit(message)
+
+func _do_cook() -> void:
+	var r: Dictionary
+	if recipe_id != "":
+		r = Cooking.try_cook(recipe_id)
+	else:
+		r = Cooking.try_cook_any()
+	if bool(r.get("ok", false)):
+		GameBus.save_game()
+		GameBus.show_toast(str(r.get("msg", "烹饪完成")))
+		SFX.play("ui")
+		interacted.emit("cook")
+	else:
+		GameBus.show_toast(str(r.get("msg", "做不了")))
+
+func _do_eat() -> void:
+	var fid := food_id
+	if fid == "":
+		for cand in ["salad", "omelette", "fish_soup", "pumpkin_pie"]:
+			if Inventory.count(cand) > 0:
+				fid = cand
+				break
+	if fid == "" or Inventory.count(fid) <= 0:
+		GameBus.show_toast("没有可吃的料理（先在灶台烹饪）")
+		return
+	if Cooking.eat(fid):
+		GameBus.save_game()
+		SFX.play("ui")
+		interacted.emit("eat_" + fid)
+
+func _show_bulletin() -> void:
+	var lines: PackedStringArray = PackedStringArray([
+		"【镇告示栏】",
+		"· 春季市集即将举办，欢迎上交新鲜作物。",
+		"· 码头渔获不错，可去海边试竿。",
+		"· 遗迹区请注意安全，结伴而行。",
+		"· 今日天气：" + Weather.weather_cn() + " · " + SeasonClock.season_cn(),
+	])
+	GameBus.show_dialogue("告示栏", "\n".join(lines))
+	QuestLog.mark("mkt_board")
+	interacted.emit("bulletin")
+
+func _show_mail() -> void:
+	var day := TimeClock.day
+	var body := "亲爱的农场主：\n\n欢迎来到橡木湾。\n种点作物，去市集卖出第一笔，\n再去码头吹吹风吧。\n\n—— 镇长"
+	if day >= 2:
+		body = "亲爱的农场主：\n\n市集筹备顺利！\n若你已卖出货物，记得去咖啡馆坐坐。\n\n—— 玛贝尔"
+	if day >= 3:
+		body = "亲爱的农场主：\n\n遗迹那边有人看见闪光。\n有空可以去看看，也许藏着小秘密。\n\n—— 伊莱"
+	GameBus.show_dialogue("信箱", body)
+	interacted.emit("mail")
 
 func _sell_all_crops() -> void:
 	var earned := 0

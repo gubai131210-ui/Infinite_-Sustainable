@@ -26,7 +26,11 @@ func _physics_process(delta: float) -> void:
 		advance_hour()
 
 func clock_text() -> String:
-	return "第%d天 %02d:00 · %s · %s" % [day, hour, _period_cn(), SeasonClock.season_cn()]
+	var w := "晴"
+	var weather_node := get_node_or_null("/root/Weather")
+	if weather_node != null and weather_node.has_method("weather_cn"):
+		w = str(weather_node.call("weather_cn"))
+	return "第%d天 %02d:00 · %s · %s · %s" % [day, hour, _period_cn(), SeasonClock.season_cn(), w]
 
 func _period_cn() -> String:
 	match period:

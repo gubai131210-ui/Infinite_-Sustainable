@@ -64,6 +64,17 @@ func _configure_zones() -> void:
 		z.message = "热可可暖手，精力 +10"
 		z.position = Vector2(9 * TS, 5 * TS)
 		add_child(z)
+	elif id == "farmhouse":
+		var stove := preload("res://scenes/interact_zone.tscn").instantiate()
+		stove.prompt_text = "按 E 灶台烹饪（自动选可做菜谱）"
+		stove.mode = "cook"
+		stove.position = Vector2(8 * TS, 6 * TS)
+		add_child(stove)
+		var table := preload("res://scenes/interact_zone.tscn").instantiate()
+		table.prompt_text = "按 E 坐下吃饭"
+		table.mode = "eat"
+		table.position = Vector2(10 * TS, 6 * TS)
+		add_child(table)
 
 func _zone(mode: String, prompt: String, pos: Vector2) -> void:
 	var z := preload("res://scenes/interact_zone.tscn").instantiate()
@@ -109,6 +120,8 @@ func _build_room() -> void:
 			_prop("res://assets/processed/chest.png", Vector2(12 * TS, 4 * TS))
 			_prop("res://assets/processed/prop_lamp.png", Vector2(14 * TS, 3 * TS))
 			_prop("res://assets/processed/prop_crate.png", Vector2(3 * TS, 7 * TS))
+			_prop("res://assets/processed/prop_barrel.png", Vector2(8 * TS, 5 * TS))
+			_prop("res://assets/processed/prop_crate.png", Vector2(10 * TS, 5 * TS))
 		"barn":
 			_prop("res://assets/processed/prop_hay.png", Vector2(5 * TS, 5 * TS))
 			_prop("res://assets/processed/prop_hay.png", Vector2(7 * TS, 6 * TS))

@@ -172,12 +172,18 @@ func _bushes() -> void:
 		for y in range(70, 86, 4):
 			if ((x + y) % 3) != 0:
 				_spr("res://assets/processed/bush.png", Vector2(x + (y % 2), y), 4)
+	# Farm ↔ town corridor fill
+	for x in range(42, 86, 3):
+		for y in range(62, 74, 3):
+			if ((x * 3 + y) % 5) != 0:
+				_spr("res://assets/processed/bush.png", Vector2(x + (y % 2), y), 4)
 	for p in [
 		Vector2(24, 82), Vector2(44, 84), Vector2(86, 46), Vector2(94, 52),
 		Vector2(132, 55), Vector2(150, 60), Vector2(168, 95), Vector2(155, 100),
 		Vector2(80, 48), Vector2(100, 48), Vector2(140, 48), Vector2(148, 72),
 		Vector2(56, 72), Vector2(64, 78), Vector2(110, 76), Vector2(118, 80),
 		Vector2(100, 88), Vector2(72, 84), Vector2(128, 70), Vector2(136, 78),
+		Vector2(58, 64), Vector2(66, 66), Vector2(74, 68), Vector2(52, 68),
 	]:
 		_spr("res://assets/processed/bush.png", p, 4)
 
@@ -299,6 +305,11 @@ func _door_and_chest() -> void:
 	chest.mode = "chest"
 	chest.position = Vector2(36, 90) * TS
 	add_child(chest)
+	var mail := preload("res://scenes/interact_zone.tscn").instantiate()
+	mail.prompt_text = "按 E 查看信箱"
+	mail.mode = "mail"
+	mail.position = Vector2(44, 88) * TS
+	add_child(mail)
 	# Chinese wood placards (layout labels)
 	var signs := [
 		{"t": "米勒农庄", "pos": Vector2(42, 76)},
@@ -378,12 +389,15 @@ func _market_festival() -> void:
 	lab.add_theme_constant_override("outline_size", 3)
 	add_child(lab)
 	var board := preload("res://scenes/interact_zone.tscn").instantiate()
-	board.prompt_text = "按 E 看集市告示"
-	board.mode = "dialogue"
-	board.speaker = "集市告示"
-	board.message = "橡木湾轻松集市日：买种子、卖货、找小菊聊花、送份小礼物、再去咖啡馆暖暖手。"
+	board.prompt_text = "按 E 看镇告示栏"
+	board.mode = "bulletin"
 	board.position = Vector2(90, 42) * TS
 	add_child(board)
+	# Soft mid-map path flowers between farm ↔ town
+	for x in range(50, 78, 3):
+		_spr("res://assets/processed/flower_%d.png" % (x % 4), Vector2(x, 68 + (x % 5)), 3)
+
+		_spr("res://assets/processed/bush.png", Vector2(x + 1, 72), 4)
 
 func _quest_zone(step_id: String, label: String, tile: Vector2) -> void:
 	var z := preload("res://scenes/interact_zone.tscn").instantiate()
