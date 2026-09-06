@@ -1,5 +1,5 @@
 extends CharacterBody2D
-## Player — atlas rows: down, left, right, up (48px). Farm tools for Z1.
+## Player — atlas rows: down, left, right, up (48px). Walk cycle always plays while moving.
 
 @export var speed: float = 130.0
 @export var tile_size: int = 16
@@ -18,9 +18,12 @@ var _prompt: String = ""
 var _interact_cb: Callable = Callable()
 var _farm: Node = null
 var _busy: float = 0.0
+var _bob_t: float = 0.0
+var _anim_base_y: float = -8.0
 
 func _ready() -> void:
 	add_to_group("player")
+	_anim_base_y = anim.position.y
 	_setup_frames()
 	camera.make_current()
 	camera.zoom = Vector2(2, 2)
@@ -28,6 +31,11 @@ func _ready() -> void:
 	anim.play("idle_down")
 
 func _load_tex(path: String) -> Texture2D:
+	# Prefer imported resource; fall back to Image.load for Chinese-path / broken .import
+	if ResourceLoader.exists(path):
+		var res := load(path)
+		if res is Texture2D:
+			return res
 	var abs_path := ProjectSettings.globalize_path(path)
 	var img := Image.new()
 	if img.load(abs_path) != OK:
@@ -49,19 +57,23 @@ func _setup_frames() -> void:
 		var idle_name := "idle_%s" % d
 		frames.add_animation(walk_name)
 		frames.add_animation(idle_name)
-		frames.set_animation_speed(walk_name, 10.0)
+		frames.set_animation_speed(walk_name, 12.0)
 		frames.set_animation_loop(walk_name, true)
-		frames.set_animation_speed(idle_name, 1.0)
+		frames.set_animation_speed(idle_name, 2.0)
 		frames.set_animation_loop(idle_name, true)
 		for ci in range(cols):
 			var at := AtlasTexture.new()
 			at.atlas = tex
 			at.region = Rect2(ci * CELL, ri * CELL, CELL, CELL)
-			frames.add_frame(walk_name, at)
+			frames.add_frame(walk_name, at, 1.0)
 			if ci == 0:
-				frames.add_frame(idle_name, at)
+				frames.add_frame(idle_name, at, 1.0)
+			# soft idle breathe: reuse mid stride as second idle frame
+			if ci == 2:
+				frames.add_frame(idle_name, at, 1.0)
 	anim.sprite_frames = frames
 	anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	anim.speed_scale = 1.0
 
 func _dir_name_from_vec(v: Vector2) -> String:
 	if absf(v.x) > absf(v.y):
@@ -81,7 +93,6 @@ func clear_interact_prompt() -> void:
 
 func get_interact_prompt() -> String:
 	return _prompt
-
 
 func get_tool_name() -> String:
 	match tool:
@@ -108,22 +119,31 @@ func target_cell() -> Vector2i:
 func _physics_process(delta: float) -> void:
 	if GameBus.inventory_open or GameBus.dialogue_open:
 		velocity = Vector2.ZERO
+		var idle_lock := "idle_%s" % _facing_name
+		if anim.animation != idle_lock or not anim.is_playing():
+			anim.play(idle_lock)
+		_set_bob(delta, false)
 		move_and_slide()
 		return
 	_busy = maxf(_busy - delta, 0.0)
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	if dir.length() > 0.1:
+	var moving := dir.length() > 0.1
+	if moving:
 		facing = dir.normalized()
 		_facing_name = _dir_name_from_vec(facing)
 		velocity = facing * speed
 		var walk_anim := "walk_%s" % _facing_name
-		if anim.animation != walk_anim:
+		# Always play so walk cycle never freezes after first frame
+		if anim.animation != walk_anim or not anim.is_playing():
 			anim.play(walk_anim)
+		anim.speed_scale = 1.15
 	else:
 		velocity = Vector2.ZERO
 		var idle_anim := "idle_%s" % _facing_name
-		if anim.animation != idle_anim:
+		if anim.animation != idle_anim or not anim.is_playing():
 			anim.play(idle_anim)
+		anim.speed_scale = 1.0
+	_set_bob(delta, moving)
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 8.0, float(192 * 16) - 8.0)
 	global_position.y = clampf(global_position.y, 8.0, float(128 * 16) - 8.0)
@@ -151,6 +171,15 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("inventory"):
 		GameBus.inventory_open = not GameBus.inventory_open
 		GameBus.show_toast("背包开" if GameBus.inventory_open else "背包关")
+
+func _set_bob(delta: float, moving: bool) -> void:
+	# Light bob only — walk sheet already has stride motion
+	if moving:
+		_bob_t += delta * 10.0
+		anim.position.y = _anim_base_y + sin(_bob_t) * 0.8
+	else:
+		_bob_t += delta * 2.5
+		anim.position.y = _anim_base_y + sin(_bob_t) * 0.4
 
 func _use_tool() -> void:
 	_busy = 0.18

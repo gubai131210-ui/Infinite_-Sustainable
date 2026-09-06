@@ -55,6 +55,8 @@ func _spr(path: String, tile: Vector2, z: int = 5) -> Sprite2D:
 	s.z_index = z
 	s.y_sort_enabled = true
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if "tree" in path:
+		s.set_meta("sway", true)
 	add_child(s)
 	return s
 
@@ -221,25 +223,25 @@ func _npcs() -> void:
 		add_child(n)
 
 func _animals() -> void:
-	# Chickens near barns; sheep/cows inside south pen (matches reference)
+	# Live animals with walk cycles (not static sprites)
 	var animal_spots := [
-		["chicken", Vector2(30, 100), "咯咯！想来点饲料吗？"],
-		["chicken", Vector2(34, 102), "啄啄地面……"],
-		["chicken", Vector2(38, 100), "母鸡今天心情不错。"],
-		["cow", Vector2(28, 116), "哞——牧场草很甜。"],
-		["cow", Vector2(40, 118), "慢悠悠地反刍着。"],
-		["sheep", Vector2(32, 114), "咩～羊毛蓬松。"],
-		["sheep", Vector2(38, 116), "咩咩，别拉我的毛。"],
+		["chicken", "鸡", Vector2(30, 100)],
+		["chicken", "鸡", Vector2(34, 102)],
+		["chicken", "鸡", Vector2(38, 100)],
+		["cow", "牛", Vector2(28, 116)],
+		["cow", "牛", Vector2(40, 118)],
+		["sheep", "羊", Vector2(32, 114)],
+		["sheep", "羊", Vector2(38, 116)],
 	]
+	var animal_scene := preload("res://scenes/animal.tscn")
 	for item in animal_spots:
-		_spr_atlas("res://assets/processed/%s.png" % item[0], item[1], 5, 0, false)
-		var z := preload("res://scenes/interact_zone.tscn").instantiate()
-		z.prompt_text = "按 E 摸摸"
-		z.mode = "dialogue"
-		z.speaker = item[0]
-		z.message = item[2]
-		z.position = item[1] * TS
-		add_child(z)
+		var a := animal_scene.instantiate()
+		a.animal_kind = str(item[0])
+		a.display_name = str(item[1])
+		a.sprite_path = "res://assets/processed/%s.png" % str(item[0])
+		a.position = item[2] * TS
+		a.z_index = 6
+		add_child(a)
 
 func _door_and_chest() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(36, 90), 4)
@@ -248,7 +250,7 @@ func _door_and_chest() -> void:
 		{"id": "barn", "prompt": "按 E 进入谷仓", "pos": Vector2(28, 102)},
 		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(72, 32)},
 		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(108, 32)},
-		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(150, 14)},
+		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(148, 18)},
 		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(174, 100)},
 	]
 	for d in doors:
@@ -307,24 +309,27 @@ func _door_and_chest() -> void:
 	add_child(fish)
 
 func _ambient() -> void:
-	for origin in [Vector2(40, 86), Vector2(74, 32), Vector2(108, 32), Vector2(142, 12)]:
+	for origin in [Vector2(40, 86), Vector2(74, 32), Vector2(108, 32), Vector2(142, 12), Vector2(174, 100)]:
 		_spawn_smoke(origin * TS)
 	_spawn_ripples(Vector2(155, 108) * TS)
+	_spawn_ripples(Vector2(28, 50) * TS)
+	_spawn_waterfall_mist(Vector2(24, 22) * TS)
+	_sway_trees()
 
 func _spawn_smoke(at: Vector2) -> void:
 	var p := CPUParticles2D.new()
-	p.position = at + Vector2(8, -20)
-	p.amount = 12
-	p.lifetime = 2.2
+	p.position = at + Vector2(8, -28)
+	p.amount = 16
+	p.lifetime = 2.4
 	p.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
 	p.emission_sphere_radius = 3.0
 	p.direction = Vector2(0, -1)
-	p.spread = 18.0
-	p.gravity = Vector2(0, -8)
-	p.initial_velocity_min = 8.0
-	p.initial_velocity_max = 18.0
-	p.scale_amount_min = 0.4
-	p.scale_amount_max = 1.2
+	p.spread = 22.0
+	p.gravity = Vector2(0, -10)
+	p.initial_velocity_min = 10.0
+	p.initial_velocity_max = 22.0
+	p.scale_amount_min = 0.5
+	p.scale_amount_max = 1.4
 	p.color = Color(0.85, 0.85, 0.88, 0.55)
 	p.z_index = 12
 	add_child(p)
@@ -332,17 +337,44 @@ func _spawn_smoke(at: Vector2) -> void:
 func _spawn_ripples(at: Vector2) -> void:
 	var p := CPUParticles2D.new()
 	p.position = at
-	p.amount = 8
-	p.lifetime = 2.5
+	p.amount = 14
+	p.lifetime = 2.8
 	p.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	p.emission_sphere_radius = 12.0
+	p.emission_sphere_radius = 18.0
 	p.direction = Vector2(0, 0)
 	p.spread = 180.0
 	p.gravity = Vector2.ZERO
-	p.initial_velocity_min = 2.0
-	p.initial_velocity_max = 6.0
-	p.scale_amount_min = 0.3
-	p.scale_amount_max = 1.0
-	p.color = Color(0.7, 0.85, 1.0, 0.35)
+	p.initial_velocity_min = 3.0
+	p.initial_velocity_max = 8.0
+	p.scale_amount_min = 0.4
+	p.scale_amount_max = 1.3
+	p.color = Color(0.7, 0.85, 1.0, 0.4)
 	p.z_index = 2
 	add_child(p)
+
+func _spawn_waterfall_mist(at: Vector2) -> void:
+	var p := CPUParticles2D.new()
+	p.position = at + Vector2(0, 24)
+	p.amount = 28
+	p.lifetime = 1.6
+	p.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = 10.0
+	p.direction = Vector2(0, 1)
+	p.spread = 40.0
+	p.gravity = Vector2(0, 20)
+	p.initial_velocity_min = 20.0
+	p.initial_velocity_max = 40.0
+	p.scale_amount_min = 0.6
+	p.scale_amount_max = 1.8
+	p.color = Color(0.85, 0.93, 1.0, 0.45)
+	p.z_index = 10
+	add_child(p)
+
+func _sway_trees() -> void:
+	for c in get_children():
+		if c is Sprite2D and c.has_meta("sway") and bool(c.get_meta("sway")):
+			var tw := create_tween().set_loops()
+			var amp := randf_range(1.2, 3.2)
+			var dur := randf_range(1.8, 3.0)
+			tw.tween_property(c, "rotation_degrees", amp, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			tw.tween_property(c, "rotation_degrees", -amp, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
