@@ -21,15 +21,39 @@ var _busy: float = 0.0
 var _bob_t: float = 0.0
 var _anim_base_y: float = -8.0
 var _foot_cd: float = 0.0
+var _foot_dust: CPUParticles2D
 
 func _ready() -> void:
 	add_to_group("player")
 	_anim_base_y = anim.position.y
 	_setup_frames()
+	_setup_foot_dust()
 	camera.make_current()
 	camera.zoom = Vector2(2, 2)
 	camera.position_smoothing_enabled = false
 	anim.play("idle_down")
+
+func _setup_foot_dust() -> void:
+	_foot_dust = CPUParticles2D.new()
+	_foot_dust.name = "FootDust"
+	_foot_dust.emitting = false
+	_foot_dust.one_shot = true
+	_foot_dust.explosiveness = 0.85
+	_foot_dust.amount = 6
+	_foot_dust.lifetime = 0.35
+	_foot_dust.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	_foot_dust.emission_sphere_radius = 3.0
+	_foot_dust.direction = Vector2(0, -1)
+	_foot_dust.spread = 60.0
+	_foot_dust.gravity = Vector2(0, 40)
+	_foot_dust.initial_velocity_min = 8.0
+	_foot_dust.initial_velocity_max = 18.0
+	_foot_dust.scale_amount_min = 0.4
+	_foot_dust.scale_amount_max = 1.0
+	_foot_dust.color = Color(0.72, 0.62, 0.45, 0.45)
+	_foot_dust.z_index = -1
+	_foot_dust.position = Vector2(0, 6)
+	add_child(_foot_dust)
 
 func _load_tex(path: String) -> Texture2D:
 	# Prefer imported resource; fall back to Image.load for Chinese-path / broken .import
@@ -142,6 +166,9 @@ func _physics_process(delta: float) -> void:
 		if _foot_cd <= 0.0:
 			SFX.play("footstep")
 			_foot_cd = 0.28
+			if _foot_dust != null:
+				_foot_dust.restart()
+				_foot_dust.emitting = true
 	else:
 		velocity = Vector2.ZERO
 		var idle_anim := "idle_%s" % _facing_name

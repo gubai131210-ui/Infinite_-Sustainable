@@ -18,7 +18,8 @@ var _acc: float = 0.0
 func _physics_process(delta: float) -> void:
 	if paused:
 		return
-	if GameBus.dialogue_open or GameBus.inventory_open:
+	var bus := get_node_or_null("/root/GameBus")
+	if bus != null and (bool(bus.get("dialogue_open")) or bool(bus.get("inventory_open"))):
 		return
 	_acc += delta
 	while _acc >= SEC_PER_HOUR:
@@ -30,7 +31,11 @@ func clock_text() -> String:
 	var weather_node := get_node_or_null("/root/Weather")
 	if weather_node != null and weather_node.has_method("weather_cn"):
 		w = str(weather_node.call("weather_cn"))
-	return "第%d天 %02d:00 · %s · %s · %s" % [day, hour, _period_cn(), SeasonClock.season_cn(), w]
+	var season := "春"
+	var sc := get_node_or_null("/root/SeasonClock")
+	if sc != null and sc.has_method("season_cn"):
+		season = str(sc.call("season_cn"))
+	return "第%d天 %02d:00 · %s · %s · %s" % [day, hour, _period_cn(), season, w]
 
 func _period_cn() -> String:
 	match period:
@@ -59,7 +64,9 @@ func sleep_to_morning() -> void:
 	hour = 6
 	_refresh_period()
 	hour_changed.emit(day, hour)
-	GameBus.show_toast("睡到了第%d天清晨" % day)
+	var bus := get_node_or_null("/root/GameBus")
+	if bus != null and bus.has_method("show_toast"):
+		bus.call("show_toast", "睡到了第%d天清晨" % day)
 
 func _roll_day() -> void:
 	day += 1

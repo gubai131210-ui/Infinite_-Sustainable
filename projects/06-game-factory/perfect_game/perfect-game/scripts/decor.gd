@@ -203,6 +203,18 @@ func _flowers() -> void:
 	]
 	for i in range(spots.size()):
 		_spr("res://assets/processed/flower_%d.png" % (i % 4), spots[i], 3)
+	# Dense meadow bands along farm ↔ town path (Critic)
+	for x in range(46, 88, 2):
+		for y in range(64, 74, 2):
+			if ((x + y * 3) % 5) != 0:
+				_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x + (y % 2), y), 3)
+	for x in range(70, 112, 2):
+		for y in range(34, 38, 2):
+			_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x, y), 3)
+	for x in range(120, 150, 2):
+		for y in range(70, 78, 2):
+			if ((x * 2 + y) % 3) != 0:
+				_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x, y), 3)
 
 func _crops_on_fields() -> void:
 	# Decorative crops only on bed edges + terraces — leave playable hoe rows clear
@@ -453,22 +465,40 @@ func _spawn_ripples(at: Vector2) -> void:
 	add_child(p)
 
 func _spawn_waterfall_mist(at: Vector2) -> void:
-	var p := CPUParticles2D.new()
-	p.position = at + Vector2(0, 24)
-	p.amount = 28
-	p.lifetime = 1.6
-	p.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	p.emission_sphere_radius = 10.0
-	p.direction = Vector2(0, 1)
-	p.spread = 40.0
-	p.gravity = Vector2(0, 20)
-	p.initial_velocity_min = 20.0
-	p.initial_velocity_max = 40.0
-	p.scale_amount_min = 0.6
-	p.scale_amount_max = 1.8
-	p.color = Color(0.85, 0.93, 1.0, 0.45)
-	p.z_index = 10
-	add_child(p)
+	for i in range(3):
+		var p := CPUParticles2D.new()
+		p.position = at + Vector2(float(i - 1) * 10.0, 18.0 + float(i) * 8.0)
+		p.amount = 36
+		p.lifetime = 1.8
+		p.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+		p.emission_rect_extents = Vector2(14, 6)
+		p.direction = Vector2(0.05, 1)
+		p.spread = 28.0
+		p.gravity = Vector2(0, 28)
+		p.initial_velocity_min = 28.0
+		p.initial_velocity_max = 55.0
+		p.scale_amount_min = 0.7
+		p.scale_amount_max = 2.0
+		p.color = Color(0.85, 0.93, 1.0, 0.5)
+		p.z_index = 10
+		add_child(p)
+	# Soft spray at pool base
+	var spray := CPUParticles2D.new()
+	spray.position = at + Vector2(0, 48)
+	spray.amount = 22
+	spray.lifetime = 1.2
+	spray.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	spray.emission_sphere_radius = 14.0
+	spray.direction = Vector2(0, -1)
+	spray.spread = 70.0
+	spray.gravity = Vector2(0, 8)
+	spray.initial_velocity_min = 8.0
+	spray.initial_velocity_max = 22.0
+	spray.scale_amount_min = 0.5
+	spray.scale_amount_max = 1.4
+	spray.color = Color(0.9, 0.96, 1.0, 0.4)
+	spray.z_index = 9
+	add_child(spray)
 
 func _sway_trees() -> void:
 	for c in get_children():

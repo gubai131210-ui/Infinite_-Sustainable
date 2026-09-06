@@ -21,18 +21,27 @@ func _ready() -> void:
 	else:
 		player.global_position = Vector2(40 * 16, 90 * 16)
 	_modulate = CanvasModulate.new()
-	_modulate.color = TimeClock.modulate_for_period() * SeasonClock.world_tint()
+	_modulate.color = _world_modulate()
 	add_child(_modulate)
 	_setup_rain(player)
 	TimeClock.period_changed.connect(_on_period)
 	TimeClock.hour_changed.connect(func(_d, _h): _refresh_modulate())
-	SeasonClock.season_changed.connect(func(_s): _refresh_modulate())
-	Weather.weather_changed.connect(_on_weather)
-	_on_weather(Weather.weather)
+	var sc := get_node_or_null("/root/SeasonClock")
+	if sc != null and sc.has_signal("season_changed"):
+		sc.season_changed.connect(func(_s): _refresh_modulate())
+	call_deferred("_bind_weather")
 	GameBus.show_toast("橡木湾：WASD 移动 · 1-4 工具 · E 交互 · Tab 背包 · 床睡觉")
 	GameBus.set_quest_hint(QuestLog.current_hint())
 	if "--capture_golden" in OS.get_cmdline_user_args():
 		await _capture_goldens(player)
+
+func _bind_weather() -> void:
+	var w := get_node_or_null("/root/Weather")
+	if w == null:
+		return
+	if not w.weather_changed.is_connected(_on_weather):
+		w.weather_changed.connect(_on_weather)
+	_on_weather(str(w.get("weather")))
 
 func _setup_rain(player: Node2D) -> void:
 	_rain = CPUParticles2D.new()
@@ -60,20 +69,27 @@ func _on_weather(w: String) -> void:
 		_rain.emitting = (w == "rain")
 	_refresh_modulate()
 
+func _is_raining() -> bool:
+	var w := get_node_or_null("/root/Weather")
+	return w != null and bool(w.call("is_raining"))
+
+func _world_modulate() -> Color:
+	var c := TimeClock.modulate_for_period()
+	var sc := get_node_or_null("/root/SeasonClock")
+	if sc != null and sc.has_method("world_tint"):
+		c *= sc.call("world_tint")
+	if _is_raining():
+		c *= Color(0.78, 0.82, 0.92, 1.0)
+	return c
+
 func _refresh_modulate() -> void:
 	if _modulate != null:
-		var c := TimeClock.modulate_for_period() * SeasonClock.world_tint()
-		if Weather.is_raining():
-			c *= Color(0.78, 0.82, 0.92, 1.0)
-		_modulate.color = c
+		_modulate.color = _world_modulate()
 
 func _on_period(_p: String) -> void:
 	if _modulate != null:
 		var tw := create_tween()
-		var target := TimeClock.modulate_for_period() * SeasonClock.world_tint()
-		if Weather.is_raining():
-			target *= Color(0.78, 0.82, 0.92, 1.0)
-		tw.tween_property(_modulate, "color", target, 1.2)
+		tw.tween_property(_modulate, "color", _world_modulate(), 1.2)
 
 func _capture_goldens(player: Node2D) -> void:
 	await get_tree().process_frame

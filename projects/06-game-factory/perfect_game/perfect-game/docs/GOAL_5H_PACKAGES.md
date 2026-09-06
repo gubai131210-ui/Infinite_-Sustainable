@@ -82,3 +82,20 @@
 - [x] P23（镇告示栏 bulletin + 农舍旁信箱 mail）  
 - [x] P24（AmbientMusic BGM + rain_loop + ui/rain SFX）  
 - [x] P25（重抓 golden + Critic + push）  
+
+## 视觉密度续跑（Critic 缺口 · ≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P26 | 35m | 北缘双脊山 + 多层瀑布 | golden overview/river |
+| P27 | 35m | 遗迹拱廊加密嵌林 | overview 北中可读 |
+| P28 | 35m | 路径花田带 + 屋顶色调差 | town/farm 走廊 |
+| P29 | 30m | 瀑布雾柱增强 + 脚步扬尘 | runtime FX |
+| P30 | 35m | golden + Critic + push | qa/golden |
+
+### 密度进度
+- [x] P26（北缘双脊山 + 崖壁嵌瀑布）  
+- [x] P27（遗迹拱廊加密）  
+- [x] P28（路径花田带 + 屋顶 tint）  
+- [x] P29（瀑布雾柱 + 脚步扬尘）  
+- [x] P30（golden + Critic + push）  

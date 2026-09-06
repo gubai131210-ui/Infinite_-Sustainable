@@ -32,7 +32,10 @@ func line_for(id: String, period: String = "") -> String:
 		return "……"
 	var entry: Dictionary = _data[id]
 	var lines: Dictionary = entry.get("lines", {})
-	var p := period if period != "" else TimeClock.period
+	var p := period
+	if p == "":
+		var tc := get_node_or_null("/root/TimeClock")
+		p = str(tc.get("period")) if tc != null else "day"
 	if lines.has(p):
 		return str(lines[p])
 	if lines.has("day"):
@@ -43,7 +46,10 @@ func schedule_tile(id: String, period: String = "") -> Vector2:
 	if not _data.has(id):
 		return Vector2.ZERO
 	var sched: Dictionary = _data[id].get("schedule", {})
-	var p := period if period != "" else TimeClock.period
+	var p := period
+	if p == "":
+		var tc := get_node_or_null("/root/TimeClock")
+		p = str(tc.get("period")) if tc != null else "day"
 	var key := p
 	if not sched.has(key):
 		key = "day"

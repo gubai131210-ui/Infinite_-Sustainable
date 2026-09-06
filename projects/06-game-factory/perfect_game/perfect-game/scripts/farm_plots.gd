@@ -113,7 +113,10 @@ func harvest(cell: Vector2i) -> String:
 func _on_new_day(_day: int) -> void:
 	## Overnight: wet planted crops advance one stage (Stardew-like).
 	## Rain auto-wets all planted plots and gives +1 extra chance.
-	var raining := Weather.is_raining()
+	var raining := false
+	var weather_node := get_node_or_null("/root/Weather")
+	if weather_node != null and weather_node.has_method("is_raining"):
+		raining = bool(weather_node.call("is_raining"))
 	for key in plots.keys():
 		var p: Dictionary = plots[key]
 		var crop := str(p.get("crop", ""))

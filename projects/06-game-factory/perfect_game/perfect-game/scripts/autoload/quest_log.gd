@@ -72,7 +72,9 @@ func _maybe_auto_market_done() -> void:
 func _emit_hint() -> void:
 	var h := current_hint()
 	progress_changed.emit(h)
-	GameBus.set_quest_hint(h)
+	var bus := get_node_or_null("/root/GameBus")
+	if bus != null and bus.has_method("set_quest_hint"):
+		bus.call("set_quest_hint", h)
 
 func restore_state(done_map: Dictionary, main_idx: int, mkt_idx: int, line: String) -> void:
 	done = done_map.duplicate(true)

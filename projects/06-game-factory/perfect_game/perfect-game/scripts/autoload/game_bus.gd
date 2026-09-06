@@ -45,7 +45,9 @@ func show_toast(text: String) -> void:
 func show_dialogue(speaker: String, text: String) -> void:
 	dialogue_open = true
 	dialogue.emit(speaker, text)
-	QuestLog.mark("talk_npc")
+	var ql := get_node_or_null("/root/QuestLog")
+	if ql != null and ql.has_method("mark"):
+		ql.call("mark", "talk_npc")
 
 func close_dialogue() -> void:
 	dialogue_open = false
