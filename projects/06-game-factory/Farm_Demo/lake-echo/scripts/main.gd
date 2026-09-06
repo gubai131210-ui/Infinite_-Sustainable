@@ -30,7 +30,7 @@ func _capture_goldens(player: Node2D) -> void:
 		["02_river", Vector2(28 * 16, 28 * 16)],
 		["03_town", Vector2(90 * 16, 48 * 16)],
 		["04_station", Vector2(155 * 16, 18 * 16)],
-		["05_terrace", Vector2(142 * 16, 48 * 16)],
+		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(168 * 16, 105 * 16)],
 		["00_overview", Vector2(100 * 16, 64 * 16)],
 	]

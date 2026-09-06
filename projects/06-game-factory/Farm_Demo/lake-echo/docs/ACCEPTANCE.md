@@ -2,24 +2,26 @@
 
 | Wave | 项 | 结果 | 证据 |
 |------|----|------|------|
-| 0 | TileMapLayer 192×128 | PASS | `world.gd` W/H；`scenes/world.tscn` |
-| 0 | CLI 无致命启动错 | PASS | Godot 4.6.1 `--capture_golden` |
-| 0–6 | 六区拓扑底图 | PASS | ZONES + golden_r5 00–06 |
-| 1 | Z1 谷仓/筒仓/农舍 | PARTIAL | shaded props；仍非视频级 |
-| 1 | 锄地播种 | PASS | `farm_plots.gd` |
-| 1 | 农舍可进 | PASS | door→`house_interior.tscn` |
-| 1–6 | 动物/NPC 不整条图集误显 | PASS | `decor.gd` AtlasTexture 单帧 |
-| 4–6 | 火车/灯塔/广场/瀑布/船 | PARTIAL | 可辨认；密度/细节仍弱 |
-| 5 | Z5 分层崖+阶 | PARTIAL | cliff ledges+stairs+crops |
-| — | 对照视频视觉一比一 | FAIL | 草纹/路径/林密仍低于 frame_01 |
-| — | MCP Connected lake-echo | FAIL | tomyud1→farm-demo；金图 CLI |
-| — | golden_r5 | PASS | `assets/qa/golden_r5/*.png` |
-| — | 六区 handoff | PARTIAL | `2026-09-06-zones-z1-z6.md` |
-| — | GitHub 终态 | PENDING | 本地 ahead；443 曾失败 |
-| — | Goal 可关闭 | NO | Critic 未 PASS |
+| 0 | TileMapLayer 192×128 | PASS | `world.gd`；world_size 3072×2048 |
+| 0 | CLI 无致命 SCRIPT ERROR | PASS | `--capture_golden` 无 Parse |
+| 0–6 | 六区拓扑 | PASS | `00_overview.png` 对照 frame_01 象限 |
+| 1 | Z1 谷仓/筒仓/农舍 | PARTIAL | `01_farm.png` 可辨；细节仍低于视频 |
+| 1 | 锄地/进屋 | PASS | `farm_plots.gd` + `house_interior.tscn` |
+| 2 | 河/瀑/桥 | PARTIAL | `02_river` + overview 瀑布 |
+| 3 | 镇广场 | PARTIAL | `03_town.png` |
+| 4 | 车站/火车/隧道 | PARTIAL | `04_station.png` 站房+火车+隧道 |
+| 5 | 分层崖梯田 | PARTIAL | 暗色 cliff tile+石墙；仍非视频级 |
+| 6 | 湖/灯塔/船 | PARTIAL | `06_lake.png` |
+| — | NPC/动物图集单帧 | PASS | `decor.gd` AtlasTexture |
+| — | 视觉一比一 vs frame_01 | FAIL | Critic v4 |
+| — | MCP Connected lake-echo | FAIL | tomyud1→farm-demo；CLI 后备 |
+| — | golden_r5 | PASS | 七张 CLI |
+| — | 六区 handoff | PARTIAL | `zones-z1-z6.md` |
+| — | Critic PASS | FAIL | v4 FAIL |
+| — | GitHub | PASS | 持续 push；以最新 commit 为准 |
+| — | Goal 可关闭 | NO | 见 Critic v4 |
 
 ## Critic
 
-- v1: `2026-09-06-critic-lake-echo-r5.md` → FAIL  
-- v2: `2026-09-06-critic-lake-echo-r5-v2.md` → FAIL  
-- 下一轮需在 atlas 修复 + 作物密度后再评
+- v3: atlas 修复后仍 FAIL  
+- v4: `2026-09-06-critic-lake-echo-r5-v4.md` → **FAIL / 不可关**

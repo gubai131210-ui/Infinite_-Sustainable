@@ -7,14 +7,14 @@ func _ready() -> void:
 	_place()
 
 func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0) -> void:
-	if not ResourceLoader.exists(path):
+	var tex: Texture2D = load(path) as Texture2D
+	if tex == null:
 		push_warning("missing landmark: %s" % path)
 		return
 	var s := Sprite2D.new()
-	s.texture = load(path)
+	s.texture = tex
 	s.centered = true
-	# YSort foot point: bottom of sprite at tile position
-	var th := float(s.texture.get_height()) * scale_mul
+	var th := float(tex.get_height()) * scale_mul
 	s.offset = Vector2(0, -th * 0.5)
 	s.position = tile * TS
 	s.z_index = z

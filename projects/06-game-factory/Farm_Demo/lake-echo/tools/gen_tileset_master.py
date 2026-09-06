@@ -109,16 +109,24 @@ def water(deep: bool = False) -> Image.Image:
 
 
 def cliff() -> Image.Image:
-    img = Image.new("RGBA", (TS, TS), (118, 102, 84, 255))
-    fill_top = (148, 138, 118, 255)
-    for y in range(0, 5):
-        for x in range(TS):
-            px(img, x, y, fill_top)
+    # Dark rock face — must read as elevation vs brown farm dirt
+    img = Image.new("RGBA", (TS, TS), (72, 62, 52, 255))
+    # grass/dirt lip on top edge
+    for x in range(TS):
+        px(img, x, 0, (86, 130, 58, 255))
+        px(img, x, 1, (100, 88, 70, 255))
+        px(img, x, 2, (88, 78, 64, 255))
+    # vertical rock strata
+    for x in (2, 5, 8, 11, 14):
+        for y in range(3, TS):
+            px(img, x, y, (55, 48, 40, 255) if (x + y) % 2 == 0 else (90, 78, 64, 255))
+    # horizontal cracks
     for y in (6, 10, 14):
-        for x in range(1, 15):
-            px(img, x, y, (96, 82, 66, 255))
-    for x in (3, 8, 12):
-        px(img, x, 8, (168, 156, 138, 255))
+        for x in range(TS):
+            px(img, x, y, (48, 42, 36, 255))
+    # highlight stones
+    for x, y in ((3, 8), (9, 12), (12, 5), (6, 13)):
+        px(img, x, y, (140, 128, 110, 255))
     return img
 
 

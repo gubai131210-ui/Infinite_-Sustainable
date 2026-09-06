@@ -81,7 +81,7 @@ func _setup_tileset() -> void:
 	src.texture = tex
 	src.texture_region_size = Vector2i(TS, TS)
 	for i in range(32):
-		var atlas_coords := Vector2i(i % 8, int(i / 8))
+		var atlas_coords := Vector2i(i % 8, i >> 3)
 		if not src.has_tile(atlas_coords):
 			src.create_tile(atlas_coords)
 	ts.add_source(src, 0)
@@ -93,7 +93,7 @@ func _setup_tileset() -> void:
 func _set_cell(layer: TileMapLayer, x: int, y: int, tid: int) -> void:
 	if x < 0 or y < 0 or x >= W or y >= H:
 		return
-	var atlas := Vector2i(tid % 8, int(tid / 8))
+	var atlas := Vector2i(tid % 8, tid >> 3)
 	layer.set_cell(Vector2i(x, y), 0, atlas)
 
 func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
@@ -196,8 +196,7 @@ func _paint_base() -> void:
 	_fill_rect(_ground, Rect2i(178, 10, 10, 16), T_CLIFF)
 	_fill_rect(_ground, Rect2i(180, 14, 6, 8), T_HILL)
 
-	# Z5 terraces — tall cliff faces (not thin gray stair strips)
-	# Pattern per band: farm ledge (3) + stone cliff drop (5) + stairs only in 4-wide columns
+	# Z5 terraces — tall dark cliff faces with grass gap between bands
 	for band in range(5):
 		var y0 := 38 + band * 10
 		var inset := (band % 3) - 1
@@ -207,20 +206,22 @@ func _paint_base() -> void:
 		_fill_rect(_ground, Rect2i(x0 + 2, y0, w - 2, 3), T_FARM)
 		for x in range(x0 + 4, x0 + w - 2, 2):
 			_set_cell(_ground, x, y0 + 1, T_DIRT)
-		# thick rocky retaining wall / cliff face
+		# thick rocky retaining wall / cliff face (must read as elevation)
 		_fill_rect(_ground, Rect2i(x0, y0 + 3, w, 5), T_CLIFF)
 		for x in range(x0, x0 + w):
 			if ((x + band * 3) % 4) == 0:
 				_set_cell(_ground, x, y0 + 3, T_HILL)
 			if ((x + band) % 5) == 0:
 				_set_cell(_ground, x, y0 + 7, T_HILL)
-		# narrow stair cuts only (do not paint stairs across whole band)
+		# grass strip under cliff so next ledge reads lower
+		_fill_rect(_ground, Rect2i(x0, y0 + 8, w, 2), T_GRASS2)
+		# narrow stair cuts only
 		for x in range(134, 138):
-			for yy in range(y0 + 3, y0 + 8):
+			for yy in range(y0 + 3, y0 + 10):
 				_set_cell(_ground, x, yy, T_STAIRS)
 		if band % 2 == 1:
 			for x in range(152, 156):
-				for yy in range(y0 + 3, y0 + 8):
+				for yy in range(y0 + 3, y0 + 10):
 					_set_cell(_ground, x, yy, T_STAIRS)
 
 	# Z6 lake + soft shore ring (sand + water-edge tiles)
