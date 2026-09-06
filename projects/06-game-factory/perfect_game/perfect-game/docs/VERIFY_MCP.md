@@ -1,19 +1,9 @@
-# VERIFY_MCP — Paper Isle
+# VERIFY_MCP — Oakhaven
 
-## 前置
+1. 打开本工程，主场景 `res://scenes/main.tscn`
+2. MCP Connected 后 `run_scene` + 分区 `take_screenshot`
+3. 或 CLI：`godot --path . -- --capture_golden`
+4. 截图落入 `assets/qa/golden/`
+5. 对照 `docs/ref/oakhaven_overview.jpg` 六区相对位置
 
-1. Godot 4.6 打开本工程，插件 Connected  
-2. MCP server 监听正常（若 `ECONNREFUSED :6506`，先重启 Cursor / MCP）
-
-## 步骤
-
-1. `get_godot_status` → connected  
-2. `run_scene` main（`wait_for_runtime=true`）  
-3. `take_screenshot` → `assets/qa/golden/01_overview.png`  
-4. `send_input` WASD 若干帧 → 再截 `02_moved.png`  
-5. `get_errors` → 无致命  
-6. 对照 `assets/qa/seam_*_3x3.png` 与 `seam_report.json`
-
-## 降级（MCP 不可用）
-
-用户本机 F5 + 自行把截图放入 `assets/qa/golden/`，Agent 不得谎称已 runtime 验收。
+MCP `:6506` 不可用时，降级为本机 F5 + 用户截图，不得伪造。

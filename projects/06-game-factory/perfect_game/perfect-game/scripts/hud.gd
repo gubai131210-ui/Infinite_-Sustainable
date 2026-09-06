@@ -1,45 +1,38 @@
 extends CanvasLayer
-## Quest + stars + cozy + toast.
+## Oakhaven HUD — coords, tool, quest hint, toast.
 
-@onready var quest: Label = $Top/Quest
-@onready var stats: Label = $Top/Stats
-@onready var toast_label: Label = $Toast
-@onready var toast_timer: Timer = $ToastTimer
+@onready var info: Label = $Margin/VBox/InfoLabel
+@onready var quest: Label = $Margin/VBox/QuestLabel
+@onready var toast_label: Label = $Margin/VBox/ToastLabel
+
+var _toast_left: float = 0.0
 
 func _ready() -> void:
-	toast_label.visible = false
-	toast_timer.timeout.connect(func() -> void: toast_label.visible = false)
-	GameState.stars_changed.connect(_on_stars)
-	GameState.cozy_changed.connect(_on_cozy)
-	GameState.quest_changed.connect(_on_quest)
-	GameState.toast.connect(show_toast)
-	_on_quest(GameState.quest_text())
-	_refresh_stats()
+	GameBus.toast.connect(_on_toast)
+	GameBus.quest_hint.connect(_on_quest)
+	toast_label.text = ""
+	quest.text = "任务提示：—"
 
-func _on_stars(_g: int, _t: int) -> void:
-	_refresh_stats()
-
-func _on_cozy(_s: int) -> void:
-	_refresh_stats()
+func _on_toast(text: String) -> void:
+	toast_label.text = text
+	_toast_left = 2.5
 
 func _on_quest(text: String) -> void:
 	quest.text = text
 
-func _refresh_stats() -> void:
-	stats.text = "纸星 %d/%d   温馨 %d   手持：%s" % [
-		GameState.stars_got,
-		GameState.stars_total,
-		GameState.cozy,
-		"灯笼" if GameState.selected_prop == "lantern" else "花丛",
-	]
-
-func show_toast(text: String) -> void:
-	_refresh_stats()
-	toast_label.text = text
-	toast_label.visible = true
-	toast_label.modulate.a = 1.0
-	toast_timer.start(2.0)
-	var tw := create_tween()
-	tw.tween_property(toast_label, "modulate:a", 1.0, 0.05)
-	tw.tween_interval(1.4)
-	tw.tween_property(toast_label, "modulate:a", 0.0, 0.4)
+func _process(delta: float) -> void:
+	var player := get_tree().get_first_node_in_group("player") as Node2D
+	if player != null:
+		var tool_name := "?"
+		if player.has_method("get_tool_name"):
+			tool_name = str(player.call("get_tool_name"))
+		var prompt := ""
+		if player.has_method("get_interact_prompt"):
+			prompt = str(player.call("get_interact_prompt"))
+		info.text = "橡木湾  (%.0f, %.0f)  工具:%s  %s" % [
+			player.global_position.x, player.global_position.y, tool_name, prompt
+		]
+	if _toast_left > 0.0:
+		_toast_left = maxf(_toast_left - delta, 0.0)
+		if _toast_left == 0.0:
+			toast_label.text = ""

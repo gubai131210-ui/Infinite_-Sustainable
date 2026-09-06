@@ -1,20 +1,22 @@
-# ACCEPTANCE — Paper Isle MVP
+# ACCEPTANCE — Oakhaven
 
 | 项 | 结果 | 证据 |
 |----|------|------|
-| 主场景可运行 | **PASS（MCP coding-solo）** | `run_project` 无 Parser/运行时错误；OpenGL 启动正常 |
-| 无缝地形 seam_score≤12 | **PASS** | grass 1.69 / path 0.45 / water 0.59；`assets/qa/seam_report.json` |
-| 草/径/水三料入库 | **PASS** | `assets/tiles/tile_*.png` + `atlas_terrain.png` |
-| 道具抠图棋盘格 | **PASS** | `assets/qa/checker_*.png`（品红色键；可选 rembg） |
-| 玩家可移动 | 待本机手感确认 | WASD / 方向键（脚本已接） |
-| 收集 ≥5 纸星 + HUD | 待本机手感确认 | `star.tscn` ×5 + HUD |
-| 分层/遮挡 | **结构 PASS** | 道具与玩家同属 `Entities` y_sort（Critic P0 已修） |
-| 与 Farm 差异化 | **PASS** | 纸片沙盘收集，无种地 |
+| Paper Isle 已清除 | PASS | 无 fox/star/GameState 玩法 |
+| 参考图入库 | PASS | `docs/ref/oakhaven_overview.jpg` |
+| TileMap 192×128 六区 | PASS | `world.gd` ZONES + paint |
+| 中文木牌 | PASS | decor 米勒农庄/橡木河/火车站/回声湖 |
+| 种地环 | PASS | `farm_plots.gd` + Player 工具 |
+| ≥6 进出建筑 | PASS | GameBus.INTERIORS 六键 |
+| ≥12 NPC 对话 | PASS | decor roster npc_01..12 |
+| 动物交互 | PASS | dialogue zones |
+| golden 六区截图 | 待跑 | `--capture_golden` / 本机 F5 |
+| Critic | 待跑 | 子 agent |
+| Windows 导出说明 | PASS | `docs/PLAYTEST.md` |
 
 ## 禁止偷懒核对
 
-- [x] seam_qa 有数值，不是只看感觉
-- [x] 道具经 processed 透明底，非 raw 带品红进游戏
-- [x] Player / World / HUD 分场景或分节点清晰
-- [x] 未复用 Farm 种地脚本冒充新品类
-- [ ] runtime 截图（需用户本机或 MCP 恢复后补）
+- [x] 非单张背景世界
+- [x] Player/World/HUD/Inventory/Dialogue 分场景
+- [x] 未复用纸片资产作主视觉
+- [ ] golden 对照参考图（用户/CLI 补）
