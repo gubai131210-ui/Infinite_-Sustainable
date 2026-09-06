@@ -23,17 +23,19 @@ func _setup_sprite() -> void:
 	var frames := SpriteFrames.new()
 	frames.add_animation("idle")
 	frames.add_animation("walk")
-	frames.set_animation_speed("idle", 2.0)
+	frames.set_animation_speed("idle", 4.0)
 	frames.set_animation_loop("idle", true)
-	frames.set_animation_speed("walk", 6.0)
+	frames.set_animation_speed("walk", 8.0)
 	frames.set_animation_loop("walk", true)
-	for i in range(4):
+	var cell := 48
+	var n := int(tex.get_width() / float(cell))
+	n = maxi(n, 1)
+	for i in range(n):
 		var at := AtlasTexture.new()
 		at.atlas = tex
-		at.region = Rect2(i * 32, 0, 32, 32)
+		at.region = Rect2(i * cell, 0, cell, cell)
 		frames.add_frame("walk", at)
-		if i == 0 or i == 2:
-			frames.add_frame("idle", at)
+		frames.add_frame("idle", at)
 	anim.sprite_frames = frames
 	anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 

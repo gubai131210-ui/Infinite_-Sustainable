@@ -11,7 +11,10 @@
 | 对话关闭 | PASS | 打开同帧忽略关闭，避免立刻重开 |
 | 动物喂食 | PASS | 鸡×3 牛×1 羊×2 + feed |
 | 钓鱼 | PASS | 河边 InteractZone mode=fish |
-| 抠图 QA | PASS | `assets/qa/checker_*`（品红键，保留绿色） |
+| 抠图 QA | PASS | `assets/qa/checker_*`；玫红+品红双键 |
+| AI 像素替换 | PASS | `tools/import_ai_sprites.py` + `screenshot_ai_art.png` |
+| 动物相对缩放 | PASS | 鸡20 / 羊28 / 牛36 / 人48 单元格 |
+| 序列帧 | PASS | 玩家/动物 6 帧 @8–10 FPS |
 | 无昼夜/存档/经济 | PASS | 未实现 |
 
 ## 禁止偷懒核对

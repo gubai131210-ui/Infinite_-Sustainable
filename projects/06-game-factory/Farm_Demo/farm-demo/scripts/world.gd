@@ -49,9 +49,9 @@ func _spawn_npcs() -> void:
 	var defs := [
 		{"id": "ahe", "name": "阿禾", "line": "地要勤锄，苗才肯长。浇水别偷懒。", "tex": "res://assets/processed/npc_ahe.png", "pos": Vector2(10, 18)},
 		{"id": "xiaoman", "name": "小满", "line": "村口风软，来坐坐呗。", "tex": "res://assets/processed/npc_xiaoman.png", "pos": Vector2(46, 18)},
-		{"id": "qingyu", "name": "青渔", "line": "河弯深处有鱼，记得带钓竿。", "tex": "res://assets/processed/npc_qingyu.png", "pos": Vector2(20, 24)},
+		{"id": "qingyu", "name": "青渔", "line": "河弯深处有鱼，记得带钓竿。", "tex": "res://assets/processed/npc_qingyu.png", "pos": Vector2(22, 24)},
 		{"id": "linshen", "name": "林婶", "line": "花开满坡，心情也跟着亮。", "tex": "res://assets/processed/npc_linshen.png", "pos": Vector2(48, 22)},
-		{"id": "zhou", "name": "石匠周", "line": "北山石头硬，脚步稳着点。", "tex": "res://assets/processed/npc_zhou.png", "pos": Vector2(36, 10)},
+		{"id": "zhou", "name": "石匠周", "line": "北山石头硬，脚步稳着点。", "tex": "res://assets/processed/npc_zhou.png", "pos": Vector2(36, 11)},
 	]
 	var scene := preload("res://scenes/npc.tscn")
 	for d in defs:
