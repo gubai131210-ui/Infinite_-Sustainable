@@ -2,7 +2,7 @@ extends Area2D
 ## Reusable interact prompt zone.
 
 @export var prompt_text: String = "按 E 交互"
-@export var mode: String = "toast"  # toast | chest | fish | dialogue
+@export var mode: String = "toast"  # toast | chest | fish | dialogue | house | bed | exit_house
 @export var message: String = ""
 @export var speaker: String = ""
 
@@ -42,6 +42,19 @@ func _do_interact() -> void:
 		"dialogue":
 			GameBus.show_dialogue(speaker, message)
 			interacted.emit(message)
+		"house":
+			var player := get_tree().get_first_node_in_group("player") as Node2D
+			var from := player.global_position if player != null else global_position
+			GameBus.show_toast("进入农舍…")
+			GameBus.enter_house(from)
+			interacted.emit("house")
+		"bed":
+			GameBus.show_toast("休息了一会儿，精神满满。")
+			interacted.emit("bed")
+		"exit_house":
+			GameBus.show_toast("走出农舍")
+			GameBus.exit_house()
+			interacted.emit("exit")
 		_:
 			GameBus.show_toast(message)
 			interacted.emit(message)

@@ -119,8 +119,8 @@ func _physics_process(delta: float) -> void:
 		if anim.animation != idle_anim:
 			anim.play(idle_anim)
 	move_and_slide()
-	global_position.x = clampf(global_position.x, 8.0, 56.0 * 16.0 - 8.0)
-	global_position.y = clampf(global_position.y, 8.0, 40.0 * 16.0 - 8.0)
+	global_position.x = clampf(global_position.x, 8.0, 96.0 * 16.0 - 8.0)
+	global_position.y = clampf(global_position.y, 8.0, 64.0 * 16.0 - 8.0)
 
 	if Input.is_action_just_pressed("tool_1"):
 		tool = Tool.HOE

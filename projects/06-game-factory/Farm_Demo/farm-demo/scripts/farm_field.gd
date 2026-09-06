@@ -1,8 +1,8 @@
 extends Node2D
 ## Farm plots + ground tile rendering + crop sprites.
 
-const W := 56
-const H := 40
+const W := 96
+const H := 64
 const TS := 16
 
 enum T { GRASS, DIRT, FARMLAND, TILLED, WATERED, WATER, PATH, HILL }
@@ -84,45 +84,59 @@ func _build_grid() -> void:
 		for x in range(W):
 			grid[_idx(x, y)] = T.GRASS
 
-	# Hills north
-	for y in range(0, 8):
+	# North hills
+	for y in range(0, 11):
 		for x in range(W):
-			if y < 5 or (y < 8 and (x + y) % 5 != 0):
+			if y < 7 or (y < 11 and (x + y) % 4 != 0):
 				set_tile(x, y, T.HILL)
 
-	# River winding
+	# Winding river around x≈28
 	for y in range(H):
-		var cx := 18 + int(3.0 * sin(y * 0.35))
+		var cx := 28 + int(4.0 * sin(y * 0.28))
 		for dx in range(-2, 3):
 			set_tile(cx + dx, y, T.WATER)
-		# banks
 		set_tile(cx - 3, y, T.DIRT)
 		set_tile(cx + 3, y, T.DIRT)
 
-	# Farmland west of river
-	for y in range(12, 28):
-		for x in range(4, 14):
+	# West farmland
+	for y in range(14, 34):
+		for x in range(4, 18):
 			set_tile(x, y, T.FARMLAND)
 
-	# Path east to village
-	for x in range(22, 50):
-		set_tile(x, 20, T.PATH)
-		set_tile(x, 21, T.PATH)
-	for y in range(14, 28):
-		set_tile(40, y, T.PATH)
-		set_tile(41, y, T.PATH)
-
-	# House yard dirt
-	for y in range(16, 24):
-		for x in range(24, 32):
+	# Farmhouse yard
+	for y in range(18, 30):
+		for x in range(32, 44):
 			if get_tile(x, y) != T.WATER:
 				set_tile(x, y, T.DIRT)
 
-	# Village plaza
-	for y in range(16, 26):
-		for x in range(44, 54):
+	# Paths: farm → village → south pasture
+	for x in range(18, 80):
+		set_tile(x, 26, T.PATH)
+		set_tile(x, 27, T.PATH)
+	for y in range(20, 50):
+		set_tile(76, y, T.PATH)
+		set_tile(77, y, T.PATH)
+	for y in range(28, 52):
+		set_tile(36, y, T.PATH)
+		set_tile(37, y, T.PATH)
+
+	# Village plaza east
+	for y in range(20, 36):
+		for x in range(70, 90):
 			if get_tile(x, y) != T.WATER:
 				set_tile(x, y, T.PATH)
+
+	# South pasture (new zone) — keep grass, light dirt patches
+	for y in range(46, 58):
+		for x in range(22, 48):
+			if (x + y) % 7 == 0:
+				set_tile(x, y, T.DIRT)
+
+	# East forest floor soft dirt spots
+	for y in range(42, 58):
+		for x in range(78, 92):
+			if (x * 3 + y) % 11 == 0:
+				set_tile(x, y, T.DIRT)
 
 func _paint_ground() -> void:
 	for c in _ground.get_children():
@@ -143,7 +157,7 @@ func _paint_ground() -> void:
 	_refresh_crop_sprites()
 
 func _display_tex(x: int, y: int, t: int) -> Texture2D:
-	## Prefer edge/corner tiles when grass meets water or dirt.
+	## Only grass↔water edges (skip grass↔dirt to avoid red-line artifacts).
 	if t == T.GRASS:
 		var n_water := get_tile(x, y - 1) == T.WATER
 		var s_water := get_tile(x, y + 1) == T.WATER
@@ -165,18 +179,6 @@ func _display_tex(x: int, y: int, t: int) -> Texture2D:
 			return edge_tex["gw_e"]
 		if w_water and edge_tex.has("gw_w"):
 			return edge_tex["gw_w"]
-		var n_dirt := get_tile(x, y - 1) == T.DIRT or get_tile(x, y - 1) == T.FARMLAND
-		var s_dirt := get_tile(x, y + 1) == T.DIRT or get_tile(x, y + 1) == T.FARMLAND
-		var e_dirt := get_tile(x + 1, y) == T.DIRT or get_tile(x + 1, y) == T.FARMLAND
-		var w_dirt := get_tile(x - 1, y) == T.DIRT or get_tile(x - 1, y) == T.FARMLAND
-		if n_dirt and edge_tex.has("gd_n"):
-			return edge_tex["gd_n"]
-		if s_dirt and edge_tex.has("gd_s"):
-			return edge_tex["gd_s"]
-		if e_dirt and edge_tex.has("gd_e"):
-			return edge_tex["gd_e"]
-		if w_dirt and edge_tex.has("gd_w"):
-			return edge_tex["gd_w"]
 	return textures[t]
 
 func _refresh_crop_sprites() -> void:
@@ -197,7 +199,10 @@ func _refresh_crop_sprites() -> void:
 		_crops_layer.add_child(spr)
 
 func _spawn_stumps() -> void:
-	var spots := [Vector2i(6, 10), Vector2i(10, 11), Vector2i(15, 9), Vector2i(30, 12), Vector2i(35, 8)]
+	var spots := [
+		Vector2i(8, 12), Vector2i(14, 12), Vector2i(40, 12),
+		Vector2i(80, 44), Vector2i(84, 48), Vector2i(88, 50), Vector2i(82, 54),
+	]
 	for c in spots:
 		if get_tile(c.x, c.y) != T.WATER:
 			stump_cells[c] = true

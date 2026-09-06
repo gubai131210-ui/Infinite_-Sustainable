@@ -1,5 +1,5 @@
 extends Node2D
-## Main entry: wire camera limits after world ready.
+## Main entry: camera limits, spawn, integer zoom.
 
 func _ready() -> void:
 	var field := $World/FarmField
@@ -11,6 +11,12 @@ func _ready() -> void:
 		cam.limit_top = 0
 		cam.limit_right = int(sz.x)
 		cam.limit_bottom = int(sz.y)
-		cam.zoom = Vector2(2.0, 2.0)
-	player.global_position = Vector2(8 * 16, 18 * 16)
-	GameBus.show_toast("欢迎来到农场 Demo！Tab 开背包，1 锄地，2 浇水")
+		# Integer zoom for crisp pixels (Goal R3)
+		cam.zoom = Vector2(2, 2)
+		cam.position_smoothing_enabled = false
+	var spawn := GameBus.consume_spawn()
+	if spawn != Vector2.ZERO:
+		player.global_position = spawn
+	else:
+		player.global_position = Vector2(10 * 16, 22 * 16)
+	GameBus.show_toast("欢迎来到扩大版农场！农舍可进，南牧场与东林地已开放")
