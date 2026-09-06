@@ -1,5 +1,7 @@
 extends Node2D
-## Oakhaven main — camera, spawn, UI, golden capture.
+## Oakhaven main — camera, spawn, day/night modulate, quest boot.
+
+var _modulate: CanvasModulate
 
 func _ready() -> void:
 	var world := $World
@@ -17,15 +19,25 @@ func _ready() -> void:
 		player.global_position = spawn
 	else:
 		player.global_position = Vector2(40 * 16, 90 * 16)
-	GameBus.show_toast("橡木湾：WASD 移动 · 1-4 工具 · E 交互 · Tab 背包")
-	GameBus.set_quest_hint("任务提示：探索六区，种地收获，与村民交谈，参观灯塔")
+	_modulate = CanvasModulate.new()
+	_modulate.color = TimeClock.modulate_for_period()
+	add_child(_modulate)
+	TimeClock.period_changed.connect(_on_period)
+	TimeClock.hour_changed.connect(func(_d, _h): _modulate.color = TimeClock.modulate_for_period())
+	GameBus.show_toast("橡木湾：WASD 移动 · 1-4 工具 · E 交互 · Tab 背包 · 床睡觉")
+	GameBus.set_quest_hint(QuestLog.current_hint())
 	if "--capture_golden" in OS.get_cmdline_user_args():
 		await _capture_goldens(player)
+
+func _on_period(_p: String) -> void:
+	if _modulate != null:
+		var tw := create_tween()
+		tw.tween_property(_modulate, "color", TimeClock.modulate_for_period(), 1.2)
 
 func _capture_goldens(player: Node2D) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
-	DirAccess.make_dir_recursive_absolute("res://assets/qa/golden")
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/qa/golden"))
 	var shots := [
 		["01_farm", Vector2(40 * 16, 98 * 16)],
 		["02_river", Vector2(28 * 16, 28 * 16)],

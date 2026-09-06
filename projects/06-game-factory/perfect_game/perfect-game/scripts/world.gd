@@ -50,6 +50,15 @@ func _ready() -> void:
 	_build_water_collisions()
 	# zone names shown via wood placards in decor.gd
 
+var _water_t: float = 0.0
+
+func _process(delta: float) -> void:
+	if _water == null:
+		return
+	_water_t += delta
+	# Gentle shimmer — modulate water layer (Stardew-like life)
+	var pulse := 0.92 + 0.08 * sin(_water_t * 2.1)
+	_water.modulate = Color(pulse, pulse, 1.0, 1.0)
 func _spawn_zone_labels() -> void:
 	var markers := $ZoneMarkers
 	var labels := {

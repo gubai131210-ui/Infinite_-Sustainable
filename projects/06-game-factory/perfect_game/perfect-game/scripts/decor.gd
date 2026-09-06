@@ -302,11 +302,34 @@ func _door_and_chest() -> void:
 	stall.message = "今日番茄与萝卜新鲜，先去农庄种点种子吧！"
 	stall.position = Vector2(80, 44) * TS
 	add_child(stall)
+	var sell := preload("res://scenes/interact_zone.tscn").instantiate()
+	sell.prompt_text = "按 E 卖出作物"
+	sell.mode = "shop_sell"
+	sell.position = Vector2(72, 36) * TS
+	add_child(sell)
+	var buy := preload("res://scenes/interact_zone.tscn").instantiate()
+	buy.prompt_text = "按 E 买种子礼包(30金)"
+	buy.mode = "shop_buy"
+	buy.position = Vector2(76, 36) * TS
+	add_child(buy)
+	# Quest visit triggers (轻松日常打卡)
+	_quest_zone("visit_town", "镇中心", Vector2(90, 48))
+	_quest_zone("visit_station", "火车站", Vector2(150, 18))
+	_quest_zone("visit_lighthouse", "灯塔", Vector2(174, 102))
 	var fish := preload("res://scenes/interact_zone.tscn").instantiate()
 	fish.prompt_text = "按 E 钓鱼"
 	fish.mode = "fish"
 	fish.position = Vector2(160, 112) * TS
 	add_child(fish)
+
+func _quest_zone(step_id: String, label: String, tile: Vector2) -> void:
+	var z := preload("res://scenes/interact_zone.tscn").instantiate()
+	z.prompt_text = "按 E 打卡·%s" % label
+	z.mode = "quest_zone"
+	z.quest_step_id = step_id
+	z.message = "打卡：%s" % label
+	z.position = tile * TS
+	add_child(z)
 
 func _ambient() -> void:
 	for origin in [Vector2(40, 86), Vector2(74, 32), Vector2(108, 32), Vector2(142, 12), Vector2(174, 100)]:

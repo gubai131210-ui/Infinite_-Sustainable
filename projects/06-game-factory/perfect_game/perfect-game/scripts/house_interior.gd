@@ -24,6 +24,17 @@ func _ready() -> void:
 	$BedZone.monitoring = show_bed
 	$ChestZone.visible = GameBus.current_interior_id in ["farmhouse", "barn", "shop"]
 	$ChestZone.monitoring = $ChestZone.visible
+	if GameBus.current_interior_id == "shop":
+		var sell := preload("res://scenes/interact_zone.tscn").instantiate()
+		sell.prompt_text = "按 E 卖出作物"
+		sell.mode = "shop_sell"
+		sell.position = Vector2(8 * TS, 6 * TS)
+		add_child(sell)
+		var buy := preload("res://scenes/interact_zone.tscn").instantiate()
+		buy.prompt_text = "按 E 买种子礼包(30金)"
+		buy.mode = "shop_buy"
+		buy.position = Vector2(11 * TS, 6 * TS)
+		add_child(buy)
 	GameBus.show_toast("%s：按 E 交互，门口可离开" % GameBus.current_interior_title)
 
 func _build_room() -> void:
