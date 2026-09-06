@@ -161,7 +161,7 @@ func _flowers() -> void:
 		_spr("res://assets/processed/flower_%d.png" % (i % 4), spots[i], 3)
 
 func _crops_on_fields() -> void:
-	# Visible crop rows on Z1 farm + Z5 terraces (mature stage sprites)
+	# Decorative crops only on bed edges + terraces — leave playable hoe rows clear
 	var crops := [
 		"res://assets/processed/crop_wheat_3.png",
 		"res://assets/processed/crop_tomato_3.png",
@@ -170,14 +170,20 @@ func _crops_on_fields() -> void:
 		"res://assets/processed/crop_pumpkin_3.png",
 	]
 	var i := 0
-	for row in range(8):
-		for x in range(18, 52, 2):
-			var y := 81 + row * 3
-			_spr(crops[i % crops.size()], Vector2(x, y), 4)
-			i += 1
+	# Sparse showcase rows on farm beds (not every tile)
+	for x in range(16, 28, 3):
+		_spr(crops[i % crops.size()], Vector2(x, 80), 4)
+		i += 1
+	for x in range(36, 48, 3):
+		_spr(crops[i % crops.size()], Vector2(x, 82), 4)
+		i += 1
+	for x in range(16, 28, 3):
+		_spr(crops[i % crops.size()], Vector2(x, 94), 4)
+		i += 1
+	# Z5 terraces — denser showcase
 	for band in range(5):
 		var y0 := 39 + band * 10
-		for x in range(128, 158, 2):
+		for x in range(128, 158, 3):
 			_spr(crops[i % crops.size()], Vector2(x, y0), 4)
 			i += 1
 
@@ -209,14 +215,15 @@ func _npcs() -> void:
 		add_child(n)
 
 func _animals() -> void:
+	# Chickens near barns; sheep/cows inside south pen (matches reference)
 	var animal_spots := [
-		["chicken", Vector2(30, 92), "咯咯！想来点饲料吗？"],
-		["chicken", Vector2(33, 94), "啄啄地面……"],
-		["chicken", Vector2(36, 93), "母鸡今天心情不错。"],
-		["cow", Vector2(28, 105), "哞——牧场草很甜。"],
-		["cow", Vector2(42, 108), "慢悠悠地反刍着。"],
-		["sheep", Vector2(36, 108), "咩～羊毛蓬松。"],
-		["sheep", Vector2(45, 104), "咩咩，别拉我的毛。"],
+		["chicken", Vector2(30, 100), "咯咯！想来点饲料吗？"],
+		["chicken", Vector2(34, 102), "啄啄地面……"],
+		["chicken", Vector2(38, 100), "母鸡今天心情不错。"],
+		["cow", Vector2(28, 116), "哞——牧场草很甜。"],
+		["cow", Vector2(40, 118), "慢悠悠地反刍着。"],
+		["sheep", Vector2(32, 114), "咩～羊毛蓬松。"],
+		["sheep", Vector2(38, 116), "咩咩，别拉我的毛。"],
 	]
 	for item in animal_spots:
 		_spr_atlas("res://assets/processed/%s.png" % item[0], item[1], 5, 0, false)
@@ -231,12 +238,12 @@ func _animals() -> void:
 func _door_and_chest() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(36, 90), 4)
 	var doors := [
-		{"id": "farmhouse", "prompt": "按 E 进入农舍", "pos": Vector2(40, 90)},
-		{"id": "barn", "prompt": "按 E 进入谷仓", "pos": Vector2(38, 102)},
-		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(72, 36)},
-		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(108, 36)},
-		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(148, 16)},
-		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(173, 105)},
+		{"id": "farmhouse", "prompt": "按 E 进入农舍", "pos": Vector2(40, 88)},
+		{"id": "barn", "prompt": "按 E 进入谷仓", "pos": Vector2(28, 102)},
+		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(72, 32)},
+		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(108, 32)},
+		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(150, 14)},
+		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(173, 102)},
 	]
 	for d in doors:
 		var door := preload("res://scenes/interact_zone.tscn").instantiate()

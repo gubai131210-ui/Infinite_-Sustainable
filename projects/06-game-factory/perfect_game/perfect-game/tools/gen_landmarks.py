@@ -247,6 +247,30 @@ def waterfall() -> Image.Image:
     return img
 
 
+def ruins() -> Image.Image:
+    """Mossy stone arch + crumbled wall — forest ruins between waterfall and station."""
+    img = Image.new("RGBA", (96, 64), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    moss = (70, 110, 70, 255)
+    stone = (130, 125, 115, 255)
+    dark = (90, 85, 78, 255)
+    # left pillar
+    _shade_rect(d, (8, 18, 28, 60), stone, dark, (160, 155, 145, 255))
+    # right pillar
+    _shade_rect(d, (68, 18, 88, 60), stone, dark, (160, 155, 145, 255))
+    # arch top
+    d.arc([8, 4, 88, 48], 180, 360, fill=stone, width=10)
+    d.arc([14, 10, 82, 44], 180, 360, fill=dark, width=4)
+    # rubble base
+    for x, y, w, h in ((4, 52, 20, 10), (30, 54, 16, 8), (50, 50, 22, 12), (74, 54, 18, 8)):
+        d.rectangle([x, y, x + w, y + h], fill=dark)
+        d.rectangle([x + 2, y + 2, x + w - 2, y + 4], fill=moss)
+    # moss patches
+    for ox, oy in ((10, 24), (14, 40), (72, 28), (78, 44), (40, 16)):
+        d.ellipse([ox, oy, ox + 8, oy + 5], fill=moss)
+    return img
+
+
 def main() -> None:
     save(barn(), "prop_barn.png")
     save(barn(100, 80), "prop_barn2.png")
@@ -263,6 +287,7 @@ def main() -> None:
     save(bridge(), "prop_bridge.png")
     save(boat(), "prop_boat.png")
     save(waterfall(), "prop_waterfall.png")
+    save(ruins(), "prop_ruins.png")
 
 
 if __name__ == "__main__":

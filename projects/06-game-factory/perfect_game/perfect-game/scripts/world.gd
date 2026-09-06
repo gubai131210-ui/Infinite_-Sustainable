@@ -48,7 +48,7 @@ func _ready() -> void:
 	_setup_tileset()
 	_paint_base()
 	_build_water_collisions()
-	_spawn_zone_labels()
+	# zone names shown via wood placards in decor.gd
 
 func _spawn_zone_labels() -> void:
 	var markers := $ZoneMarkers
@@ -142,15 +142,27 @@ func _paint_base() -> void:
 	_fill_rect(_ground, Rect2i(0, 0, W, 14), T_HILL)
 	_fill_rect(_ground, Rect2i(0, 14, W, 4), T_CLIFF)
 
-	# Z1 farm soil — irregular blob (not hard rectangle)
-	for y in range(72, 118):
-		for x in range(10, 68):
-			var dx := x - 38
-			var dy := y - 94
-			if dx * dx + int(dy * dy * 0.7) < 780 + ((x * 13 + y) % 40):
+	# Z1 farm — rectangular crop beds + grass corridors (like reference), not one brown slab
+	# Animal pen stays grass (south of barns)
+	var farm_beds := [
+		Rect2i(14, 78, 16, 10), Rect2i(34, 78, 16, 10), Rect2i(52, 78, 12, 10),
+		Rect2i(14, 92, 16, 8), Rect2i(34, 92, 16, 8),
+	]
+	for bed in farm_beds:
+		_fill_rect(_ground, bed, T_DIRT)
+		# inner tilled rows
+		for row in range(0, bed.size.y - 1, 2):
+			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
+	# Path strips between beds
+	_fill_rect(_ground, Rect2i(30, 78, 4, 22), T_PATH)
+	_fill_rect(_ground, Rect2i(14, 88, 50, 3), T_PATH)
+	# Yard around farmhouse / barns — light dirt patches, not wall-to-wall soil
+	for y in range(96, 110):
+		for x in range(22, 56):
+			if ((x + y * 3) % 5) != 0:
 				_set_cell(_ground, x, y, T_DIRT)
-	for row in range(8):
-		_fill_rect(_ground, Rect2i(16, 80 + row * 3, 40, 2), T_FARM)
+	# Animal pen floor stays mostly grass (south of barns)
+	_fill_rect(_ground, Rect2i(24, 112, 20, 10), T_GRASS2)
 
 	# Z2 river winding + banks + edges
 	for y in range(16, 100):

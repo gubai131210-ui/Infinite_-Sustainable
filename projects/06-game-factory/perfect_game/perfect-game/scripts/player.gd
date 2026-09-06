@@ -82,6 +82,19 @@ func clear_interact_prompt() -> void:
 func get_interact_prompt() -> String:
 	return _prompt
 
+
+func get_tool_name() -> String:
+	match tool:
+		Tool.HOE:
+			return "锄头"
+		Tool.CAN:
+			return "水壶"
+		Tool.AXE:
+			return "斧头"
+		Tool.ROD:
+			return "钓竿"
+	return "?"
+
 func try_interact() -> bool:
 	if _interact_cb.is_valid():
 		_interact_cb.call()
