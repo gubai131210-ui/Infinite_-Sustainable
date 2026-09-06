@@ -37,7 +37,21 @@ func _configure_zones() -> void:
 	var show_bed := id == "farmhouse"
 	$BedZone.visible = show_bed
 	$BedZone.monitoring = show_bed
-	$ChestZone.visible = id in ["farmhouse", "barn", "shop"]
+	match id:
+		"farmhouse":
+			$ChestZone.position = Vector2(12 * TS, 4 * TS)
+			$ChestZone.visible = true
+		"barn":
+			$ChestZone.position = Vector2(4 * TS, 4 * TS)
+			$ChestZone.visible = true
+		"shop":
+			$ChestZone.position = Vector2(15 * TS, 8 * TS)
+			$ChestZone.visible = true
+		"lighthouse":
+			$ChestZone.position = Vector2(13 * TS, 8 * TS)
+			$ChestZone.visible = true
+		_:
+			$ChestZone.visible = false
 	$ChestZone.monitoring = $ChestZone.visible
 	if id == "shop":
 		_zone("shop_sell", "按 E 卖出作物", Vector2(8 * TS, 6 * TS))
