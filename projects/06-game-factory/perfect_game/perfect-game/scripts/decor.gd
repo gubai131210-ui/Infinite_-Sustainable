@@ -156,6 +156,12 @@ func _flowers() -> void:
 		Vector2(86, 54), Vector2(94, 56), Vector2(135, 50), Vector2(140, 58),
 		Vector2(145, 70), Vector2(150, 68), Vector2(160, 90), Vector2(165, 92),
 		Vector2(170, 88), Vector2(72, 50), Vector2(108, 50), Vector2(36, 80),
+		# Town plaza ring
+		Vector2(78, 38), Vector2(102, 38), Vector2(78, 60), Vector2(102, 60),
+		Vector2(88, 34), Vector2(92, 34), Vector2(88, 64), Vector2(92, 64),
+		# Lake shore
+		Vector2(148, 98), Vector2(154, 102), Vector2(166, 96), Vector2(176, 98),
+		Vector2(182, 92), Vector2(170, 110),
 	]
 	for i in range(spots.size()):
 		_spr("res://assets/processed/flower_%d.png" % (i % 4), spots[i], 3)
@@ -243,7 +249,7 @@ func _door_and_chest() -> void:
 		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(72, 32)},
 		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(108, 32)},
 		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(150, 14)},
-		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(173, 102)},
+		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(174, 100)},
 	]
 	for d in doors:
 		var door := preload("res://scenes/interact_zone.tscn").instantiate()
