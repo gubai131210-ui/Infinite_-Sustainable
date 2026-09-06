@@ -19,4 +19,4 @@ func _ready() -> void:
 		player.global_position = spawn
 	else:
 		player.global_position = Vector2(10 * 16, 22 * 16)
-	GameBus.show_toast("欢迎来到扩大版农场！农舍可进，南牧场与东林地已开放")
+	GameBus.show_toast("欢迎来到村口农场！北有山阶，东有广场，南有牧场")

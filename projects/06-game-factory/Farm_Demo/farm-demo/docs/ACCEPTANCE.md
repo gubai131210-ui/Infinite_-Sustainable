@@ -1,24 +1,23 @@
-# ACCEPTANCE — Farm_Demo Round3
+# ACCEPTANCE — Farm_Demo Round4
 
 | 项 | 结果 | 证据 |
 |----|------|------|
 | MCP 无致命错误 | PASS | get_errors=0 |
 | 地图 ≥96×64 | PASS | world_size=(1536,1024) |
 | 整数缩放 | PASS | Camera2D.zoom=(2,2) |
-| 去粉边抽样 | PASS | player/tree/house/chicken hotpink=0 |
-| 河岸过渡（无 dirt 边红线） | PASS | 仅 gw_* 边角 |
-| 四向动画 | PASS | walk_right/left/up/down + facing + 位移轴（2026-09-06 复验） |
-| 农舍可进 | PASS | root→HouseInterior；golden `02_house_interior.png` |
-| 出门回室外 | PASS | root→Main；pos≈(560,360) |
-| 床休息 | PASS | ToastLabel=`休息了一会儿，精神满满。` |
-| 南牧场新区 | PASS | warp y≈800；`03_south_pasture.png` |
-| golden_r3 | PASS | `assets/qa/golden_r3/*` |
+| 左右朝向正确 | PASS | atlas 行对调；walk_left/right + facing ±x；golden `04`/`05` |
+| 上下朝向 | PASS | walk_up y↓；walk_down y↑；golden `06` |
+| 草地无粉缝重生 | PASS | `tools/r4_fix_assets.py` 重生 tile_* + QA checker |
+| 河岸过渡 | PASS | gw_* 8 向；golden `02_river_shore.png` |
+| 村口石板广场 | PASS | T.PLAZA；golden `03_village_plaza.png` |
+| 北崖/台阶 | PASS | CLIFF + STAIRS 走廊 |
+| 农舍可进 | PASS | HouseInterior；golden `07_house_interior.png` |
+| 床交互 | PASS | BedZone._do_interact OK（toast 需同帧读） |
+| golden_r4 | PASS | `assets/qa/golden_r4/*` |
 
 ## 禁止偷懒核对
 
-- [x] MCP 证据
-- [x] 房子非纯装饰
-- [x] 地图扩分区
-- [x] 四向用 atlas 行
-- [x] 相机整数 zoom
-- [x] 室内独立场景
+- [x] 四向用脸朝向截图，不只 animation 名
+- [x] 未假装火车/灯塔全图
+- [x] 树/灌木非整排复制
+- [x] 参考帧与规格已入库

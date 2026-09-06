@@ -48,9 +48,10 @@ def import_player_4dir() -> None:
     print("player 4dir")
     path = SRC / "farm_player_4dir_walk.png"
     src = chroma(Image.open(path))
-    # AI layout: row0 down, row1 right, row2 left, row3 up — 4x6
+    # AI layout often: row0 down, row1 right, row2 left, row3 up — 4x6
     grid = split_grid_clean(src, 6, 4)
-    # Atlas rows: down, left, right, up
+    # Contract atlas rows (player.gd DIRS): down, left, right, up
+    # Remap right/left (src 1/2) -> left/right (out 1/2)
     order = [0, 2, 1, 3]
     atlas = Image.new("RGBA", (H_HUMAN * 6, H_HUMAN * 4), (0, 0, 0, 0))
     for out_r, src_r in enumerate(order):

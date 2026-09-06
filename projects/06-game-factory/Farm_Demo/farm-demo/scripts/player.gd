@@ -1,5 +1,6 @@
 extends CharacterBody2D
-## Top-down player with 4-direction walk cycles (atlas rows: down/left/right/up).
+## Top-down player with 4-direction walk cycles.
+## Atlas contract (48px cells): row0 down, row1 left, row2 right, row3 up.
 
 @export var speed: float = 120.0
 @export var tile_size: int = 16

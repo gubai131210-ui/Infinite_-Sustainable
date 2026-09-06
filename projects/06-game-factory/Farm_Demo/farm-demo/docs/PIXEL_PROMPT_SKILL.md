@@ -78,6 +78,7 @@ SUBJECT: young farmer blue shirt brown pants
 STYLE: 16-bit Stardew-like pixel art sprite sheet
 COMPOSITION: exact 4 rows × 6 columns equal cells;
 Row1 DOWN front walk treadmill; Row2 LEFT; Row3 RIGHT; Row4 UP back;
+**入库契约必须与此一致**（若 AI 产出 Row2=RIGHT/Row3=LEFT，import 时对调）。
 foot-anchored, identical scale
 TECHNICAL: hot-pink #ED067A background, loopable, no camera pan
 NEGATIVE: frame size mismatch, photoreal, blur, text

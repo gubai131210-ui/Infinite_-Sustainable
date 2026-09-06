@@ -1,11 +1,11 @@
 extends Node2D
-## Farm plots + ground tile rendering + crop sprites.
+## Farm plots + ground tile rendering + crop sprites (R4 layout).
 
 const W := 96
 const H := 64
 const TS := 16
 
-enum T { GRASS, DIRT, FARMLAND, TILLED, WATERED, WATER, PATH, HILL }
+enum T { GRASS, DIRT, FARMLAND, TILLED, WATERED, WATER, PATH, HILL, PLAZA, CLIFF, STAIRS }
 
 var grid: Array = []  # row-major int
 var plots: Dictionary = {}  # Vector2i -> {crop, stage, waters_done, watered_now}
@@ -45,6 +45,9 @@ func _load_textures() -> void:
 		T.WATER: load("res://assets/processed/tile_water.png"),
 		T.PATH: load("res://assets/processed/tile_path.png"),
 		T.HILL: load("res://assets/processed/tile_hill.png"),
+		T.PLAZA: load("res://assets/processed/tile_plaza.png"),
+		T.CLIFF: load("res://assets/processed/tile_cliff.png"),
+		T.STAIRS: load("res://assets/processed/tile_stairs.png"),
 	}
 	edge_tex = {
 		"gd_n": load("res://assets/processed/tile_gd_n.png"),
@@ -84,58 +87,82 @@ func _build_grid() -> void:
 		for x in range(W):
 			grid[_idx(x, y)] = T.GRASS
 
-	# North hills
-	for y in range(0, 11):
+	# North hills + cliff face + stair notch toward farm
+	for y in range(0, 10):
 		for x in range(W):
-			if y < 7 or (y < 11 and (x + y) % 4 != 0):
+			if y < 6:
 				set_tile(x, y, T.HILL)
+			elif y < 8:
+				set_tile(x, y, T.CLIFF)
+			else:
+				if (x + y) % 5 == 0:
+					set_tile(x, y, T.CLIFF)
+	# Stairs corridor from hills into farm (x 10-13)
+	for y in range(6, 12):
+		for x in range(10, 14):
+			set_tile(x, y, T.STAIRS)
 
-	# Winding river around x≈28
+	# Winding river (video-like soft curve)
 	for y in range(H):
-		var cx := 28 + int(4.0 * sin(y * 0.28))
+		var cx := 30 + int(5.0 * sin(y * 0.22) + 2.0 * sin(y * 0.07))
 		for dx in range(-2, 3):
 			set_tile(cx + dx, y, T.WATER)
+		# dirt banks
 		set_tile(cx - 3, y, T.DIRT)
 		set_tile(cx + 3, y, T.DIRT)
 
-	# West farmland
+	# West farmland rows
 	for y in range(14, 34):
 		for x in range(4, 18):
 			set_tile(x, y, T.FARMLAND)
 
-	# Farmhouse yard
-	for y in range(18, 30):
-		for x in range(32, 44):
+	# Farmhouse yard (west of river bend)
+	for y in range(18, 28):
+		for x in range(34, 44):
 			if get_tile(x, y) != T.WATER:
 				set_tile(x, y, T.DIRT)
 
-	# Paths: farm → village → south pasture
-	for x in range(18, 80):
+	# Winding dirt path farm → bridge → village
+	for t in range(0, 70):
+		var px := 18 + t
+		var py := 26 + int(2.0 * sin(t * 0.18))
+		set_tile(px, py, T.PATH)
+		set_tile(px, py + 1, T.PATH)
+	# Bridge strip over river around y~26
+	for x in range(26, 36):
+		set_tile(x, 25, T.PATH)
 		set_tile(x, 26, T.PATH)
 		set_tile(x, 27, T.PATH)
+	# South spur to pasture
+	for y in range(28, 52):
+		var ox := 36 + int(1.5 * sin(y * 0.3))
+		set_tile(ox, y, T.PATH)
+		set_tile(ox + 1, y, T.PATH)
+	# East spur to village / forest
 	for y in range(20, 50):
 		set_tile(76, y, T.PATH)
 		set_tile(77, y, T.PATH)
-	for y in range(28, 52):
-		set_tile(36, y, T.PATH)
-		set_tile(37, y, T.PATH)
 
-	# Village plaza east
-	for y in range(20, 36):
-		for x in range(70, 90):
-			if get_tile(x, y) != T.WATER:
+	# Village stone plaza
+	for y in range(18, 34):
+		for x in range(68, 90):
+			if get_tile(x, y) == T.WATER:
+				continue
+			if x >= 72 and x <= 86 and y >= 20 and y <= 30:
+				set_tile(x, y, T.PLAZA)
+			else:
 				set_tile(x, y, T.PATH)
 
-	# South pasture (new zone) — keep grass, light dirt patches
+	# South pasture soft dirt patches
 	for y in range(46, 58):
 		for x in range(22, 48):
-			if (x + y) % 7 == 0:
+			if (x + y) % 7 == 0 and get_tile(x, y) == T.GRASS:
 				set_tile(x, y, T.DIRT)
 
 	# East forest floor soft dirt spots
 	for y in range(42, 58):
 		for x in range(78, 92):
-			if (x * 3 + y) % 11 == 0:
+			if (x * 3 + y) % 11 == 0 and get_tile(x, y) == T.GRASS:
 				set_tile(x, y, T.DIRT)
 
 func _paint_ground() -> void:
@@ -156,13 +183,18 @@ func _paint_ground() -> void:
 			_ground.add_child(spr)
 	_refresh_crop_sprites()
 
+func _is_water(t: int) -> bool:
+	return t == T.WATER
+
+func _is_soft_ground(t: int) -> bool:
+	return t == T.DIRT or t == T.PATH or t == T.FARMLAND or t == T.PLAZA
+
 func _display_tex(x: int, y: int, t: int) -> Texture2D:
-	## Only grass↔water edges (skip grass↔dirt to avoid red-line artifacts).
 	if t == T.GRASS:
-		var n_water := get_tile(x, y - 1) == T.WATER
-		var s_water := get_tile(x, y + 1) == T.WATER
-		var e_water := get_tile(x + 1, y) == T.WATER
-		var w_water := get_tile(x - 1, y) == T.WATER
+		var n_water := _is_water(get_tile(x, y - 1))
+		var s_water := _is_water(get_tile(x, y + 1))
+		var e_water := _is_water(get_tile(x + 1, y))
+		var w_water := _is_water(get_tile(x - 1, y))
 		if n_water and e_water and edge_tex.has("gw_ne"):
 			return edge_tex["gw_ne"]
 		if n_water and w_water and edge_tex.has("gw_nw"):
@@ -179,6 +211,19 @@ func _display_tex(x: int, y: int, t: int) -> Texture2D:
 			return edge_tex["gw_e"]
 		if w_water and edge_tex.has("gw_w"):
 			return edge_tex["gw_w"]
+		# soft grass↔dirt edges (clean procedural tiles, no red-line AI edges)
+		var n_d := _is_soft_ground(get_tile(x, y - 1))
+		var s_d := _is_soft_ground(get_tile(x, y + 1))
+		var e_d := _is_soft_ground(get_tile(x + 1, y))
+		var w_d := _is_soft_ground(get_tile(x - 1, y))
+		if n_d and edge_tex.has("gd_n"):
+			return edge_tex["gd_n"]
+		if s_d and edge_tex.has("gd_s"):
+			return edge_tex["gd_s"]
+		if e_d and edge_tex.has("gd_e"):
+			return edge_tex["gd_e"]
+		if w_d and edge_tex.has("gd_w"):
+			return edge_tex["gd_w"]
 	return textures[t]
 
 func _refresh_crop_sprites() -> void:
@@ -200,11 +245,11 @@ func _refresh_crop_sprites() -> void:
 
 func _spawn_stumps() -> void:
 	var spots := [
-		Vector2i(8, 12), Vector2i(14, 12), Vector2i(40, 12),
+		Vector2i(8, 12), Vector2i(14, 12), Vector2i(42, 12),
 		Vector2i(80, 44), Vector2i(84, 48), Vector2i(88, 50), Vector2i(82, 54),
 	]
 	for c in spots:
-		if get_tile(c.x, c.y) != T.WATER:
+		if get_tile(c.x, c.y) != T.WATER and get_tile(c.x, c.y) != T.CLIFF:
 			stump_cells[c] = true
 			var spr := Sprite2D.new()
 			spr.name = "Stump_%d_%d" % [c.x, c.y]
@@ -218,7 +263,7 @@ func _spawn_stumps() -> void:
 
 func is_blocked(cell: Vector2i) -> bool:
 	var t := get_tile(cell.x, cell.y)
-	return t == T.WATER or t == T.HILL
+	return t == T.WATER or t == T.HILL or t == T.CLIFF
 
 func world_size() -> Vector2:
 	return Vector2(W * TS, H * TS)
@@ -307,8 +352,9 @@ func build_collisions(parent: Node) -> void:
 	for y in range(H):
 		for x in range(W):
 			var t := get_tile(x, y)
-			if t != T.WATER and t != T.HILL:
+			if t != T.WATER and t != T.HILL and t != T.CLIFF:
 				continue
+			# stairs stay walkable
 			var body := StaticBody2D.new()
 			body.position = Vector2(x * TS + TS * 0.5, y * TS + TS * 0.5)
 			var cs := CollisionShape2D.new()
