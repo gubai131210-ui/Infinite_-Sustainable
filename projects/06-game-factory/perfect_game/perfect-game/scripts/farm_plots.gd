@@ -164,6 +164,7 @@ func _refresh() -> void:
 		spr.texture = tex
 		spr.centered = true
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		spr.modulate = SeasonClock.crop_modulate()
 		root.add_child(spr)
 		_crops.add_child(root)
 		_start_sway(root, stage)

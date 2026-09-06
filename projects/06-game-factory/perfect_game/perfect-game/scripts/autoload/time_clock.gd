@@ -26,7 +26,7 @@ func _physics_process(delta: float) -> void:
 		advance_hour()
 
 func clock_text() -> String:
-	return "第%d天 %02d:00 · %s" % [day, hour, _period_cn()]
+	return "第%d天 %02d:00 · %s · %s" % [day, hour, _period_cn(), SeasonClock.season_cn()]
 
 func _period_cn() -> String:
 	match period:

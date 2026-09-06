@@ -98,9 +98,13 @@ func save_game() -> void:
 		"farm_plots": plots_out,
 		"inventory": Inventory.stacks.duplicate(true),
 		"quest_done": QuestLog.done.duplicate(true),
-		"quest_idx": QuestLog._idx,
+		"quest_main_idx": QuestLog._main_idx,
+		"quest_mkt_idx": QuestLog._mkt_idx,
+		"quest_line": QuestLog.active_line,
+		"friendship": Friendship.hearts.duplicate(true),
+		"selected_gift": Inventory.selected_gift,
 		"energy": Stamina.energy,
-		"save_version": 2,
+		"save_version": 3,
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f == null:
@@ -144,10 +148,18 @@ func load_game() -> void:
 	if data.has("hour"):
 		TimeClock.hour = int(data["hour"])
 		TimeClock._refresh_period()
+	if data.has("day") or data.has("hour"):
+		SeasonClock._sync_from_day(TimeClock.day)
 	if data.has("quest_done") and typeof(data["quest_done"]) == TYPE_DICTIONARY:
-		QuestLog.done = data["quest_done"]
-	if data.has("quest_idx"):
-		QuestLog._idx = int(data["quest_idx"])
+		var qdone: Dictionary = data["quest_done"]
+		var mi := int(data.get("quest_main_idx", data.get("quest_idx", 0)))
+		var mk := int(data.get("quest_mkt_idx", 0))
+		var line := str(data.get("quest_line", "main"))
+		QuestLog.restore_state(qdone, mi, mk, line)
+	if data.has("friendship") and typeof(data["friendship"]) == TYPE_DICTIONARY:
+		Friendship.hearts = data["friendship"]
+	if data.has("selected_gift"):
+		Inventory.selected_gift = str(data["selected_gift"])
 	if data.has("energy"):
 		Stamina.energy = clampi(int(data["energy"]), 0, Stamina.MAX_ENERGY)
 		Stamina.energy_changed.emit(Stamina.energy, Stamina.MAX_ENERGY)

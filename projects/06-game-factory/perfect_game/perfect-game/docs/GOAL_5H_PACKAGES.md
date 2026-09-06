@@ -55,5 +55,11 @@
 - [x] P10（六室内独立场景页 + 家具/调色差异 + 咖啡馆回精力）  
 - [x] P11（作物 4 阶重绘更清晰 + 水体棋盘帧动画）  
 - [x] P12（脚步/浇水/开箱/卖出/锄地 WAV 占位）  
+- [x] P13（集市日第二任务线 MARKET ids）  
+- [x] P14（golden 已捕获：`assets/qa/golden/` 六区+overview）  
+- [x] P15（export_presets + ITCH_PAGE_DRAFT_CN + EXPORT_AND_PLAYTEST）  
+- [x] P16（Friendship 送礼改台词）  
+- [x] P17（SeasonClock 春夏秋冬色调 / HUD 季节）  
+- [x] P18（save_version 3 + 回归清单）  
 
-下一会话优先 **P13+**（第二任务线等），直至接近完整星露谷。
+> 关闭 Goal 仍需：本机 golden 对照 overview 的 Critic 证据 + 可运行导出包实测。竖切可玩 ≠ complete。

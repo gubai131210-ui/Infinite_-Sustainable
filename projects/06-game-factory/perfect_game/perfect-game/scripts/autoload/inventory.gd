@@ -5,6 +5,7 @@ signal changed
 
 var stacks: Dictionary = {}  # id -> count
 var selected_seed: String = "seed_radish"
+var selected_gift: String = ""
 var selected_inv_index: int = 0
 
 func _ready() -> void:

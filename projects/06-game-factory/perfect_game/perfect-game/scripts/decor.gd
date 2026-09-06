@@ -335,6 +335,30 @@ func _door_and_chest() -> void:
 	fish_river.mode = "fish"
 	fish_river.position = Vector2(34, 50) * TS
 	add_child(fish_river)
+	_market_festival()
+
+func _market_festival() -> void:
+	## P13 cozy market day — denser plaza stalls + banner labels
+	for p in [Vector2(82, 46), Vector2(88, 50), Vector2(96, 46), Vector2(84, 52)]:
+		_spr("res://assets/processed/prop_stall_yellow.png", p, 5)
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(98, 50), 5)
+	_spr("res://assets/processed/prop_canopy.png", Vector2(90, 42), 5)
+	var lab := Label.new()
+	lab.text = "今日集市"
+	lab.position = Vector2(86, 40) * TS + Vector2(-20, -28)
+	lab.z_index = 25
+	lab.add_theme_font_size_override("font_size", 13)
+	lab.add_theme_color_override("font_color", Color(0.55, 0.2, 0.15))
+	lab.add_theme_color_override("font_outline_color", Color(1, 0.95, 0.8))
+	lab.add_theme_constant_override("outline_size", 3)
+	add_child(lab)
+	var board := preload("res://scenes/interact_zone.tscn").instantiate()
+	board.prompt_text = "按 E 看集市告示"
+	board.mode = "dialogue"
+	board.speaker = "集市告示"
+	board.message = "橡木湾轻松集市日：买种子、卖货、找小菊聊花、送份小礼物、再去咖啡馆暖暖手。"
+	board.position = Vector2(90, 42) * TS
+	add_child(board)
 
 func _quest_zone(step_id: String, label: String, tile: Vector2) -> void:
 	var z := preload("res://scenes/interact_zone.tscn").instantiate()

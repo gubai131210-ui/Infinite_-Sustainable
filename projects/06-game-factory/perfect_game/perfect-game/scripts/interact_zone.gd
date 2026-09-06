@@ -88,6 +88,7 @@ func _do_interact() -> void:
 			var amt := stamina_restore if stamina_restore > 0 else 10
 			Stamina.restore(amt)
 			GameBus.show_toast(message if message != "" else ("恢复精力 +%d" % amt))
+			QuestLog.mark("mkt_cafe")
 			interacted.emit("sip")
 		_:
 			GameBus.show_toast(message)
@@ -114,6 +115,7 @@ func _sell_all_crops() -> void:
 	GameBus.show_toast("卖出货物，获得 %d 金币" % earned)
 	SFX.play("sell")
 	QuestLog.mark("done")
+	QuestLog.mark("mkt_sell")
 	interacted.emit("sold")
 
 func _buy_seed_bundle() -> void:
@@ -127,4 +129,5 @@ func _buy_seed_bundle() -> void:
 	Inventory.add("feed", 2)
 	GameBus.save_game()
 	GameBus.show_toast("买下种子礼包（-%d 金）" % cost)
+	QuestLog.mark("mkt_buy")
 	interacted.emit("bought")

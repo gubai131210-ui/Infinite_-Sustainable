@@ -20,19 +20,24 @@ func _ready() -> void:
 	else:
 		player.global_position = Vector2(40 * 16, 90 * 16)
 	_modulate = CanvasModulate.new()
-	_modulate.color = TimeClock.modulate_for_period()
+	_modulate.color = TimeClock.modulate_for_period() * SeasonClock.world_tint()
 	add_child(_modulate)
 	TimeClock.period_changed.connect(_on_period)
-	TimeClock.hour_changed.connect(func(_d, _h): _modulate.color = TimeClock.modulate_for_period())
+	TimeClock.hour_changed.connect(func(_d, _h): _refresh_modulate())
+	SeasonClock.season_changed.connect(func(_s): _refresh_modulate())
 	GameBus.show_toast("橡木湾：WASD 移动 · 1-4 工具 · E 交互 · Tab 背包 · 床睡觉")
 	GameBus.set_quest_hint(QuestLog.current_hint())
 	if "--capture_golden" in OS.get_cmdline_user_args():
 		await _capture_goldens(player)
 
+func _refresh_modulate() -> void:
+	if _modulate != null:
+		_modulate.color = TimeClock.modulate_for_period() * SeasonClock.world_tint()
+
 func _on_period(_p: String) -> void:
 	if _modulate != null:
 		var tw := create_tween()
-		tw.tween_property(_modulate, "color", TimeClock.modulate_for_period(), 1.2)
+		tw.tween_property(_modulate, "color", TimeClock.modulate_for_period() * SeasonClock.world_tint(), 1.2)
 
 func _capture_goldens(player: Node2D) -> void:
 	await get_tree().process_frame

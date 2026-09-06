@@ -135,7 +135,11 @@ func _play_move(delta: float, moving: bool) -> void:
 func _on_enter(body: Node2D) -> void:
 	if body.is_in_group("player") and body.has_method("set_interact_prompt"):
 		_player_inside = body
-		body.set_interact_prompt("按 E 与%s交谈" % display_name, Callable(self, "_talk"))
+		var gift := Inventory.selected_gift
+		if gift != "" and Friendship.can_gift(gift) and Inventory.has(gift):
+			body.set_interact_prompt("按 E 送%s给%s" % [ItemDB.display_name(gift), display_name], Callable(self, "_talk"))
+		else:
+			body.set_interact_prompt("按 E 与%s交谈" % display_name, Callable(self, "_talk"))
 
 func _on_exit(body: Node2D) -> void:
 	if body == _player_inside and body.has_method("clear_interact_prompt"):
@@ -143,5 +147,17 @@ func _on_exit(body: Node2D) -> void:
 		_player_inside = null
 
 func _talk() -> void:
+	var gift := Inventory.selected_gift
+	if gift != "" and Friendship.can_gift(gift) and Inventory.has(gift):
+		if Friendship.try_gift(npc_id, gift):
+			var react := Friendship.gift_line(npc_id, gift)
+			Inventory.selected_gift = ""
+			GameBus.show_dialogue(display_name, react)
+			if _player_inside != null and _player_inside.has_method("set_interact_prompt"):
+				_player_inside.set_interact_prompt("按 E 与%s交谈" % display_name, Callable(self, "_talk"))
+			return
 	var spoken := CharacterDB.line_for(npc_id) if CharacterDB.has_id(npc_id) else line
+	spoken += Friendship.warm_line_suffix(npc_id)
 	GameBus.show_dialogue(display_name, spoken)
+	if npc_id == "hua":
+		QuestLog.mark("mkt_talk_hua")
