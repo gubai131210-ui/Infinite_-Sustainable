@@ -1,13 +1,20 @@
-# ACCEPTANCE — Lake Echo R5
+# ACCEPTANCE — Lake Echo R5 (honest status)
 
 | Wave | 项 | 结果 | 证据 |
 |------|----|------|------|
-| 0 | 工程存在 TileMapLayer | PASS | `scenes/world.tscn` Ground/Water |
-| 0 | 192×128 / world_size | PASS | `world.gd` W=192 H=128；CLI 运行无致命错 |
-| 0 | 六区底图+标签 | PASS | `world.gd` ZONES + ZoneMarkers |
-| 0 | 玩家 WASD + zoom=2 | PASS | `player.gd` / `main.gd` |
-| 0 | Godot CLI 启动 | PASS | coding-solo run_project；仅 GDScript 警告 |
-| 1 | 农场地标（谷仓/筒仓/农舍） | PASS | `prop_barn/silo/farmhouse` + landmarks.gd |
-| 1 | Z1 锄地播种 | PASS | `farm_plots.gd` |
-| 3–6 | 广场摊位/火车/灯塔剪影 | PARTIAL | landmarks 已放；密度与美术待深化 |
-| 7 | golden_r5 全包 | PENDING | 待 MCP Connected 到 lake-echo |
+| 0 | TileMapLayer 192×128 | PASS | `world.gd` W/H；`scenes/world.tscn` |
+| 0 | CLI 无致命启动错 | PASS | Godot 4.6.1 run；仅 int-div 警告 |
+| 0–6 | 六区拓扑底图 | PASS | ZONES + golden_r5 00–06 |
+| 1 | Z1 谷仓/筒仓/农舍剪影 | PARTIAL | landmarks；美术远低于视频 |
+| 1 | 锄地播种 | PASS | `farm_plots.gd` |
+| 1 | 农舍可进 | PASS | door→`house_interior.tscn`（代码） |
+| 4–6 | 火车/灯塔/广场 | PARTIAL | 可辨认剪影；密度不足 |
+| — | 对照视频视觉一比一 | FAIL | Critic：稀疏色块感仍重 |
+| — | MCP Connected lake-echo | FAIL | 仍连 farm-demo；金图改 CLI |
+| — | golden_r5 | PASS | `assets/qa/golden_r5/*.png` |
+| — | 六区 handoff 齐全 | PARTIAL | builder/verifier/critic 有；分区卡不全 |
+| — | Goal 可关闭 | NO | 见 critic handoff |
+
+## Critic
+
+`docs/handoffs/2026-09-06-critic-lake-echo-r5.md` → **FAIL / 不可关 Goal**

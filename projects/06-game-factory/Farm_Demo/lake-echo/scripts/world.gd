@@ -166,8 +166,18 @@ func _paint_base() -> void:
 				_set_cell(_ground, x, y, T_DEEP if dx * dx + dy * dy * 2 < 400 else T_WATER)
 			elif dx * dx + dy * dy * 2 < 1100:
 				_set_cell(_ground, x, y, T_SAND)
-	# Lighthouse pad
-	_fill_rect(_ground, Rect2i(168, 100, 6, 8), T_CLIFF)
+	# Lighthouse peninsula (must be above water paint)
+	_fill_rect(_ground, Rect2i(168, 98, 10, 12), T_CLIFF)
+	_fill_rect(_ground, Rect2i(170, 100, 6, 8), T_SAND)
+	for x in range(168, 178):
+		_water.erase_cell(Vector2i(x, 100))
+		_water.erase_cell(Vector2i(x, 101))
+		_water.erase_cell(Vector2i(x, 102))
+		_water.erase_cell(Vector2i(x, 103))
+	# Wooden pier into lake
+	for x in range(158, 166):
+		_set_cell(_ground, x, 110, T_BRIDGE)
+		_water.erase_cell(Vector2i(x, 110))
 
 	# Stairs from north hills into farm corridor
 	for y in range(14, 24):

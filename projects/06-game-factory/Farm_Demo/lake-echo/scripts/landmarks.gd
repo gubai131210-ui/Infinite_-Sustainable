@@ -17,13 +17,13 @@ func _spr(path: String, tile: Vector2, z: int = 6) -> void:
 	add_child(s)
 
 func _place() -> void:
-	# Z1 Farm
-	_spr("res://assets/processed/prop_barn.png", Vector2(24, 96), 8)
-	_spr("res://assets/processed/prop_barn.png", Vector2(34, 98), 8)
-	_spr("res://assets/processed/prop_silo.png", Vector2(18, 94), 8)
-	_spr("res://assets/processed/prop_silo.png", Vector2(42, 94), 8)
+	# Z1 Farm — keep barns east of river (~x>=34)
+	_spr("res://assets/processed/prop_barn.png", Vector2(38, 100), 8)
+	_spr("res://assets/processed/prop_barn.png", Vector2(48, 102), 8)
+	_spr("res://assets/processed/prop_silo.png", Vector2(34, 96), 8)
+	_spr("res://assets/processed/prop_silo.png", Vector2(54, 96), 8)
 	_spr("res://assets/processed/prop_farmhouse.png", Vector2(40, 88), 8)
-	for x in range(16, 50, 2):
+	for x in range(20, 52, 2):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 78), 4)
 	# Z3 Town
 	_spr("res://assets/processed/prop_statue.png", Vector2(90, 48), 7)
@@ -40,8 +40,8 @@ func _place() -> void:
 	# Z4 Station
 	_spr("res://assets/processed/prop_train.png", Vector2(150, 20), 7)
 	_spr("res://assets/processed/prop_farmhouse.png", Vector2(145, 16), 8)
-	# Z6 Lake
-	_spr("res://assets/processed/prop_lighthouse.png", Vector2(171, 104), 10)
+	# Z6 Lake — lighthouse on shore cliff pad (not in water)
+	_spr("res://assets/processed/prop_lighthouse.png", Vector2(173, 103), 10)
 	# Bridges visual
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5)
