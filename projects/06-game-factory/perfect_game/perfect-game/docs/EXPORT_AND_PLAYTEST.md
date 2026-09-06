@@ -37,7 +37,7 @@ itch 文案见 [`ITCH_PAGE_DRAFT_CN.md`](ITCH_PAGE_DRAFT_CN.md)。
 ```text
 Godot 运行主场景并传用户参数：
   --capture_golden
-输出：assets/qa/golden/01_farm … 06_lake + 00_overview.png
+输出：`00_overview` … `06_lake` + `07_waterfall` + `08_dialogue`
 ```
 
 对照：`docs/ref/oakhaven_overview.jpg` + Visual Bible。

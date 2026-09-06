@@ -172,3 +172,16 @@
 
 ### 云松瀑进度
 - [x] P51 · P52 · P53 · P54 · P55  
+
+## 有机北缘与主线瀑布（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P56 | 40m | 岩石有机脊带，去全宽山墙 | overview |
+| P57 | 30m | 土路多频摆动+羽化 | farm/overview |
+| P58 | 20m | MAIN 含水瀑→灯塔 | QuestLog |
+| P59 | 15m | NPC flip_h | 行走 |
+| P60 | 30m | golden + Critic + push | origin/main |
+
+### 有机北缘进度
+- [x] P56 · P57 · P58 · P59 · P60  

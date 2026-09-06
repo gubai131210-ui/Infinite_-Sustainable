@@ -127,6 +127,10 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func _play_move(delta: float, moving: bool) -> void:
+	if _dir.x < -0.1:
+		anim.flip_h = true
+	elif _dir.x > 0.1:
+		anim.flip_h = false
 	if moving:
 		if anim.animation != "walk" or not anim.is_playing():
 			anim.play("walk")

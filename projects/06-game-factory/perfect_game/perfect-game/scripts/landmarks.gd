@@ -59,68 +59,36 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## Layered skyline: sky → clouds → broken peaks → sparse pines (NO flat wall)
-	for x in range(-10, 210, 5):
-		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, -12), -3, 3.0)
-	for x in range(-6, 206, 6):
-		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, -5), -2, 2.7)
-	for x in range(-2, 202, 6):
-		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, 1), -2, 2.4)
-	for i in range(0, 20):
-		var cx := i * 10 + (i % 5) * 2
-		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(cx, -9 + (i % 4)), -1, 2.0 + float(i % 3) * 0.2)
-	for i in range(0, 12):
-		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(4 + i * 16, 0 + (i % 2)), -1, 1.7)
-	# Broken mountain silhouette — large gaps at waterfall + ruins + station
-	for x in range(-4, 200, 8):
-		if x >= 12 and x <= 38:
+	## Organic ridge strip + sky (spaced; rocky not green wall)
+	for x in range(-4, 200, 18):
+		_spr("res://assets/processed/prop_ridge_organic.png", Vector2(x, -4), -2, 1.25)
+	for i in range(0, 14):
+		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(i * 14 + (i % 3), -7 + (i % 2)), -1, 1.85)
+	for x in range(2, 190, 16):
+		if x >= 12 and x <= 40:
 			continue
-		if x >= 66 and x <= 108:
+		if x >= 64 and x <= 110:
 			continue
-		if x >= 140 and x <= 170 and (x % 16) < 8:
-			continue
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 3 + (x % 3)), 0, 1.9 + float(x % 5) * 0.05)
-	for x in range(0, 196, 10):
-		if x >= 14 and x <= 36:
-			continue
-		if x >= 70 and x <= 100:
-			continue
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 6 + (x % 2)), 0, 1.45)
-	# Cliffs only as irregular clusters (not a continuous shelf)
-	for p in [
-		Vector2(4, 9), Vector2(8, 10), Vector2(42, 8), Vector2(48, 9), Vector2(54, 8),
-		Vector2(112, 9), Vector2(118, 8), Vector2(124, 10), Vector2(176, 9), Vector2(184, 8),
-		Vector2(190, 10), Vector2(56, 11), Vector2(130, 11),
-	]:
-		_spr("res://assets/processed/prop_cliff.png", p, 1, 1.25 + float(int(p.x) % 3) * 0.05)
-	# Waterfall bowl cliffs only
-	for dx in [-4, -2, 2, 4]:
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 9), 1, 1.4)
-	# Sparse accent pines ON peaks (never a belt)
-	for p in [
-		Vector2(6, 7), Vector2(46, 6), Vector2(52, 8), Vector2(116, 7), Vector2(128, 6),
-		Vector2(178, 7), Vector2(188, 8), Vector2(10, 11), Vector2(50, 12), Vector2(120, 12),
-	]:
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 6 + (x % 2)), 0, 1.4)
+	for dx in [-5, -3, -1, 1, 3, 5]:
+		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 9), 1, 1.35)
+	for p in [Vector2(8, 9), Vector2(50, 8), Vector2(120, 9), Vector2(182, 8)]:
 		_spr("res://assets/processed/tree_pine.png", p, 2, 0.85)
-	for x in range(2, 190, 9):
+	for x in range(6, 186, 13):
 		if x >= 14 and x <= 38:
 			continue
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 14 + (x % 3)), 2, 1.15)
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 14 + (x % 2)), 2, 1.05)
 
 func _ruins() -> void:
 	## Irregular mossy arches woven with canopy (break flat grid rows)
 	var arches := [
-		Vector2(63, 11), Vector2(71, 9), Vector2(79, 13), Vector2(88, 8), Vector2(96, 12), Vector2(104, 10),
-		Vector2(67, 15), Vector2(75, 17), Vector2(83, 14), Vector2(91, 16), Vector2(99, 15),
-		Vector2(65, 19), Vector2(73, 21), Vector2(81, 19), Vector2(89, 22), Vector2(97, 20),
-		Vector2(69, 24), Vector2(77, 25), Vector2(85, 23), Vector2(93, 26), Vector2(101, 24),
-		Vector2(72, 12), Vector2(86, 18), Vector2(94, 14),
+		Vector2(68, 14), Vector2(76, 12), Vector2(84, 15), Vector2(92, 13), Vector2(100, 16),
+		Vector2(72, 19), Vector2(80, 21), Vector2(88, 18), Vector2(96, 20),
+		Vector2(74, 24), Vector2(86, 25), Vector2(94, 23),
 	]
 	# Keep grove below ridge so skyline stays open
 	var grove := [
-		Vector2(66, 18), Vector2(74, 16), Vector2(82, 19), Vector2(90, 17), Vector2(98, 19),
-		Vector2(64, 24), Vector2(78, 22), Vector2(92, 25), Vector2(106, 18), Vector2(70, 26),
-		Vector2(88, 27), Vector2(100, 24), Vector2(84, 24),
+		Vector2(70, 20), Vector2(82, 22), Vector2(94, 21), Vector2(78, 26), Vector2(90, 27),
 	]
 	for i in range(grove.size()):
 		var gp: Vector2 = grove[i]

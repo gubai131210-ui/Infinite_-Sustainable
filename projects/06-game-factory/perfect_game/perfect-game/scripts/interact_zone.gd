@@ -22,7 +22,9 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player") and body.has_method("set_interact_prompt"):
 		body.set_interact_prompt(prompt_text, Callable(self, "_do_interact"))
 		if mode == "quest_zone" and quest_step_id != "":
-			QuestLog.mark(quest_step_id)
+			var ql := get_node_or_null("/root/QuestLog")
+			if ql != null and ql.has_method("mark"):
+				ql.call("mark", quest_step_id)
 
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("player") and body.has_method("clear_interact_prompt"):
@@ -84,7 +86,10 @@ func _do_interact() -> void:
 		"quest_zone":
 			if quest_step_id != "":
 				QuestLog.mark(quest_step_id)
-			GameBus.show_toast(message if message != "" else "到访打卡")
+			if message != "" and message.length() > 12:
+				GameBus.show_dialogue(speaker if speaker != "" else "提示", message)
+			else:
+				GameBus.show_toast(message if message != "" else "到访打卡")
 			interacted.emit(quest_step_id)
 		"stamina_sip":
 			var amt := stamina_restore if stamina_restore > 0 else 10

@@ -9,7 +9,8 @@ const MAIN := [
 	{"id": "talk_npc", "hint": "任务：与任意村民交谈"},
 	{"id": "visit_town", "hint": "任务：走到镇中心广场（雕像附近）"},
 	{"id": "visit_station", "hint": "任务：参观橡木火车站"},
-	{"id": "visit_lighthouse", "hint": "任务：参观回声湖灯塔"},
+	{"id": "visit_waterfall", "hint": "任务：去北缘瀑布倾听回声"},
+	{"id": "visit_lighthouse", "hint": "任务：按纸条提示参观回声湖灯塔"},
 	{"id": "done", "hint": "一日游完成！可去卖作物，或开始「小镇集市日」"},
 ]
 

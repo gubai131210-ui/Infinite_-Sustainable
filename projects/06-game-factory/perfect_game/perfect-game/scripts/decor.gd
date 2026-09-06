@@ -375,10 +375,10 @@ func _door_and_chest() -> void:
 	fall.prompt_text = "按 E 倾听瀑布"
 	fall.mode = "quest_zone"
 	fall.quest_step_id = "visit_waterfall"
-	fall.message = "瀑布回声里有人说：去灯塔看一眼灯火。"
+	fall.speaker = "瀑布回声"
+	fall.message = "水雾扑面。耳边有人低语：\n「若你听见瀑布的回声，就去灯塔看一眼灯火。」"
 	fall.position = Vector2(24, 20) * TS
 	add_child(fall)
-	_quest_zone("visit_waterfall", "瀑布源头", Vector2(26, 18))
 	var stall := preload("res://scenes/interact_zone.tscn").instantiate()
 	stall.prompt_text = "按 E 看看摊位"
 	stall.mode = "dialogue"

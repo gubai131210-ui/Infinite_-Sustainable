@@ -125,23 +125,32 @@ func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
 			_set_cell(layer, x, y, tid)
 
 func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
-	## Stronger sine wobble so farm↔town↔lake reads as winding dirt (overview parity)
+	## Soft organic dirt — stronger multi-frequency wobble + feathered edges
 	for i in range(steps + 1):
 		var t: float = float(i) / float(maxi(steps, 1))
-		var wobble_x: float = 5.5 * sin(t * PI * 5.0 + float(a.x) * 0.11)
-		var wobble_y: float = 3.8 * sin(t * PI * 3.5 + float(a.y) * 0.09)
+		var wobble_x: float = 7.2 * sin(t * PI * 4.2 + float(a.x) * 0.13)
+		wobble_x += 3.1 * sin(t * PI * 9.0 + float(a.y) * 0.07)
+		var wobble_y: float = 5.0 * sin(t * PI * 3.1 + float(a.y) * 0.11)
+		wobble_y += 2.4 * cos(t * PI * 7.5 + float(a.x) * 0.05)
 		var x: int = int(lerpf(float(a.x), float(b.x), t) + wobble_x)
 		var y: int = int(lerpf(float(a.y), float(b.y), t) + wobble_y)
 		x = clampi(x, 2, W - 4)
 		y = clampi(y, 2, H - 4)
 		_set_cell(_ground, x, y, T_PATH)
 		_set_cell(_ground, x + 1, y, T_PATH)
-		_set_cell(_ground, x, y + 1, T_PATH)
-		_set_cell(_ground, x + 1, y + 1, T_PATH)
+		if i % 3 != 1:
+			_set_cell(_ground, x, y + 1, T_PATH)
+		if i % 4 == 0:
+			_set_cell(_ground, x + 1, y + 1, T_DIRT)
+		# Feathered soft edge (dirt / grass mix — less grid brick)
 		if i % 2 == 0:
 			_set_cell(_ground, x - 1, y, T_DIRT)
 			_set_cell(_ground, x + 2, y, T_DIRT)
+		if i % 3 == 0:
 			_set_cell(_ground, x, y - 1, T_DIRT)
+		if i % 5 == 0:
+			_set_cell(_ground, x + 1, y - 1, T_GRASS3)
+			_set_cell(_ground, x - 1, y + 1, T_GRASS2)
 
 func _paint_base() -> void:
 	# Full grass with noisy variants (avoid diagonal stripe modulo)
@@ -160,15 +169,29 @@ func _paint_base() -> void:
 			elif m == 8:
 				g = T_DIRT if (h % 17) == 0 else T_GRASS
 			_set_cell(_ground, x, y, g)
-	# North hills — thicker mountain shelf for overview silhouette
-	_fill_rect(_ground, Rect2i(0, 0, W, 10), T_HILL)
-	_fill_rect(_ground, Rect2i(0, 10, W, 6), T_HILL)
-	_fill_rect(_ground, Rect2i(0, 14, W, 5), T_CLIFF)
-	# Extra rocky peaks
-	for x in range(0, W, 7):
-		_fill_rect(_ground, Rect2i(x, 2, 4, 6), T_CLIFF)
-	for x in range(3, W, 11):
-		_fill_rect(_ground, Rect2i(x, 0, 3, 5), T_HILL)
+	# North hills — irregular shelf (not solid wall); leave waterfall corridor open
+	for x in range(W):
+		var hmax := 5 + ((x * 7) % 4)
+		if x >= 14 and x <= 38:
+			hmax = 2
+		elif x >= 66 and x <= 105:
+			hmax = 3 + (x % 3)
+		for y in range(hmax):
+			if ((x + y * 3) % 4) == 0 and y < 2:
+				continue
+			_set_cell(_ground, x, y, T_HILL)
+	# Soft mid-north hills only in patches (not full-width shelf)
+	for x in range(0, W, 3):
+		if x >= 14 and x <= 38:
+			continue
+		if ((x * 5) % 7) < 3:
+			_set_cell(_ground, x, 8 + (x % 3), T_HILL)
+			_set_cell(_ground, x + 1, 9 + (x % 2), T_HILL)
+	# Rocky accents sparse
+	for x in range(0, W, 13):
+		if x >= 14 and x <= 38:
+			continue
+		_fill_rect(_ground, Rect2i(x, 3, 2, 3), T_CLIFF)
 
 	# Z1 farm — rectangular crop beds + grass corridors (like reference), not one brown slab
 	# Animal pen stays grass (south of barns)
@@ -227,13 +250,14 @@ func _paint_base() -> void:
 		if (x + 5) % 6 == 0:
 			_set_cell(_ground, x, 64, T_PLAZA)
 	# Organic winding dirt paths (stronger wobble + more links)
-	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 85)
-	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 70)
-	_paint_path_winding(Vector2i(90, 55), Vector2i(155, 105), 75)
-	_paint_path_winding(Vector2i(48, 88), Vector2i(48, 30), 50)
-	_paint_path_winding(Vector2i(40, 90), Vector2i(82, 20), 55)  # farm → ruins
-	_paint_path_winding(Vector2i(110, 48), Vector2i(168, 100), 65)  # town → lake
-	_paint_path_winding(Vector2i(70, 70), Vector2i(130, 70), 40)  # mid crosslink
+	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 95)
+	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 80)
+	_paint_path_winding(Vector2i(90, 55), Vector2i(155, 105), 85)
+	_paint_path_winding(Vector2i(48, 88), Vector2i(48, 30), 55)
+	_paint_path_winding(Vector2i(40, 90), Vector2i(82, 20), 65)  # farm → ruins
+	_paint_path_winding(Vector2i(110, 48), Vector2i(168, 100), 75)  # town → lake
+	_paint_path_winding(Vector2i(70, 70), Vector2i(130, 70), 48)  # mid crosslink
+	_paint_path_winding(Vector2i(90, 48), Vector2i(28, 24), 70)  # town → waterfall
 
 	# Z4 rails + wider platform
 	for x in range(118, 186):
