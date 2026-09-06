@@ -169,6 +169,15 @@ func _props_fill() -> void:
 		_spr("res://assets/processed/prop_lamp.png", p, 5)
 
 func _bushes() -> void:
+	# Path fringe tufts (soften dirt edge brick-read along main corridors)
+	for p in [
+		Vector2(50, 88), Vector2(58, 80), Vector2(66, 70), Vector2(74, 60), Vector2(82, 54),
+		Vector2(88, 52), Vector2(96, 48), Vector2(104, 46), Vector2(112, 40), Vector2(120, 34),
+		Vector2(70, 68), Vector2(100, 58), Vector2(48, 50), Vector2(52, 40), Vector2(60, 34),
+		Vector2(108, 70), Vector2(118, 78), Vector2(130, 88), Vector2(140, 96), Vector2(150, 102),
+		Vector2(80, 42), Vector2(70, 36), Vector2(55, 30), Vector2(42, 26), Vector2(34, 24),
+	]:
+		_spr("res://assets/processed/prop_path_tuft.png", p, 3, false)
 	# Fill mid-map grass voids (overview "lived-in" density)
 	for x in range(48, 120, 4):
 		for y in range(70, 86, 4):

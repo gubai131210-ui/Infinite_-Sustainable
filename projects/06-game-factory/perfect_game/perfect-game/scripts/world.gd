@@ -125,7 +125,7 @@ func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
 			_set_cell(layer, x, y, tid)
 
 func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
-	## Soft organic dirt — stronger multi-frequency wobble + feathered edges
+	## Soft organic dirt — multi-frequency wobble + irregular fringe (less brick)
 	for i in range(steps + 1):
 		var t: float = float(i) / float(maxi(steps, 1))
 		var wobble_x: float = 7.2 * sin(t * PI * 4.2 + float(a.x) * 0.13)
@@ -142,15 +142,20 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 			_set_cell(_ground, x, y + 1, T_PATH)
 		if i % 4 == 0:
 			_set_cell(_ground, x + 1, y + 1, T_DIRT)
-		# Feathered soft edge (dirt / grass mix — less grid brick)
+		# Irregular fringe offsets (break 2x2 brick read)
+		var ox := (i % 3) - 1
+		var oy := ((i * 2) % 3) - 1
 		if i % 2 == 0:
-			_set_cell(_ground, x - 1, y, T_DIRT)
-			_set_cell(_ground, x + 2, y, T_DIRT)
+			_set_cell(_ground, x - 1 + ox, y + oy, T_DIRT)
+			_set_cell(_ground, x + 2 - ox, y, T_DIRT)
 		if i % 3 == 0:
-			_set_cell(_ground, x, y - 1, T_DIRT)
+			_set_cell(_ground, x + ox, y - 1, T_DIRT)
 		if i % 5 == 0:
-			_set_cell(_ground, x + 1, y - 1, T_GRASS3)
+			_set_cell(_ground, x + 1, y - 1 + oy, T_GRASS3)
 			_set_cell(_ground, x - 1, y + 1, T_GRASS2)
+		if i % 7 == 0:
+			_set_cell(_ground, x + 2, y + 1, T_GRASS4)
+			_set_cell(_ground, x - 1, y - 1, T_DIRT)
 
 func _paint_base() -> void:
 	# Full grass with noisy variants (avoid diagonal stripe modulo)
