@@ -130,7 +130,9 @@ func _on_new_day(_day: int) -> void:
 			# Rain bonus: chance to advance another stage
 			if raining and int(p["stage"]) < 3 and randf() < 0.45:
 				p["stage"] = mini(int(p["stage"]) + 1, 3)
-		p["wet"] = false
+		# Keep rain-wet look into morning; clear only on dry overnight
+		if not raining:
+			p["wet"] = false
 		plots[key] = p
 	_persist()
 	_refresh()

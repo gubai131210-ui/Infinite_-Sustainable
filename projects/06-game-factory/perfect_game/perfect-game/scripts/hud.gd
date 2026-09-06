@@ -18,6 +18,15 @@ func _ready() -> void:
 	quest.text = QuestLog.current_hint()
 	_clock_line = TimeClock.clock_text()
 	_on_gold(GameBus.gold)
+	call_deferred("_bind_weather")
+
+func _bind_weather() -> void:
+	var w := get_node_or_null("/root/Weather")
+	if w != null and not w.weather_changed.is_connected(_on_weather):
+		w.weather_changed.connect(_on_weather)
+
+func _on_weather(_weather_id: String) -> void:
+	_clock_line = TimeClock.clock_text()
 
 func _on_toast(text: String) -> void:
 	toast_label.text = text
