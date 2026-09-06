@@ -186,37 +186,42 @@ func _paint_base() -> void:
 	_paint_path_winding(Vector2i(90, 55), Vector2i(155, 105), 60)
 	_paint_path_winding(Vector2i(48, 88), Vector2i(48, 30), 40)
 
-	# Z4 rails
-	for x in range(120, 184):
+	# Z4 rails + wider platform
+	for x in range(118, 186):
+		_set_cell(_ground, x, 18, T_RAIL)
+		_set_cell(_ground, x, 19, T_RAIL)
 		_set_cell(_ground, x, 20, T_RAIL)
-		_set_cell(_ground, x, 21, T_RAIL)
-	_fill_rect(_ground, Rect2i(140, 14, 24, 14), T_PLAZA)
+	_fill_rect(_ground, Rect2i(136, 12, 36, 16), T_PLAZA)
+	# Tunnel cliff mouth on east end of rails
+	_fill_rect(_ground, Rect2i(178, 10, 10, 16), T_CLIFF)
+	_fill_rect(_ground, Rect2i(180, 14, 6, 8), T_HILL)
 
-	# Z5 terraces: wider cliff faces + irregular ledge widths
+	# Z5 terraces — tall cliff faces (not thin gray stair strips)
+	# Pattern per band: farm ledge (3) + stone cliff drop (5) + stairs only in 4-wide columns
 	for band in range(5):
-		var y0 := 40 + band * 8
+		var y0 := 38 + band * 10
 		var inset := (band % 3) - 1
-		var ledge_w := 38 + (band % 3) * 2
-		_fill_rect(_ground, Rect2i(122 + inset, y0 + 4, ledge_w + 4, 4), T_CLIFF)
-		# jagged cliff top edge
-		for x in range(122 + inset, 122 + inset + ledge_w + 4):
-			if ((x + band) % 5) == 0:
-				_set_cell(_ground, x, y0 + 3, T_CLIFF)
-			if ((x + band * 2) % 7) == 0:
-				_set_cell(_ground, x, y0 + 8, T_HILL)
-		_fill_rect(_ground, Rect2i(124 + inset, y0, ledge_w, 4), T_FARM)
-		for x in range(126 + inset, 124 + inset + ledge_w - 2, 2):
+		var x0 := 122 + inset
+		var w := 42
+		# farmable ledge
+		_fill_rect(_ground, Rect2i(x0 + 2, y0, w - 2, 3), T_FARM)
+		for x in range(x0 + 4, x0 + w - 2, 2):
 			_set_cell(_ground, x, y0 + 1, T_DIRT)
-		for x in range(132, 138):
-			_set_cell(_ground, x, y0 + 4, T_STAIRS)
-			_set_cell(_ground, x, y0 + 5, T_STAIRS)
-			_set_cell(_ground, x, y0 + 6, T_STAIRS)
-			_set_cell(_ground, x, y0 + 7, T_STAIRS)
+		# thick rocky retaining wall / cliff face
+		_fill_rect(_ground, Rect2i(x0, y0 + 3, w, 5), T_CLIFF)
+		for x in range(x0, x0 + w):
+			if ((x + band * 3) % 4) == 0:
+				_set_cell(_ground, x, y0 + 3, T_HILL)
+			if ((x + band) % 5) == 0:
+				_set_cell(_ground, x, y0 + 7, T_HILL)
+		# narrow stair cuts only (do not paint stairs across whole band)
+		for x in range(134, 138):
+			for yy in range(y0 + 3, y0 + 8):
+				_set_cell(_ground, x, yy, T_STAIRS)
 		if band % 2 == 1:
-			for x in range(150, 156):
-				_set_cell(_ground, x, y0 + 4, T_STAIRS)
-				_set_cell(_ground, x, y0 + 5, T_STAIRS)
-				_set_cell(_ground, x, y0 + 6, T_STAIRS)
+			for x in range(152, 156):
+				for yy in range(y0 + 3, y0 + 8):
+					_set_cell(_ground, x, yy, T_STAIRS)
 
 	# Z6 lake + soft shore ring (sand + water-edge tiles)
 	for y in range(86, 122):

@@ -68,16 +68,21 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(112, 48), 8, 1.15)
 
 func _station() -> void:
-	_spr("res://assets/processed/prop_train.png", Vector2(150, 20), 7, 1.35)
-	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(142, 14), 8, 1.25)
-	_spr("res://assets/processed/prop_stall.png", Vector2(158, 16), 6, 1.1)
-	_spr("res://assets/processed/prop_fence.png", Vector2(138, 18), 4)
-	_spr("res://assets/processed/prop_fence.png", Vector2(162, 18), 4)
+	_spr("res://assets/processed/prop_station.png", Vector2(148, 14), 8, 1.15)
+	_spr("res://assets/processed/prop_canopy.png", Vector2(152, 18), 7, 1.2)
+	_spr("res://assets/processed/prop_train.png", Vector2(155, 20), 7, 1.4)
+	_spr("res://assets/processed/prop_tunnel.png", Vector2(182, 16), 9, 1.3)
+	_spr("res://assets/processed/prop_stall.png", Vector2(138, 16), 6, 1.1)
+	_spr("res://assets/processed/prop_fence.png", Vector2(130, 18), 4)
+	_spr("res://assets/processed/prop_fence.png", Vector2(168, 18), 4)
 
 func _terrace() -> void:
-	_spr("res://assets/processed/prop_stall.png", Vector2(148, 48), 5, 1.1)
-	_spr("res://assets/processed/prop_fence.png", Vector2(128, 52), 4)
-	_spr("res://assets/processed/prop_fence.png", Vector2(158, 52), 4)
+	_spr("res://assets/processed/prop_stall.png", Vector2(148, 42), 5, 1.1)
+	for band in range(5):
+		var y := 42 + band * 10
+		_spr("res://assets/processed/prop_stonewall.png", Vector2(130, y), 5, 1.2)
+		_spr("res://assets/processed/prop_stonewall.png", Vector2(145, y), 5, 1.2)
+		_spr("res://assets/processed/prop_stonewall.png", Vector2(160, y), 5, 1.2)
 
 func _lake() -> void:
 	_spr("res://assets/processed/prop_lighthouse.png", Vector2(173, 103), 10, 1.45)

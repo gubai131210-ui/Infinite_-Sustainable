@@ -29,17 +29,17 @@ func _capture_goldens(player: Node2D) -> void:
 		["01_farm", Vector2(40 * 16, 98 * 16)],
 		["02_river", Vector2(28 * 16, 28 * 16)],
 		["03_town", Vector2(90 * 16, 48 * 16)],
-		["04_station", Vector2(150 * 16, 20 * 16)],
-		["05_terrace", Vector2(140 * 16, 52 * 16)],
+		["04_station", Vector2(155 * 16, 18 * 16)],
+		["05_terrace", Vector2(142 * 16, 48 * 16)],
 		["06_lake", Vector2(168 * 16, 105 * 16)],
-		["00_overview", Vector2(96 * 16, 68 * 16)],
+		["00_overview", Vector2(100 * 16, 64 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
 	for s in shots:
 		player.global_position = s[1]
 		# Overview needs pull-back to show six-zone topology
 		if str(s[0]) == "00_overview":
-			cam.zoom = Vector2(0.45, 0.45)
+			cam.zoom = Vector2(0.38, 0.38)
 		else:
 			cam.zoom = Vector2(2, 2)
 		await get_tree().process_frame

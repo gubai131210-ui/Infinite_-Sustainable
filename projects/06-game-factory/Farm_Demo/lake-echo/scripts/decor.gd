@@ -72,12 +72,13 @@ func _spr_atlas(path: String, tile: Vector2, z: int = 5, frame: int = 0, flip: b
 
 func _trees() -> void:
 	var spots: Array[Vector2] = []
-	# Dense NW pine belt above waterfall
-	for x in range(2, 55, 2):
-		for y in range(6, 20, 2):
+	# Dense NW pine belt (video forest above waterfall)
+	for x in range(2, 60, 2):
+		for y in range(2, 24, 2):
 			spots.append(Vector2(x + (y % 2), y + (x % 2)))
-	for x in range(55, 110, 3):
-		spots.append(Vector2(x, 10 + (x % 4)))
+	for x in range(60, 120, 2):
+		for y in range(4, 18, 2):
+			spots.append(Vector2(x + (y % 2), y))
 	# Farm edges + river corridor
 	for p in [
 		Vector2(10, 70), Vector2(14, 74), Vector2(8, 88), Vector2(12, 100),
@@ -168,9 +169,9 @@ func _crops_on_fields() -> void:
 			_spr(crops[i % crops.size()], Vector2(x, y), 4)
 			i += 1
 	for band in range(5):
-		var y0 := 42 + band * 8
+		var y0 := 39 + band * 10
 		for x in range(128, 158, 2):
-			_spr(crops[i % crops.size()], Vector2(x, y0 + 1), 4)
+			_spr(crops[i % crops.size()], Vector2(x, y0), 4)
 			i += 1
 
 func _animals() -> void:
