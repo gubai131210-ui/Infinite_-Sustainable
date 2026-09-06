@@ -52,37 +52,21 @@ func _ready() -> void:
 	# zone names shown via wood placards in decor.gd
 
 var _water_t: float = 0.0
-var _water_anim_t: float = 0.0
-var _water_frame: int = 0
 var _water_cells: Array[Vector2i] = []
 
 func _process(delta: float) -> void:
 	if _water == null:
 		return
 	_water_t += delta
-	_water_anim_t += delta
-	# Gentle shimmer — modulate water layer
-	var pulse := 0.92 + 0.08 * sin(_water_t * 2.1)
-	_water.modulate = Color(pulse, pulse, 1.0, 1.0)
-	# Animated water frames (alternate T_WATER / T_DEEP on checker)
-	if _water_anim_t >= 0.45:
-		_water_anim_t = 0.0
-		_water_frame = 1 - _water_frame
-		_apply_water_frame()
+	# Soft shimmer only — avoid checkerboard tile swap (reads as broken water)
+	var pulse := 0.90 + 0.10 * sin(_water_t * 2.1)
+	var cool := 0.95 + 0.05 * sin(_water_t * 1.3 + 1.0)
+	_water.modulate = Color(pulse * cool, pulse, 1.05, 1.0)
 
 func _cache_water_cells() -> void:
 	_water_cells.clear()
 	for cell in _water.get_used_cells():
 		_water_cells.append(cell)
-
-func _apply_water_frame() -> void:
-	if _water_cells.is_empty():
-		return
-	for cell in _water_cells:
-		var tid := T_WATER
-		if ((cell.x + cell.y + _water_frame) % 2) == 0:
-			tid = T_DEEP
-		_set_cell(_water, cell.x, cell.y, tid)
 func _spawn_zone_labels() -> void:
 	var markers := $ZoneMarkers
 	var labels := {

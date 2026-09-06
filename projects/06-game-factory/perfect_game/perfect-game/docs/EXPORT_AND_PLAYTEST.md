@@ -13,7 +13,10 @@
 3. 项目 → 导出 → **Windows Desktop**（`export_presets.cfg` → `build/Oakhaven.exe`）  
 4. 导出后本地双击 `build/Oakhaven.exe` 冒烟  
 
-> 2026-09-06 Agent 实测：本机未装导出模板，`--export-release` 失败。需你在编辑器下载模板后再导出。
+> 2026-09-06 Agent 实测：  
+> 1) 曾因缺导出模板导致 `--export-release` 失败。  
+> 2) 尝试下载 `Godot_v4.6.1-stable_mono_export_templates.tpz`（≈1.08GB）成功，但 **C 盘空间不足**，无法解压安装；已删除 tpz 释放空间。  
+> **请你本机**：先腾出 ≥3GB，再在 Godot「管理导出模板」下载 mono 4.6.1，然后导出到 `build/Oakhaven.exe`。
 
 itch 文案见 [`ITCH_PAGE_DRAFT_CN.md`](ITCH_PAGE_DRAFT_CN.md)。
 

@@ -58,27 +58,48 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## Distant skyline — oversized so overview zoom still reads peaks
-	for x in range(-2, 196, 6):
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 2), 0, 1.85)
-	for x in range(0, 192, 4):
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 8), 1, 1.45)
-	for x in range(2, 190, 6):
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 12), 1, 1.2)
+	## Distant skyline + cliff shelf (readable at overview zoom)
+	for x in range(-4, 200, 5):
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 0), 0, 2.1)
+	for x in range(0, 192, 3):
+		_spr("res://assets/processed/prop_cliff.png", Vector2(x, 6), 1, 1.35)
+	for x in range(1, 191, 4):
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 10), 1, 1.5)
+	for x in range(2, 190, 5):
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 14), 2, 1.15)
 
 func _ruins() -> void:
-	## Denser ancient stone cluster north of plaza (overview ruins)
-	_spr("res://assets/processed/prop_ruins.png", Vector2(70, 18), 7, 1.25, Vector2(48, 24))
-	_spr("res://assets/processed/prop_ruins.png", Vector2(88, 16), 7, 1.05, Vector2(40, 20))
-	_spr("res://assets/processed/prop_ruins.png", Vector2(78, 14), 7, 0.9, Vector2(36, 18))
-	_spr("res://assets/processed/prop_ruins.png", Vector2(96, 20), 7, 0.85, Vector2(32, 16))
-	_spr("res://assets/processed/prop_ruins.png", Vector2(62, 20), 7, 0.8, Vector2(30, 16))
-	_spr("res://assets/processed/prop_stonewall.png", Vector2(78, 22), 6, 1.2)
-	_spr("res://assets/processed/prop_stonewall.png", Vector2(84, 24), 6, 1.0)
-	_spr("res://assets/processed/prop_stonewall.png", Vector2(72, 24), 6, 1.0)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(66, 22), 5, 1.1)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(92, 22), 5, 1.0)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(80, 26), 5, 0.9)
+	## Nested mossy arches in forest north of plaza
+	var arches := [
+		Vector2(68, 14), Vector2(76, 12), Vector2(84, 14), Vector2(92, 12),
+		Vector2(72, 18), Vector2(88, 18), Vector2(80, 16), Vector2(96, 16),
+		Vector2(64, 20), Vector2(100, 20), Vector2(78, 20), Vector2(86, 22),
+	]
+	for i in range(arches.size()):
+		var p: Vector2 = arches[i]
+		var path := "res://assets/processed/prop_ruin_arch.png" if (i % 2) == 0 else "res://assets/processed/prop_ruins.png"
+		_spr(path, p, 7, 0.85 + float(i % 3) * 0.12, Vector2(36, 18))
+	for x in range(66, 102, 4):
+		_spr("res://assets/processed/prop_stonewall.png", Vector2(x, 24), 6, 1.05)
+	for p in [Vector2(70, 22), Vector2(82, 26), Vector2(94, 22), Vector2(76, 26), Vector2(90, 24)]:
+		_spr("res://assets/processed/prop_rocks.png", p, 5, 1.0)
+
+func _terrace() -> void:
+	## Layered ledges with crops (not only retaining walls)
+	for band in range(5):
+		var y := 42 + band * 10
+		for x in range(126, 164, 5):
+			_spr("res://assets/processed/prop_stonewall.png", Vector2(x, y + 4), 5, 1.1)
+		for x in range(128, 162, 3):
+			var crop := "res://assets/processed/crop_%s_2.png" % ["wheat", "greens", "tomato", "radish"][band % 4]
+			_spr(crop, Vector2(x, y + 1), 4, 1.0)
+		_spr("res://assets/processed/prop_planter.png", Vector2(130 + band * 6, y + 2), 5, 0.9)
+	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(168, 48), 8, 1.0, Vector2(40, 30))
+	_spr("res://assets/processed/prop_townhouse_green.png", Vector2(176, 56), 8, 0.95, Vector2(36, 28))
+	_spr("res://assets/processed/prop_farmhouse.png", Vector2(166, 62), 8, 0.95, Vector2(40, 26))
+	_spr("res://assets/processed/prop_flowerbed.png", Vector2(170, 52), 4)
+	_spr("res://assets/processed/prop_fence.png", Vector2(164, 44), 4)
+	_spr("res://assets/processed/prop_fence.png", Vector2(172, 44), 4)
 
 func _process(delta: float) -> void:
 	# Idle train rock + slow crawl along platform
@@ -180,16 +201,6 @@ func _attach_train_steam(train: Node2D) -> void:
 	p.color = Color(0.9, 0.9, 0.92, 0.5)
 	p.z_index = 12
 	train.add_child(p)
-
-func _terrace() -> void:
-	for band in range(5):
-		var y := 42 + band * 10
-		for x in range(126, 164, 6):
-			_spr("res://assets/processed/prop_stonewall.png", Vector2(x, y + 3), 5, 1.15)
-	_spr("res://assets/processed/prop_townhouse_brown.png", Vector2(168, 48), 8, 1.0, Vector2(40, 30))
-	_spr("res://assets/processed/prop_townhouse_green.png", Vector2(176, 56), 8, 0.95, Vector2(36, 28))
-	_spr("res://assets/processed/prop_farmhouse.png", Vector2(166, 62), 8, 0.95, Vector2(40, 26))
-	_spr("res://assets/processed/prop_flowerbed.png", Vector2(170, 52), 4)
 
 func _lake() -> void:
 	var lh := _spr("res://assets/processed/prop_lighthouse.png", Vector2(174, 100), 11, 1.25, Vector2(30, 72))
