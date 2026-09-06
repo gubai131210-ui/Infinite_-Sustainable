@@ -54,10 +54,10 @@ func _spawn_zone_labels() -> void:
 		"梯田 Z5": Vector2(140, 55),
 		"湖·灯塔 Z6": Vector2(170, 108),
 	}
-	for name in labels.keys():
+	for label_text in labels.keys():
 		var lab := Label.new()
-		lab.text = str(name)
-		lab.position = labels[name] * TS
+		lab.text = str(label_text)
+		lab.position = labels[label_text] * TS
 		lab.z_index = 30
 		lab.add_theme_color_override("font_color", Color(1, 1, 1))
 		lab.add_theme_color_override("font_outline_color", Color(0, 0, 0))

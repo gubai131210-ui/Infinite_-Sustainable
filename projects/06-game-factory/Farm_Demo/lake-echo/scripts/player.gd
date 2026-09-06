@@ -1,17 +1,23 @@
 extends CharacterBody2D
-## Player — atlas rows: down, left, right, up (48px).
+## Player — atlas rows: down, left, right, up (48px). Farm tools for Z1.
 
 @export var speed: float = 130.0
+@export var tile_size: int = 16
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
 @onready var camera: Camera2D = $Camera2D
+
+enum Tool { HOE, CAN, AXE, ROD }
 
 const CELL := 48
 const DIRS := ["down", "left", "right", "up"]
 
+var tool: Tool = Tool.HOE
 var facing: Vector2 = Vector2.DOWN
 var _facing_name: String = "down"
 var _prompt: String = ""
 var _interact_cb: Callable = Callable()
+var _farm: Node = null
+var _busy: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
@@ -51,6 +57,9 @@ func _dir_name_from_vec(v: Vector2) -> String:
 		return "left" if v.x < 0.0 else "right"
 	return "up" if v.y < 0.0 else "down"
 
+func set_farm(farm: Node) -> void:
+	_farm = farm
+
 func set_interact_prompt(text: String, cb: Callable = Callable()) -> void:
 	_prompt = text
 	_interact_cb = cb
@@ -68,11 +77,16 @@ func try_interact() -> bool:
 		return true
 	return false
 
-func _physics_process(_delta: float) -> void:
+func target_cell() -> Vector2i:
+	var world := global_position + facing * float(tile_size)
+	return Vector2i(floori(world.x / tile_size), floori(world.y / tile_size))
+
+func _physics_process(delta: float) -> void:
 	if GameBus.inventory_open or GameBus.dialogue_open:
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
+	_busy = maxf(_busy - delta, 0.0)
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if dir.length() > 0.1:
 		facing = dir.normalized()
@@ -89,8 +103,57 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 8.0, float(192 * 16) - 8.0)
 	global_position.y = clampf(global_position.y, 8.0, float(128 * 16) - 8.0)
+
+	if Input.is_action_just_pressed("tool_1"):
+		tool = Tool.HOE
+		GameBus.show_toast("工具：锄头")
+	elif Input.is_action_just_pressed("tool_2"):
+		tool = Tool.CAN
+		GameBus.show_toast("工具：水壶")
+	elif Input.is_action_just_pressed("tool_3"):
+		tool = Tool.AXE
+		GameBus.show_toast("工具：斧头")
+	elif Input.is_action_just_pressed("tool_4"):
+		tool = Tool.ROD
+		GameBus.show_toast("工具：钓竿")
+
 	if Input.is_action_just_pressed("interact"):
-		try_interact()
+		if not try_interact():
+			_try_farm_interact()
+
+	if Input.is_action_just_pressed("use_tool") and _busy <= 0.0:
+		_use_tool()
+
 	if Input.is_action_just_pressed("inventory"):
 		GameBus.inventory_open = not GameBus.inventory_open
-		GameBus.show_toast("背包暂未接入 UI（Wave1+）" if GameBus.inventory_open else "关闭背包")
+		GameBus.show_toast("背包开" if GameBus.inventory_open else "背包关")
+
+func _use_tool() -> void:
+	_busy = 0.18
+	if _farm == null:
+		return
+	var cell := target_cell()
+	match tool:
+		Tool.HOE:
+			_farm.call("hoe", cell)
+		Tool.CAN:
+			if _farm.call("water", cell):
+				GameBus.show_toast("浇水了")
+		Tool.AXE:
+			GameBus.show_toast("暂无枯枝")
+		Tool.ROD:
+			GameBus.show_toast("去河边按 E 钓鱼（Wave2）")
+
+func _try_farm_interact() -> void:
+	if _farm == null:
+		return
+	var cell := target_cell()
+	var got: Variant = _farm.call("harvest", cell)
+	if got != null and str(got) != "":
+		Inventory.add(str(got), 1)
+		GameBus.show_toast("收获：" + ItemDB.display_name(str(got)))
+		return
+	var seed_id := Inventory.selected_seed
+	if Inventory.has(seed_id) and _farm.call("plant", cell, seed_id):
+		Inventory.remove(seed_id, 1)
+		GameBus.show_toast("播种：" + ItemDB.display_name(seed_id))
