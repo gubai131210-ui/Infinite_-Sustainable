@@ -1,0 +1,16 @@
+{
+  "tile_size": 64,
+  "names": [
+    "grass",
+    "path",
+    "water",
+    "gw_n",
+    "gw_s",
+    "gw_e",
+    "gw_w",
+    "gp_n",
+    "gp_s",
+    "gp_e",
+    "gp_w"
+  ]
+}
