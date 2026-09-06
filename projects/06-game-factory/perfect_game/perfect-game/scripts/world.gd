@@ -171,9 +171,15 @@ func _paint_base() -> void:
 			elif m == 8:
 				g = T_DIRT if (h % 17) == 0 else T_GRASS
 			_set_cell(_ground, x, y, g)
-	# North hills
-	_fill_rect(_ground, Rect2i(0, 0, W, 14), T_HILL)
-	_fill_rect(_ground, Rect2i(0, 14, W, 4), T_CLIFF)
+	# North hills — thicker mountain shelf for overview silhouette
+	_fill_rect(_ground, Rect2i(0, 0, W, 10), T_HILL)
+	_fill_rect(_ground, Rect2i(0, 10, W, 6), T_HILL)
+	_fill_rect(_ground, Rect2i(0, 14, W, 5), T_CLIFF)
+	# Extra rocky peaks
+	for x in range(0, W, 7):
+		_fill_rect(_ground, Rect2i(x, 2, 4, 6), T_CLIFF)
+	for x in range(3, W, 11):
+		_fill_rect(_ground, Rect2i(x, 0, 3, 5), T_HILL)
 
 	# Z1 farm — rectangular crop beds + grass corridors (like reference), not one brown slab
 	# Animal pen stays grass (south of barns)

@@ -82,40 +82,60 @@ func _spr_atlas(path: String, tile: Vector2, z: int = 5, frame: int = 0, flip: b
 
 func _trees() -> void:
 	var spots: Array[Vector2] = []
-	# Dense NW pine belt (video forest above waterfall)
-	for x in range(2, 60, 2):
-		for y in range(2, 24, 2):
-			spots.append(Vector2(x + (y % 2), y + (x % 2)))
-	for x in range(60, 120, 2):
-		for y in range(4, 18, 2):
+	# Dense NW + N pine/deciduous belt (leave y<=7 clearer for mountain silhouette)
+	for x in range(1, 70, 1):
+		for y in range(8, 26, 1):
+			if ((x * 3 + y * 5) % 3) == 0:
+				continue
+			spots.append(Vector2(x + (y % 2) * 0.5, y + (x % 2) * 0.5))
+	for x in range(70, 130, 1):
+		for y in range(8, 20, 1):
+			if ((x + y * 2) % 4) == 0:
+				continue
 			spots.append(Vector2(x + (y % 2), y))
+	# Ruins grove (north of town)
+	for x in range(62, 100, 2):
+		for y in range(10, 26, 2):
+			spots.append(Vector2(x + (y % 2), y + (x % 2)))
 	# Farm edges + river corridor (choppable for axe wood)
 	var farm_chop: Array[Vector2] = [
 		Vector2(10, 70), Vector2(14, 74), Vector2(8, 88), Vector2(12, 100),
 		Vector2(8, 110), Vector2(58, 70), Vector2(62, 78), Vector2(60, 90),
 		Vector2(64, 100), Vector2(58, 110), Vector2(20, 66), Vector2(30, 68),
 		Vector2(42, 66), Vector2(52, 68), Vector2(16, 62), Vector2(56, 62),
+		Vector2(6, 80), Vector2(18, 86), Vector2(54, 86), Vector2(66, 94),
 	]
 	for p in farm_chop:
 		spots.append(p)
-	for y in range(26, 95, 4):
-		spots.append(Vector2(12 + (y % 4), y))
-		spots.append(Vector2(42 + (y % 3), y + 1))
+	# River west bank denser
+	for y in range(24, 100, 2):
+		spots.append(Vector2(8 + (y % 3), y))
+		spots.append(Vector2(14 + (y % 2), y + 1))
+		spots.append(Vector2(44 + (y % 4), y))
 	# Town fringe dense
 	for p in [
 		Vector2(66, 28), Vector2(66, 34), Vector2(66, 40), Vector2(66, 48), Vector2(66, 55), Vector2(66, 68),
 		Vector2(116, 28), Vector2(116, 34), Vector2(116, 40), Vector2(116, 48), Vector2(116, 55), Vector2(116, 68),
 		Vector2(78, 26), Vector2(102, 26), Vector2(78, 70), Vector2(102, 70),
 		Vector2(70, 30), Vector2(112, 30), Vector2(70, 66), Vector2(112, 66),
+		Vector2(64, 44), Vector2(118, 44), Vector2(64, 60), Vector2(118, 60),
 	]:
 		spots.append(p)
-	# Station / terrace / lake rings
+	# Station / terrace / lake rings — denser canopy like reference
+	for x in range(118, 190, 2):
+		for y in range(6, 14, 2):
+			spots.append(Vector2(x + (y % 2), y))
+	for x in range(118, 188, 2):
+		for y in [86, 90, 94, 98, 112, 116, 120]:
+			if ((x + y) % 3) != 0:
+				spots.append(Vector2(x + (y % 2), y))
 	for p in [
 		Vector2(125, 12), Vector2(135, 10), Vector2(165, 12), Vector2(175, 14),
 		Vector2(180, 28), Vector2(120, 40), Vector2(168, 45), Vector2(175, 55),
 		Vector2(120, 88), Vector2(125, 100), Vector2(128, 115), Vector2(180, 90),
 		Vector2(185, 105), Vector2(180, 118), Vector2(140, 120), Vector2(155, 122),
 		Vector2(130, 85), Vector2(175, 85), Vector2(185, 95), Vector2(122, 105),
+		Vector2(148, 88), Vector2(158, 92), Vector2(170, 118), Vector2(188, 110),
 	]:
 		spots.append(p)
 	for i in range(spots.size()):
@@ -147,12 +167,17 @@ func _props_fill() -> void:
 		_spr("res://assets/processed/prop_lamp.png", p, 5)
 
 func _bushes() -> void:
-	if not ResourceLoader.exists("res://assets/processed/bush.png"):
-		return
+	# Fill mid-map grass voids (overview "lived-in" density)
+	for x in range(48, 120, 4):
+		for y in range(70, 86, 4):
+			if ((x + y) % 3) != 0:
+				_spr("res://assets/processed/bush.png", Vector2(x + (y % 2), y), 4)
 	for p in [
 		Vector2(24, 82), Vector2(44, 84), Vector2(86, 46), Vector2(94, 52),
 		Vector2(132, 55), Vector2(150, 60), Vector2(168, 95), Vector2(155, 100),
 		Vector2(80, 48), Vector2(100, 48), Vector2(140, 48), Vector2(148, 72),
+		Vector2(56, 72), Vector2(64, 78), Vector2(110, 76), Vector2(118, 80),
+		Vector2(100, 88), Vector2(72, 84), Vector2(128, 70), Vector2(136, 78),
 	]:
 		_spr("res://assets/processed/bush.png", p, 4)
 

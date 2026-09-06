@@ -48,6 +48,7 @@ func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll:
 	return root
 
 func _place() -> void:
+	_mountains()
 	_farm()
 	_river()
 	_ruins()
@@ -55,6 +56,29 @@ func _place() -> void:
 	_station()
 	_terrace()
 	_lake()
+
+func _mountains() -> void:
+	## Distant skyline — oversized so overview zoom still reads peaks
+	for x in range(-2, 196, 6):
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 2), 0, 1.85)
+	for x in range(0, 192, 4):
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 8), 1, 1.45)
+	for x in range(2, 190, 6):
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 12), 1, 1.2)
+
+func _ruins() -> void:
+	## Denser ancient stone cluster north of plaza (overview ruins)
+	_spr("res://assets/processed/prop_ruins.png", Vector2(70, 18), 7, 1.25, Vector2(48, 24))
+	_spr("res://assets/processed/prop_ruins.png", Vector2(88, 16), 7, 1.05, Vector2(40, 20))
+	_spr("res://assets/processed/prop_ruins.png", Vector2(78, 14), 7, 0.9, Vector2(36, 18))
+	_spr("res://assets/processed/prop_ruins.png", Vector2(96, 20), 7, 0.85, Vector2(32, 16))
+	_spr("res://assets/processed/prop_ruins.png", Vector2(62, 20), 7, 0.8, Vector2(30, 16))
+	_spr("res://assets/processed/prop_stonewall.png", Vector2(78, 22), 6, 1.2)
+	_spr("res://assets/processed/prop_stonewall.png", Vector2(84, 24), 6, 1.0)
+	_spr("res://assets/processed/prop_stonewall.png", Vector2(72, 24), 6, 1.0)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(66, 22), 5, 1.1)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(92, 22), 5, 1.0)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(80, 26), 5, 0.9)
 
 func _process(delta: float) -> void:
 	# Idle train rock + slow crawl along platform
@@ -88,11 +112,6 @@ func _river() -> void:
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)
-
-func _ruins() -> void:
-	_spr("res://assets/processed/prop_ruins.png", Vector2(70, 18), 7, 1.15, Vector2(48, 24))
-	_spr("res://assets/processed/prop_ruins.png", Vector2(88, 16), 7, 0.95, Vector2(40, 20))
-	_spr("res://assets/processed/prop_stonewall.png", Vector2(78, 22), 6, 1.2)
 
 func _town() -> void:
 	_spr("res://assets/processed/prop_statue.png", Vector2(90, 48), 7, 1.2, Vector2(18, 22))

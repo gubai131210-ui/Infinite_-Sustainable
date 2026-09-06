@@ -8,9 +8,12 @@
 ## Windows 导出步骤
 
 1. Godot 4.6 打开本工程  
-2. 项目 → 导出 → **Windows Desktop**（`export_presets.cfg` → `build/Oakhaven.exe`）  
-3. 缺模板则先下载对应版本导出模板  
+2. **先安装导出模板**（编辑器 → 管理导出模板 → 下载与引擎同版本 `4.6.1.stable.mono`）  
+   - 缺模板时 CLI 会报：`export_templates/4.6.1.stable.mono/windows_release_x86_64.exe` 不存在  
+3. 项目 → 导出 → **Windows Desktop**（`export_presets.cfg` → `build/Oakhaven.exe`）  
 4. 导出后本地双击 `build/Oakhaven.exe` 冒烟  
+
+> 2026-09-06 Agent 实测：本机未装导出模板，`--export-release` 失败。需你在编辑器下载模板后再导出。
 
 itch 文案见 [`ITCH_PAGE_DRAFT_CN.md`](ITCH_PAGE_DRAFT_CN.md)。
 
