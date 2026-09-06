@@ -11,6 +11,7 @@ var grid: Array = []  # row-major int
 var plots: Dictionary = {}  # Vector2i -> {crop, stage, waters_done, watered_now}
 var stump_cells: Dictionary = {}  # Vector2i -> true (chop once)
 var textures: Dictionary = {}
+var edge_tex: Dictionary = {}  # "gw_n" etc.
 var crop_tex: Dictionary = {}
 var _ground: Node2D
 var _crops_layer: Node2D
@@ -44,6 +45,20 @@ func _load_textures() -> void:
 		T.WATER: load("res://assets/processed/tile_water.png"),
 		T.PATH: load("res://assets/processed/tile_path.png"),
 		T.HILL: load("res://assets/processed/tile_hill.png"),
+	}
+	edge_tex = {
+		"gd_n": load("res://assets/processed/tile_gd_n.png"),
+		"gd_e": load("res://assets/processed/tile_gd_e.png"),
+		"gd_s": load("res://assets/processed/tile_gd_s.png"),
+		"gd_w": load("res://assets/processed/tile_gd_w.png"),
+		"gw_n": load("res://assets/processed/tile_gw_n.png"),
+		"gw_e": load("res://assets/processed/tile_gw_e.png"),
+		"gw_s": load("res://assets/processed/tile_gw_s.png"),
+		"gw_w": load("res://assets/processed/tile_gw_w.png"),
+		"gw_ne": load("res://assets/processed/tile_gw_ne.png"),
+		"gw_nw": load("res://assets/processed/tile_gw_nw.png"),
+		"gw_se": load("res://assets/processed/tile_gw_se.png"),
+		"gw_sw": load("res://assets/processed/tile_gw_sw.png"),
 	}
 	for crop in ItemDB.CROPS.keys():
 		crop_tex[crop] = []
@@ -115,18 +130,54 @@ func _paint_ground() -> void:
 	for y in range(H):
 		for x in range(W):
 			var t: int = get_tile(x, y)
-			# plot overlays
 			var key := Vector2i(x, y)
 			if plots.has(key):
 				var p: Dictionary = plots[key]
 				t = T.WATERED if bool(p.get("watered_now", false)) else T.TILLED
 			var spr := Sprite2D.new()
-			spr.texture = textures[t]
+			spr.texture = _display_tex(x, y, t)
 			spr.centered = false
 			spr.position = Vector2(x * TS, y * TS)
 			spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			_ground.add_child(spr)
 	_refresh_crop_sprites()
+
+func _display_tex(x: int, y: int, t: int) -> Texture2D:
+	## Prefer edge/corner tiles when grass meets water or dirt.
+	if t == T.GRASS:
+		var n_water := get_tile(x, y - 1) == T.WATER
+		var s_water := get_tile(x, y + 1) == T.WATER
+		var e_water := get_tile(x + 1, y) == T.WATER
+		var w_water := get_tile(x - 1, y) == T.WATER
+		if n_water and e_water and edge_tex.has("gw_ne"):
+			return edge_tex["gw_ne"]
+		if n_water and w_water and edge_tex.has("gw_nw"):
+			return edge_tex["gw_nw"]
+		if s_water and e_water and edge_tex.has("gw_se"):
+			return edge_tex["gw_se"]
+		if s_water and w_water and edge_tex.has("gw_sw"):
+			return edge_tex["gw_sw"]
+		if n_water and edge_tex.has("gw_n"):
+			return edge_tex["gw_n"]
+		if s_water and edge_tex.has("gw_s"):
+			return edge_tex["gw_s"]
+		if e_water and edge_tex.has("gw_e"):
+			return edge_tex["gw_e"]
+		if w_water and edge_tex.has("gw_w"):
+			return edge_tex["gw_w"]
+		var n_dirt := get_tile(x, y - 1) == T.DIRT or get_tile(x, y - 1) == T.FARMLAND
+		var s_dirt := get_tile(x, y + 1) == T.DIRT or get_tile(x, y + 1) == T.FARMLAND
+		var e_dirt := get_tile(x + 1, y) == T.DIRT or get_tile(x + 1, y) == T.FARMLAND
+		var w_dirt := get_tile(x - 1, y) == T.DIRT or get_tile(x - 1, y) == T.FARMLAND
+		if n_dirt and edge_tex.has("gd_n"):
+			return edge_tex["gd_n"]
+		if s_dirt and edge_tex.has("gd_s"):
+			return edge_tex["gd_s"]
+		if e_dirt and edge_tex.has("gd_e"):
+			return edge_tex["gd_e"]
+		if w_dirt and edge_tex.has("gd_w"):
+			return edge_tex["gd_w"]
+	return textures[t]
 
 func _refresh_crop_sprites() -> void:
 	for c in _crops_layer.get_children():

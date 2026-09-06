@@ -14,7 +14,10 @@
 | 抠图 QA | PASS | `assets/qa/checker_*`；玫红+品红双键 |
 | AI 像素替换 | PASS | `tools/import_ai_sprites.py` + `screenshot_ai_art.png` |
 | 动物相对缩放 | PASS | 鸡20 / 羊28 / 牛36 / 人48 单元格 |
-| 序列帧 | PASS | 玩家/动物 6 帧 @8–10 FPS |
+| 四向走路 | PASS | `idle_right` runtime；player atlas 288×192 |
+| NPC 真走路条 | PASS | 5 条 6 帧 side walk + flip_h |
+| 过渡地砖 | PASS | gw/gd 边角接入 `_display_tex` |
+| Round2 截图 | PASS | `assets/qa/screenshot_round2.png` |
 | 无昼夜/存档/经济 | PASS | 未实现 |
 
 ## 禁止偷懒核对

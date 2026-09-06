@@ -1,5 +1,5 @@
 extends CharacterBody2D
-## Top-down player: move, tools 1-4, plant seed, interact E, inventory Tab.
+## Top-down player with 4-direction walk cycles (atlas rows: down/left/right/up).
 
 @export var speed: float = 120.0
 @export var tile_size: int = 16
@@ -9,8 +9,12 @@ extends CharacterBody2D
 
 enum Tool { HOE, CAN, AXE, ROD }
 
+const CELL := 48
+const DIRS := ["down", "left", "right", "up"]
+
 var tool: Tool = Tool.HOE
 var facing: Vector2 = Vector2.DOWN
+var _facing_name: String = "down"
 var _prompt: String = ""
 var _interact_cb: Callable = Callable()
 var _farm: Node = null
@@ -23,29 +27,37 @@ func _ready() -> void:
 		if InputMap.has_action(a):
 			Input.action_release(a)
 	camera.make_current()
-	anim.play("idle")
+	anim.play("idle_down")
 
 func _setup_frames() -> void:
 	var tex := load("res://assets/processed/player.png") as Texture2D
 	var frames := SpriteFrames.new()
-	frames.add_animation("idle")
-	frames.add_animation("walk")
-	frames.set_animation_speed("walk", 10.0)
-	frames.set_animation_loop("walk", true)
-	frames.set_animation_speed("idle", 1.0)
-	frames.set_animation_loop("idle", true)
-	var cell := 48
-	var n := int(tex.get_width() / float(cell))
-	n = maxi(n, 1)
-	for i in range(n):
-		var at := AtlasTexture.new()
-		at.atlas = tex
-		at.region = Rect2(i * cell, 0, cell, cell)
-		frames.add_frame("walk", at)
-		if i == 0 or i == n - 1:
-			frames.add_frame("idle", at)
+	var cols := maxi(int(tex.get_width() / float(CELL)), 1)
+	var rows := maxi(int(tex.get_height() / float(CELL)), 1)
+	for ri in range(mini(rows, DIRS.size())):
+		var d: String = DIRS[ri]
+		var walk_name := "walk_%s" % d
+		var idle_name := "idle_%s" % d
+		frames.add_animation(walk_name)
+		frames.add_animation(idle_name)
+		frames.set_animation_speed(walk_name, 10.0)
+		frames.set_animation_loop(walk_name, true)
+		frames.set_animation_speed(idle_name, 1.0)
+		frames.set_animation_loop(idle_name, true)
+		for ci in range(cols):
+			var at := AtlasTexture.new()
+			at.atlas = tex
+			at.region = Rect2(ci * CELL, ri * CELL, CELL, CELL)
+			frames.add_frame(walk_name, at)
+			if ci == 0:
+				frames.add_frame(idle_name, at)
 	anim.sprite_frames = frames
 	anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+func _dir_name_from_vec(v: Vector2) -> String:
+	if absf(v.x) > absf(v.y):
+		return "left" if v.x < 0.0 else "right"
+	return "up" if v.y < 0.0 else "down"
 
 func set_farm(farm: Node) -> void:
 	_farm = farm
@@ -84,7 +96,6 @@ func target_cell() -> Vector2i:
 	return Vector2i(floori(world.x / tile_size), floori(world.y / tile_size))
 
 func _physics_process(delta: float) -> void:
-	# Inventory toggle must work even while panel is open.
 	if Input.is_action_just_pressed("inventory"):
 		GameBus.inventory_open = not GameBus.inventory_open
 
@@ -96,16 +107,18 @@ func _physics_process(delta: float) -> void:
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if dir.length() > 0.1:
 		facing = dir.normalized()
-		velocity = dir.normalized() * speed
-		if anim.animation != "walk":
-			anim.play("walk")
-		anim.flip_h = facing.x < -0.2
+		_facing_name = _dir_name_from_vec(facing)
+		velocity = facing * speed
+		var walk_anim := "walk_%s" % _facing_name
+		if anim.animation != walk_anim:
+			anim.play(walk_anim)
+		anim.flip_h = false
 	else:
 		velocity = Vector2.ZERO
-		if anim.animation != "idle":
-			anim.play("idle")
+		var idle_anim := "idle_%s" % _facing_name
+		if anim.animation != idle_anim:
+			anim.play(idle_anim)
 	move_and_slide()
-	# clamp inside map (56x40 tiles)
 	global_position.x = clampf(global_position.x, 8.0, 56.0 * 16.0 - 8.0)
 	global_position.y = clampf(global_position.y, 8.0, 40.0 * 16.0 - 8.0)
 
@@ -151,7 +164,6 @@ func _use_tool() -> void:
 			else:
 				GameBus.show_toast("没有可砍的枯枝")
 		Tool.ROD:
-			# Fishing handled by FishingSpot interact; tip player
 			GameBus.show_toast("去河边按 E 钓鱼")
 
 func _try_farm_interact() -> void:
