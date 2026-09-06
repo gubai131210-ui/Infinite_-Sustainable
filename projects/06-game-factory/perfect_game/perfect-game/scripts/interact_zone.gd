@@ -35,6 +35,7 @@ func _do_interact() -> void:
 				GameBus.chest_claimed = true
 				var bonus: Dictionary = Inventory.grant_chest_bonus()
 				GameBus.show_toast("从箱子里拿了备用种子和饲料")
+				SFX.play("chest")
 				GameBus.save_game()
 				interacted.emit(str(bonus))
 		"fish":
@@ -111,6 +112,7 @@ func _sell_all_crops() -> void:
 	GameBus.add_gold(earned)
 	GameBus.save_game()
 	GameBus.show_toast("卖出货物，获得 %d 金币" % earned)
+	SFX.play("sell")
 	QuestLog.mark("done")
 	interacted.emit("sold")
 

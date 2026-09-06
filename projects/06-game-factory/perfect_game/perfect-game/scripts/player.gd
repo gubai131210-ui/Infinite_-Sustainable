@@ -20,6 +20,7 @@ var _farm: Node = null
 var _busy: float = 0.0
 var _bob_t: float = 0.0
 var _anim_base_y: float = -8.0
+var _foot_cd: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
@@ -126,6 +127,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 	_busy = maxf(_busy - delta, 0.0)
+	_foot_cd = maxf(_foot_cd - delta, 0.0)
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var moving := dir.length() > 0.1
 	if moving:
@@ -137,6 +139,9 @@ func _physics_process(delta: float) -> void:
 		if anim.animation != walk_anim or not anim.is_playing():
 			anim.play(walk_anim)
 		anim.speed_scale = 1.15
+		if _foot_cd <= 0.0:
+			SFX.play("footstep")
+			_foot_cd = 0.28
 	else:
 		velocity = Vector2.ZERO
 		var idle_anim := "idle_%s" % _facing_name
@@ -192,6 +197,8 @@ func _use_tool() -> void:
 				return
 			if not _farm.call("hoe", cell):
 				Stamina.restore(4)
+			else:
+				SFX.play("hoe")
 		Tool.CAN:
 			if _farm == null:
 				return
@@ -199,6 +206,7 @@ func _use_tool() -> void:
 				return
 			if _farm.call("water", cell):
 				GameBus.show_toast("浇水了")
+				SFX.play("water")
 			else:
 				Stamina.restore(2)
 		Tool.AXE:
