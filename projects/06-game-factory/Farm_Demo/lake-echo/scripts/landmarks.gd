@@ -13,7 +13,10 @@ func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0) -> vo
 	var s := Sprite2D.new()
 	s.texture = load(path)
 	s.centered = true
-	s.position = tile * TS + Vector2(0, -8)
+	# YSort foot point: bottom of sprite at tile position
+	var th := float(s.texture.get_height()) * scale_mul
+	s.offset = Vector2(0, -th * 0.5)
+	s.position = tile * TS
 	s.z_index = z
 	s.scale = Vector2(scale_mul, scale_mul)
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST

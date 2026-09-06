@@ -136,8 +136,13 @@ func _paint_base() -> void:
 	_fill_rect(_ground, Rect2i(0, 0, W, 14), T_HILL)
 	_fill_rect(_ground, Rect2i(0, 14, W, 4), T_CLIFF)
 
-	# Z1 farm soil + crop rows
-	_fill_rect(_ground, ZONES["Z1_FARM"], T_DIRT)
+	# Z1 farm soil — irregular blob (not hard rectangle)
+	for y in range(72, 118):
+		for x in range(10, 68):
+			var dx := x - 38
+			var dy := y - 94
+			if dx * dx + int(dy * dy * 0.7) < 780 + ((x * 13 + y) % 40):
+				_set_cell(_ground, x, y, T_DIRT)
 	for row in range(8):
 		_fill_rect(_ground, Rect2i(16, 80 + row * 3, 40, 2), T_FARM)
 
@@ -187,38 +192,51 @@ func _paint_base() -> void:
 		_set_cell(_ground, x, 21, T_RAIL)
 	_fill_rect(_ground, Rect2i(140, 14, 24, 14), T_PLAZA)
 
-	# Z5 real terraces: cliff face + inset farm ledge + stairs per band
+	# Z5 terraces: wider cliff faces + irregular ledge widths
 	for band in range(5):
 		var y0 := 40 + band * 8
-		var inset := band % 2  # slight stagger like video terraces
-		# retaining cliff wall (taller face)
-		_fill_rect(_ground, Rect2i(122 + inset, y0 + 5, 44, 3), T_CLIFF)
-		# farm ledge above cliff
-		_fill_rect(_ground, Rect2i(124 + inset, y0, 40, 5), T_FARM)
-		# crop row texture alternate
-		for x in range(126 + inset, 160, 2):
-			_set_cell(_ground, x, y0 + 2, T_DIRT)
-		# stone stairs connecting bands
+		var inset := (band % 3) - 1
+		var ledge_w := 38 + (band % 3) * 2
+		_fill_rect(_ground, Rect2i(122 + inset, y0 + 4, ledge_w + 4, 4), T_CLIFF)
+		# jagged cliff top edge
+		for x in range(122 + inset, 122 + inset + ledge_w + 4):
+			if ((x + band) % 5) == 0:
+				_set_cell(_ground, x, y0 + 3, T_CLIFF)
+			if ((x + band * 2) % 7) == 0:
+				_set_cell(_ground, x, y0 + 8, T_HILL)
+		_fill_rect(_ground, Rect2i(124 + inset, y0, ledge_w, 4), T_FARM)
+		for x in range(126 + inset, 124 + inset + ledge_w - 2, 2):
+			_set_cell(_ground, x, y0 + 1, T_DIRT)
 		for x in range(132, 138):
+			_set_cell(_ground, x, y0 + 4, T_STAIRS)
 			_set_cell(_ground, x, y0 + 5, T_STAIRS)
 			_set_cell(_ground, x, y0 + 6, T_STAIRS)
 			_set_cell(_ground, x, y0 + 7, T_STAIRS)
-		# side stairs alternate
 		if band % 2 == 1:
 			for x in range(150, 156):
+				_set_cell(_ground, x, y0 + 4, T_STAIRS)
 				_set_cell(_ground, x, y0 + 5, T_STAIRS)
 				_set_cell(_ground, x, y0 + 6, T_STAIRS)
 
-	# Z6 lake
-	for y in range(88, 120):
-		for x in range(130, 180):
-			var dx := x - 155
-			var dy := y - 104
-			if dx * dx + dy * dy * 2 < 900:
-				_set_cell(_water, x, y, T_DEEP if dx * dx + dy * dy * 2 < 400 else T_WATER)
-				_set_cell(_ground, x, y, T_DEEP if dx * dx + dy * dy * 2 < 400 else T_WATER)
-			elif dx * dx + dy * dy * 2 < 1100:
+	# Z6 lake + soft shore ring (sand + water-edge tiles)
+	for y in range(86, 122):
+		for x in range(126, 184):
+			var dx := float(x - 155)
+			var dy := float(y - 104)
+			# slight ellipse wobble
+			var r2 := dx * dx + dy * dy * 1.85
+			if r2 < 780.0:
+				var tid := T_DEEP if r2 < 360.0 else T_WATER
+				_set_cell(_water, x, y, tid)
+				_set_cell(_ground, x, y, tid)
+			elif r2 < 980.0:
 				_set_cell(_ground, x, y, T_SAND)
+			elif r2 < 1120.0:
+				# shore fringe — pick edge tile by direction to center
+				if absf(dx) > absf(dy):
+					_set_cell(_ground, x, y, T_WE_W if dx > 0.0 else T_WE_E)
+				else:
+					_set_cell(_ground, x, y, T_WE_N if dy > 0.0 else T_WE_S)
 	# Lighthouse peninsula
 	_fill_rect(_ground, Rect2i(168, 98, 10, 12), T_CLIFF)
 	_fill_rect(_ground, Rect2i(170, 100, 6, 8), T_SAND)

@@ -9,6 +9,7 @@ func _ready() -> void:
 	_bushes()
 	_flowers()
 	_crops_on_fields()
+	_props_fill()
 	_animals()
 	_npcs()
 	_door_and_chest()
@@ -43,6 +44,8 @@ func _spr(path: String, tile: Vector2, z: int = 5) -> Sprite2D:
 	var s := Sprite2D.new()
 	s.texture = load(path)
 	s.centered = true
+	var th := float(s.texture.get_height())
+	s.offset = Vector2(0, -th * 0.5)
 	s.position = tile * TS
 	s.z_index = z
 	s.y_sort_enabled = true
@@ -57,6 +60,8 @@ func _spr_atlas(path: String, tile: Vector2, z: int = 5, frame: int = 0, flip: b
 	var s := Sprite2D.new()
 	s.texture = tex
 	s.centered = true
+	var th := float(tex.get_height())
+	s.offset = Vector2(0, -th * 0.5)
 	s.position = tile * TS
 	s.z_index = z
 	s.flip_h = flip
@@ -102,7 +107,29 @@ func _trees() -> void:
 	]:
 		spots.append(p)
 	for i in range(spots.size()):
-		_spr("res://assets/processed/tree_%d.png" % (i % 3), spots[i], 6)
+		var p: Vector2 = spots[i]
+		if p.y < 22 and ResourceLoader.exists("res://assets/processed/tree_pine.png"):
+			_spr("res://assets/processed/tree_pine.png", p, 6)
+		else:
+			_spr("res://assets/processed/tree_%d.png" % (i % 3), p, 6)
+
+func _props_fill() -> void:
+	for p in [
+		Vector2(78, 44), Vector2(102, 44), Vector2(86, 58), Vector2(94, 40),
+		Vector2(146, 18), Vector2(154, 24), Vector2(38, 94), Vector2(46, 96),
+		Vector2(160, 100), Vector2(172, 96),
+	]:
+		_spr("res://assets/processed/prop_crate.png", p, 4)
+	for p in [
+		Vector2(82, 52), Vector2(98, 52), Vector2(150, 16), Vector2(44, 100),
+		Vector2(164, 108),
+	]:
+		_spr("res://assets/processed/prop_barrel.png", p, 4)
+	for p in [
+		Vector2(76, 38), Vector2(104, 38), Vector2(76, 60), Vector2(104, 60),
+		Vector2(90, 36), Vector2(148, 14), Vector2(168, 100),
+	]:
+		_spr("res://assets/processed/prop_lamp.png", p, 5)
 
 func _bushes() -> void:
 	if not ResourceLoader.exists("res://assets/processed/bush.png"):
@@ -156,11 +183,12 @@ func _animals() -> void:
 	_spr_atlas("res://assets/processed/sheep.png", Vector2(45, 104), 5, 3, true)
 
 func _npcs() -> void:
+	# Keep NPCs on plaza/path clear of tree canopies
 	var spots := [
-		[Vector2(84, 46), false, 0], [Vector2(96, 50), true, 1],
-		[Vector2(88, 54), false, 2], [Vector2(92, 44), true, 3],
-		[Vector2(148, 18), false, 0], [Vector2(42, 92), true, 1],
-		[Vector2(100, 52), false, 4], [Vector2(156, 20), true, 2],
+		[Vector2(86, 48), false, 0], [Vector2(94, 50), true, 1],
+		[Vector2(88, 52), false, 2], [Vector2(92, 46), true, 3],
+		[Vector2(148, 18), false, 0], [Vector2(44, 94), true, 1],
+		[Vector2(100, 50), false, 4], [Vector2(154, 22), true, 2],
 	]
 	for item in spots:
 		_spr_atlas("res://assets/processed/npc_ahe.png", item[0], 7, int(item[2]), bool(item[1]))
