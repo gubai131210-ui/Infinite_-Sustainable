@@ -133,3 +133,16 @@
 - [x] P38（屋顶变体 shop/cafe/townhouse/farm）  
 - [x] P39（全套 golden + Critic）  
 - [x] P40（smoke + push + review）  
+
+## 北缘与真屋顶续跑（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P41 | 35m | 打破松树墙：天空云+山脊缺口 | overview 北缘 |
+| P42 | 40m | 手绘屋顶立面（非重上色） | town golden |
+| P43 | 25m | 天空带 + 瀑布走廊留白 | river/overview |
+| P44 | 25m | 对话显示友谊心进度 | NPC 对话 |
+| P45 | 30m | golden + Critic + push | qa/golden |
+
+### 北缘进度
+- [x] P41 · P42 · P43 · P44 · P45  

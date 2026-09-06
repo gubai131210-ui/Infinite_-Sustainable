@@ -94,6 +94,14 @@ func _on_period(_p: String) -> void:
 func _capture_goldens(player: Node2D) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
+	var tc := get_node_or_null("/root/TimeClock")
+	if tc != null:
+		tc.set("paused", true)
+		tc.set("day", 1)
+		tc.set("hour", 10)
+		if tc.has_method("_refresh_period"):
+			tc.call("_refresh_period")
+		_refresh_modulate()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/qa/golden"))
 	var shots := [
 		["01_farm", Vector2(40 * 16, 98 * 16)],

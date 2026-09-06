@@ -59,19 +59,34 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## Distant skyline + cliff shelf (taller / double ridge for overview)
-	for x in range(-6, 202, 4):
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, -4), 0, 2.55)
-	for x in range(-2, 198, 5):
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 1), 0, 2.0)
-	for x in range(0, 192, 3):
-		_spr("res://assets/processed/prop_cliff.png", Vector2(x, 5), 1, 1.45)
-	for x in range(1, 191, 4):
-		_spr("res://assets/processed/prop_cliff.png", Vector2(x, 8), 1, 1.25)
-	for x in range(1, 191, 4):
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 11), 1, 1.55)
-	for x in range(2, 190, 5):
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 15), 2, 1.2)
+	## Broken skyline: peaks + gaps + soft sky/clouds (kill solid pine-wall read)
+	for x in range(-4, 200, 8):
+		_spr("res://assets/processed/prop_sky_band.png", Vector2(x, -2), -1, 2.4)
+	for i in range(0, 14):
+		var cx := 4 + i * 14 + (i % 3) * 2
+		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(cx, 0 + (i % 2)), 0, 1.5 + float(i % 3) * 0.15)
+	# Mountain peaks with intentional gaps (waterfall corridor + ruins window)
+	for x in range(-6, 202, 6):
+		if x >= 16 and x <= 34:
+			continue  # leave waterfall sky open
+		if x >= 70 and x <= 100 and (x % 12) < 4:
+			continue  # thin ruins ridge gaps
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, -3), 0, 2.35)
+	for x in range(-2, 198, 7):
+		if x >= 18 and x <= 32:
+			continue
+		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 1), 0, 1.85)
+	for x in range(0, 192, 4):
+		if x >= 18 and x <= 30:
+			_spr("res://assets/processed/prop_cliff.png", Vector2(x, 6), 1, 1.5)
+			continue
+		_spr("res://assets/processed/prop_cliff.png", Vector2(x, 5), 1, 1.4)
+	for x in range(1, 191, 5):
+		if x >= 20 and x <= 28:
+			continue
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 10), 1, 1.45)
+	for x in range(2, 190, 6):
+		_spr("res://assets/processed/prop_hills.png", Vector2(x, 14), 2, 1.15)
 
 func _ruins() -> void:
 	## Irregular mossy arches woven with canopy (break flat grid rows)
@@ -187,41 +202,35 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(110, 48), 6, 1.05, Vector2(28, 16))
 	for p in [Vector2(82, 44), Vector2(98, 44), Vector2(82, 52), Vector2(98, 52)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
-	_spr("res://assets/processed/prop_shop_redroof.png", Vector2(72, 32), 8, 1.05, Vector2(48, 28))
-	_spr("res://assets/processed/prop_cafe_tealroof.png", Vector2(108, 32), 8, 1.05, Vector2(48, 28))
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(72, 32), 8, 1.15, Vector2(48, 28))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(108, 32), 8, 1.15, Vector2(48, 28))
 	var houses := [
-		[Vector2(66, 38), "red", Color(1.05, 0.95, 0.92)],
-		[Vector2(66, 54), "thatch", Color(0.95, 1.02, 0.9)],
-		[Vector2(114, 38), "slate", Color(0.92, 0.96, 1.08)],
-		[Vector2(114, 54), "red", Color(1.08, 0.92, 0.88)],
-		[Vector2(74, 64), "slate", Color(0.95, 0.98, 1.06)],
-		[Vector2(90, 66), "brown", Color(1.02, 0.94, 0.9)],
-		[Vector2(106, 64), "thatch", Color(0.92, 1.05, 0.92)],
-		[Vector2(82, 28), "thatch", Color(0.94, 1.02, 0.9)],
-		[Vector2(98, 28), "red", Color(1.06, 0.9, 0.86)],
-		[Vector2(70, 70), "brown", Color(1.0, 0.95, 0.9)],
-		[Vector2(110, 70), "slate", Color(0.9, 0.95, 1.1)],
-		[Vector2(58, 48), "slate", Color(0.93, 0.97, 1.05)],
-		[Vector2(122, 48), "thatch", Color(0.96, 1.04, 0.9)],
+		[Vector2(66, 38), "red"],
+		[Vector2(66, 54), "thatch"],
+		[Vector2(114, 38), "slate"],
+		[Vector2(114, 54), "green"],
+		[Vector2(74, 64), "slate"],
+		[Vector2(90, 66), "red"],
+		[Vector2(106, 64), "thatch"],
+		[Vector2(82, 28), "green"],
+		[Vector2(98, 28), "red"],
+		[Vector2(70, 70), "thatch"],
+		[Vector2(110, 70), "slate"],
+		[Vector2(58, 48), "green"],
+		[Vector2(122, 48), "red"],
 	]
 	for h in houses:
-		var path := "res://assets/processed/prop_townhouse_brown.png"
+		var path := "res://assets/processed/prop_house_redroof.png"
 		match str(h[1]):
 			"red":
-				path = "res://assets/processed/prop_townhouse_redroof.png"
+				path = "res://assets/processed/prop_house_redroof.png"
 			"slate":
-				path = "res://assets/processed/prop_townhouse_slateroof.png"
+				path = "res://assets/processed/prop_house_slateroof.png"
 			"thatch":
-				path = "res://assets/processed/prop_townhouse_thatch.png"
-			"brown":
-				path = "res://assets/processed/prop_townhouse_brown.png"
+				path = "res://assets/processed/prop_house_thatch.png"
 			"green":
-				path = "res://assets/processed/prop_townhouse_green.png"
-			"blue":
-				path = "res://assets/processed/prop_townhouse_blue.png"
-		var tint: Color = h[2] if h.size() > 2 else Color(1, 1, 1, 1)
-		_spr(path, h[0], 8, 1.0, Vector2(40, 30), tint)
-		_spr("res://assets/processed/prop_chimney.png", h[0] + Vector2(0.6, -1.2), 9, 1.0)
+				path = "res://assets/processed/prop_house_greenroof.png"
+		_spr(path, h[0], 8, 1.05, Vector2(36, 28))
 	for x in range(68, 114, 3):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(12, 8))
 

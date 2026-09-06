@@ -30,19 +30,30 @@ func _ready() -> void:
 	_timer = randf_range(0.8, 2.2)
 	_bob_t = randf() * TAU
 	anim.play("idle")
-	if CharacterDB.has_id(npc_id):
-		display_name = CharacterDB.display_name(npc_id)
-		line = CharacterDB.line_for(npc_id)
-		_apply_schedule(TimeClock.period, false)
-	if not TimeClock.period_changed.is_connected(_on_period):
-		TimeClock.period_changed.connect(_on_period)
+	call_deferred("_bind_db")
+
+func _bind_db() -> void:
+	var cdb := get_node_or_null("/root/CharacterDB")
+	var tc := get_node_or_null("/root/TimeClock")
+	if cdb != null and bool(cdb.call("has_id", npc_id)):
+		display_name = str(cdb.call("display_name", npc_id))
+		line = str(cdb.call("line_for", npc_id))
+		var period := str(tc.get("period")) if tc != null else "day"
+		_apply_schedule(period, false)
+	if tc != null and not tc.period_changed.is_connected(_on_period):
+		tc.period_changed.connect(_on_period)
 
 func _on_period(period: String) -> void:
-	line = CharacterDB.line_for(npc_id, period)
+	var cdb := get_node_or_null("/root/CharacterDB")
+	if cdb != null:
+		line = str(cdb.call("line_for", npc_id, period))
 	_apply_schedule(period, true)
 
 func _apply_schedule(period: String, commute: bool) -> void:
-	var tile := CharacterDB.schedule_tile(npc_id, period)
+	var cdb := get_node_or_null("/root/CharacterDB")
+	if cdb == null:
+		return
+	var tile: Vector2 = cdb.call("schedule_tile", npc_id, period)
 	if tile == Vector2.ZERO:
 		return
 	var target := tile * TS
@@ -86,7 +97,6 @@ func _setup_sprite() -> void:
 	anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 func _physics_process(delta: float) -> void:
-	# Commute toward schedule anchor when period changes
 	if _commute:
 		var to_home := _home - global_position
 		if to_home.length() <= 6.0:
@@ -118,13 +128,11 @@ func _physics_process(delta: float) -> void:
 
 func _play_move(delta: float, moving: bool) -> void:
 	if moving:
-		if absf(_dir.x) > 0.05:
-			anim.flip_h = _dir.x < 0.0
 		if anim.animation != "walk" or not anim.is_playing():
 			anim.play("walk")
-		anim.speed_scale = 1.1
-		_bob_t += delta * 12.0
-		anim.position.y = _anim_base_y + sin(_bob_t) * 1.5
+		anim.speed_scale = 1.0
+		_bob_t += delta * 8.0
+		anim.position.y = _anim_base_y + sin(_bob_t) * 0.8
 	else:
 		if anim.animation != "idle" or not anim.is_playing():
 			anim.play("idle")
@@ -151,13 +159,18 @@ func _talk() -> void:
 	if gift != "" and Friendship.can_gift(gift) and Inventory.has(gift):
 		if Friendship.try_gift(npc_id, gift):
 			var react := Friendship.gift_line(npc_id, gift)
+			var h := Friendship.hearts_of(npc_id)
 			Inventory.selected_gift = ""
-			GameBus.show_dialogue(display_name, react)
+			GameBus.show_dialogue(display_name, "友谊心 %d/5\n%s" % [h, react])
 			if _player_inside != null and _player_inside.has_method("set_interact_prompt"):
 				_player_inside.set_interact_prompt("按 E 与%s交谈" % display_name, Callable(self, "_talk"))
 			return
-	var spoken := CharacterDB.line_for(npc_id) if CharacterDB.has_id(npc_id) else line
+	var cdb := get_node_or_null("/root/CharacterDB")
+	var spoken := line
+	if cdb != null and bool(cdb.call("has_id", npc_id)):
+		spoken = str(cdb.call("line_for", npc_id))
 	spoken += Friendship.warm_line_suffix(npc_id)
-	GameBus.show_dialogue(display_name, spoken)
+	var hearts := Friendship.hearts_of(npc_id)
+	GameBus.show_dialogue(display_name, "友谊心 %d/5\n%s" % [hearts, spoken])
 	if npc_id == "hua":
 		QuestLog.mark("mkt_talk_hua")
