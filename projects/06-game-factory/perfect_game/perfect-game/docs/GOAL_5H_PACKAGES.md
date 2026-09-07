@@ -234,3 +234,16 @@
 
 ### 天空加高进度
 - [x] P73 · P74 · P75 · P76 · P77  
+
+## 山谷林缘围合（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P78 | 40m | 东西南+北麓林缘围合 | overview |
+| P79 | 30m | 瀑头不规则 amphitheater | waterfall |
+| P80 | 25m | 天空条 240px + 更广 overview | 00_overview |
+| P81 | 20m | 广场缀边加密 | town |
+| P82 | 25m | golden + Critic + push | origin/main |
+
+### 山谷林缘进度
+- [x] P78 · P79 · P80 · P81 · P82  

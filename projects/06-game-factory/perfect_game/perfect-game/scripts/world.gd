@@ -239,9 +239,19 @@ func _paint_base() -> void:
 		_set_cell(_ground, cx + 3, y, T_WE_W)
 		_set_cell(_ground, cx - 4, y, T_DIRT)
 		_set_cell(_ground, cx + 4, y, T_DIRT)
-	# Waterfall head
-	_fill_rect(_ground, Rect2i(16, 14, 14, 8), T_CLIFF)
+	# Waterfall amphitheater — irregular cliff cells (not one brick rect)
+	for x in range(16, 32):
+		for y in range(12, 22):
+			var dx := x - 24
+			var dy := y - 16
+			var bowl := float(dx * dx) * 0.45 + float(dy * dy) * 1.1
+			if bowl < 28.0:
+				_set_cell(_ground, x, y, T_CLIFF if ((x + y) % 3) != 0 else T_HILL)
+			elif bowl < 40.0 and ((x * 3 + y) % 4) != 0:
+				_set_cell(_ground, x, y, T_HILL)
 	for x in range(20, 28):
+		_set_cell(_water, x, 21, T_WATER)
+		_set_cell(_ground, x, 21, T_WATER)
 		_set_cell(_water, x, 22, T_WATER)
 		_set_cell(_ground, x, 22, T_WATER)
 	# Bridges

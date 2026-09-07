@@ -6,6 +6,7 @@ const TS := 16
 
 func _ready() -> void:
 	_trees()
+	_forest_rim()
 	_bushes()
 	_flowers()
 	_crops_on_fields()
@@ -150,6 +151,45 @@ func _trees() -> void:
 		else:
 			_spr(path, p, 6, can_chop)
 
+func _forest_rim() -> void:
+	## Valley enclosure for overview — dense rim canopy, keep sky/waterfall/station open.
+	# West outer wall (left of river)
+	for y in range(18, 124, 2):
+		for x in range(0, 7, 2):
+			if ((x + y) % 3) == 0:
+				continue
+			var pine_w := (y % 4) == 0
+			_spr("res://assets/processed/tree_pine.png" if pine_w else "res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + (y % 2) * 0.4, y), 6)
+	# East outer wall (right of terraces / lake)
+	for y in range(20, 124, 2):
+		for x in range(184, 192, 2):
+			if ((x * 2 + y) % 5) == 0:
+				continue
+			_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x, y + (x % 2) * 0.3), 6)
+	# South canopy belt
+	for x in range(4, 188, 2):
+		for y in range(120, 128, 2):
+			if ((x + y * 3) % 4) == 0:
+				continue
+			_spr("res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 2), y), 5)
+	# Mid-north forest shelf BELOW skyline (y>=18) — closes open grass sea
+	for x in range(2, 190, 3):
+		if x >= 14 and x <= 40:
+			continue  # waterfall corridor
+		if x >= 130 and x <= 178:
+			# thin station approach — don't wall tracks
+			if (x % 6) != 0:
+				continue
+		for y in range(18, 26, 2):
+			if ((x * 5 + y * 7) % 6) == 0:
+				continue
+			var use_pine := (x + y) % 4 == 0
+			_spr("res://assets/processed/tree_pine.png" if use_pine else "res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 2) * 0.5, y), 5)
+	# Soft inner belts (east of river / west of town) to break empty mid-grass
+	for y in range(28, 70, 3):
+		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(48 + (y % 3), y), 5)
+		_spr("res://assets/processed/tree_%d.png" % ((y + 1) % 3), Vector2(56 + (y % 2), y + 1), 5)
+
 func _props_fill() -> void:
 	for p in [
 		Vector2(78, 44), Vector2(102, 44), Vector2(86, 58), Vector2(94, 40),
@@ -169,6 +209,20 @@ func _props_fill() -> void:
 		_spr("res://assets/processed/prop_lamp.png", p, 5)
 
 func _bushes() -> void:
+	# Plaza fringe tufts denser (soften stone rect)
+	for p in [
+		Vector2(72, 36), Vector2(74, 35), Vector2(110, 36), Vector2(112, 35),
+		Vector2(72, 62), Vector2(74, 64), Vector2(110, 62), Vector2(112, 64),
+		Vector2(70, 42), Vector2(70, 50), Vector2(70, 58), Vector2(114, 42), Vector2(114, 50), Vector2(114, 58),
+		Vector2(80, 34), Vector2(90, 34), Vector2(100, 34), Vector2(80, 66), Vector2(90, 66), Vector2(100, 66),
+		Vector2(76, 38), Vector2(108, 38), Vector2(76, 60), Vector2(108, 60),
+	]:
+		_spr("res://assets/processed/prop_path_tuft.png", p, 3, false)
+	for p in [
+		Vector2(73, 40), Vector2(111, 44), Vector2(73, 56), Vector2(111, 52),
+		Vector2(84, 35), Vector2(96, 35), Vector2(84, 63), Vector2(96, 63),
+	]:
+		_spr("res://assets/processed/prop_path_pebble.png", p, 2, false)
 	# Path fringe tufts + pebbles (soften dirt edge brick-read)
 	for p in [
 		Vector2(50, 88), Vector2(58, 80), Vector2(66, 70), Vector2(74, 60), Vector2(82, 54),

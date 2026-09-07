@@ -1,21 +1,21 @@
-# 视觉 Critic — golden vs overview（2026-09-07 · P73–P77）
+# 视觉 Critic — golden vs overview（2026-09-07 · P78–P82）
 
 ## 结论
-更接近 overview：**是**（更高天空带、碗口软过渡、有机崖/瀑、BAKERY/SHOP/CAFE 可读招牌、广场毛边）。  
+更接近 overview：**是**（东西南林缘围合 + 北麓林带开始读成山谷；瀑头不规则崖；天空条 240px；广场缀边加密）。  
 达到「商店页可直接当主图」：**否**。
 
 ## 本轮证据
 - MCP `0` error · `GOLDEN_CAPTURE_DONE`
-- `prop_skyline_wide` 3072×200；碗口用 smooth feather，去掉叠云/双崖假缝
-- `prop_cliff` / `prop_waterfall` 重绘；河岸崖堆减量
-- 招牌文字 SHOP / CAFE / BAKERY；overview 可读 BAKERY
-- 广场边缘 dither 泥土/草；overview 取景 y=36
+- `decor._forest_rim()`：西/东/南密林 + 北麓 y18–26 林带（留瀑布走廊与车站疏空）
+- `world` 瀑头椭圆碗状 CLIFF/HILL 混合，去掉整块砖矩形
+- `prop_skyline_wide` 3072×240；overview zoom 0.34
+- 广场外围 tuft/pebble 加密
 
 ## 仍差
-1. 天空仍偏窄，远峰层次不够油画  
-2. 瀑布近景仍偏平面条带；未达参考「林中坠落」  
-3. 广场 fringe 改善有限，tile 感仍强  
-4. 立面仍是 PIL；缺用户签字试玩 + itch URL  
+1. 仍非参考图那种「整谷被松林包住」的油画密度与层次  
+2. 瀑布近景仍偏道具叠层，未达林中坠落一体构图  
+3. 路径/广场 tile 感、PIL 立面仍在  
+4. 缺用户签字试玩 + itch URL  
 
 ## Goal
 **不可 complete**。
