@@ -102,40 +102,47 @@ func _spawn_zone_labels() -> void:
 		markers.add_child(lab)
 
 func _fill_dirt_blob(cx: int, cy: int, hw: int, hh: int, till: bool = false) -> void:
-	## Stardew-like irregular dirt patch (noisy ellipse), optional tilled core
-	for y in range(cy - hh - 3, cy + hh + 4):
-		for x in range(cx - hw - 3, cx + hw + 4):
+	## Irregular dirt clearing — smaller solid core + wider grass/dirt mix fringe (anti-rectangle)
+	for y in range(cy - hh - 4, cy + hh + 5):
+		for x in range(cx - hw - 4, cx + hw + 5):
 			var dx: float = absf(float(x - cx)) / float(maxi(hw, 1))
 			var dy: float = absf(float(y - cy)) / float(maxi(hh, 1))
-			var edge: float = sqrt(dx * dx * 0.85 + dy * dy)
+			var edge: float = sqrt(dx * dx * 0.78 + dy * dy * 1.05)
 			var n: float = float(absi(x * 17 + y * 31) % 11) / 11.0
 			var n2: float = float(absi(x * 13 + y * 19) % 7) / 7.0
-			var wave: float = 0.14 * sin(float(x) * 0.55 + float(y) * 0.31) + 0.1 * (n - 0.5)
+			var wave: float = 0.18 * sin(float(x) * 0.48 + float(y) * 0.37) + 0.12 * (n - 0.5)
 			var rim: float = 1.0 + wave
-			if edge < rim * 0.72:
-				if till and edge < rim * 0.55 and ((y + cy) % 2) == 0 and x > cx - hw + 1 and x < cx + hw - 1:
+			if edge < rim * 0.58:
+				## Lived-in core — occasional grass pocket so dirt never reads as a slab
+				if n2 > 0.88 and edge > rim * 0.4:
+					_set_cell(_ground, x, y, T_GRASS3)
+				elif till and edge < rim * 0.45 and ((y + cy) % 2) == 0 and x > cx - hw + 1 and x < cx + hw - 1:
 					_set_cell(_ground, x, y, T_FARM)
-				elif n2 > 0.78:
+				elif n2 > 0.72:
 					_set_cell(_ground, x, y, T_DIRT2)
 				else:
 					_set_cell(_ground, x, y, T_DIRT)
-			elif edge < rim * 0.92:
-				## Soft grass↔dirt fringe band
-				var pick: int = absi(x * 7 + y * 11) % 5
+			elif edge < rim * 0.88:
+				## Wide mixed fringe — grass invades dirt (ref farm yards)
+				var pick: int = absi(x * 7 + y * 11) % 7
 				if pick == 0:
 					_set_cell(_ground, x, y, T_GD_N if dy > dx else T_GD_E)
 				elif pick == 1:
 					_set_cell(_ground, x, y, T_GD_S if dy > dx else T_GD_W)
 				elif pick == 2:
 					_set_cell(_ground, x, y, T_DIRT2)
-				elif pick == 3:
-					_set_cell(_ground, x, y, T_GRASS3)
+				elif pick == 3 or pick == 4:
+					_set_cell(_ground, x, y, T_GRASS3 if (pick == 3) else T_GRASS4)
+				elif pick == 5:
+					_set_cell(_ground, x, y, T_DIRT)
 				else:
-					_set_cell(_ground, x, y, T_GRASS4)
-			elif edge < rim * 1.05 and n > 0.55:
-				## Occasional dirt spit / grass pocket outside
-				if n2 > 0.7:
+					_set_cell(_ground, x, y, T_GRASS2)
+			elif edge < rim * 1.12 and n > 0.48:
+				## Outer spit / meadow dither
+				if n2 > 0.75:
 					_set_cell(_ground, x, y, T_DIRT2)
+				elif n2 > 0.45:
+					_set_cell(_ground, x, y, T_GRASS4)
 				else:
 					_set_cell(_ground, x, y, T_GRASS2)
 
@@ -368,73 +375,41 @@ func _paint_base() -> void:
 			continue
 		_fill_rect(_ground, Rect2i(x, 3, 2, 3), T_CLIFF)
 
-	# Z1 farm — Stardew hybrid: irregular dirt CLEARINGS + rectangular tilled beds
-	# Animal pen = dirt yard (overview ref), not plain grass
-	## Farmhouse / barn dirt aprons (blob, not crop grid)
-	_fill_dirt_blob(40, 93, 15, 7, false)
-	_fill_dirt_blob(38, 104, 17, 6, false)
-	_fill_dirt_blob(28, 100, 8, 4, false)
-	## Soft path ribbons (noisy)
-	for y in range(76, 108):
-		var wob: int = int(1.6 * sin(float(y) * 0.33))
-		_set_cell(_ground, 30 + wob, y, T_PATH if (y % 3 != 0) else T_PATH2)
-		_set_cell(_ground, 31 + wob, y, T_PATH2 if (y % 4 == 0) else T_DIRT2)
-	for x in range(14, 60):
-		var wobx: int = int(1.3 * sin(float(x) * 0.38))
-		_set_cell(_ground, x, 88 + wobx, T_PATH if (x % 3 != 0) else T_DIRT2)
-	## Playable tilled beds (keep FarmPlots cells like 16,78 hoeable)
-	var farm_beds := [
-		Rect2i(14, 78, 16, 10), Rect2i(34, 78, 16, 10), Rect2i(52, 78, 12, 10),
-		Rect2i(14, 92, 16, 8), Rect2i(34, 92, 16, 8),
-	]
-	for bed in farm_beds:
-		_fill_rect(_ground, bed, T_DIRT)
-		for row in range(0, bed.size.y - 1, 2):
-			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
-		_fringe_soft(bed)
-		for row in range(0, bed.size.y - 1, 2):
-			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
-	# Animal pen — dirt yard like overview ref (not plain grass)
-	_fill_dirt_blob(34, 116, 11, 5, false)
-	for yy in range(113, 121):
-		for xx in range(25, 43):
-			var h: int = absi(xx * 11 + yy * 7) % 5
-			if h <= 2:
-				_set_cell(_ground, xx, yy, T_DIRT)
-			elif h == 3:
-				_set_cell(_ground, xx, yy, T_DIRT2)
-			else:
-				_set_cell(_ground, xx, yy, T_PATH2)
-	_fringe_soft(Rect2i(25, 113, 18, 8))
+	# Z1 Miller Farmstead — composition first (see docs/regions/P167_MILLER_FARM.md)
+	_paint_miller_farmstead()
 
 	# Z2 river winding + soft banks + edges
 	for y in range(16, 100):
 		var cx := 28 + int(6.0 * sin(y * 0.18))
-		for dx in range(-2, 3):
+		## Farm stretch: wider, more lobed channel (kill staircase 1–2 tile ribbon look)
+		var half_w: int = 3 if (y >= 68 and y <= 98) else 2
+		for dx in range(-half_w, half_w + 1):
 			_set_cell(_water, cx + dx, y, T_WATER)
 			_set_cell(_ground, cx + dx, y, T_WATER)
 		# Soft irregular banks — wider sand/dirt shoulder (ref-like river edge)
 		var wob := (y * 3) % 3 - 1
-		_set_cell(_ground, cx - 3 + wob, y, T_SAND if (y % 5 == 0) else (T_WE_E if (y % 2) == 0 else T_GRASS3))
-		_set_cell(_ground, cx + 3 - wob, y, T_SAND if (y % 5 == 2) else (T_WE_W if (y % 2) == 0 else T_GRASS2))
+		if y >= 68 and y <= 98:
+			wob = int(2.2 * sin(float(y) * 0.29)) + ((y * 5) % 3 - 1)
+		_set_cell(_ground, cx - half_w - 1 + wob, y, T_SAND if (y % 5 == 0) else (T_WE_E if (y % 2) == 0 else T_GRASS3))
+		_set_cell(_ground, cx + half_w + 1 - wob, y, T_SAND if (y % 5 == 2) else (T_WE_W if (y % 2) == 0 else T_GRASS2))
 		if y % 2 == 0:
-			_set_cell(_ground, cx - 4 + wob, y, T_DIRT if (y % 3 == 0) else T_SAND)
-			_set_cell(_ground, cx + 4 - wob, y, T_DIRT if (y % 4 == 0) else T_GRASS3)
+			_set_cell(_ground, cx - half_w - 2 + wob, y, T_DIRT if (y % 3 == 0) else T_SAND)
+			_set_cell(_ground, cx + half_w + 2 - wob, y, T_DIRT if (y % 4 == 0) else T_GRASS3)
 		if y % 3 == 0:
-			_set_cell(_ground, cx - 5, y, T_GRASS4)
-			_set_cell(_ground, cx + 5, y, T_DIRT)
-			_set_cell(_ground, cx - 2, y, T_SAND)
-			_set_cell(_ground, cx + 2, y, T_SAND)
+			_set_cell(_ground, cx - half_w - 3, y, T_GRASS4)
+			_set_cell(_ground, cx + half_w + 3, y, T_DIRT)
+			_set_cell(_ground, cx - 1, y, T_SAND)
+			_set_cell(_ground, cx + 1, y, T_SAND)
 		elif y % 4 == 1:
-			_set_cell(_ground, cx - 4 + wob, y, T_DIRT)
-			_set_cell(_ground, cx + 4 - wob, y, T_GRASS3)
-			_set_cell(_ground, cx - 5 + wob, y, T_GRASS2)
+			_set_cell(_ground, cx - half_w - 2 + wob, y, T_DIRT)
+			_set_cell(_ground, cx + half_w + 2 - wob, y, T_GRASS3)
+			_set_cell(_ground, cx - half_w - 3 + wob, y, T_GRASS2)
 		else:
-			_set_cell(_ground, cx - 4, y, T_GRASS2)
-			_set_cell(_ground, cx + 4, y, T_GRASS)
+			_set_cell(_ground, cx - half_w - 2, y, T_GRASS2)
+			_set_cell(_ground, cx + half_w + 2, y, T_GRASS)
 			if y % 5 == 3:
-				_set_cell(_ground, cx - 5, y, T_SAND)
-				_set_cell(_ground, cx + 5, y, T_DIRT)
+				_set_cell(_ground, cx - half_w - 3, y, T_SAND)
+				_set_cell(_ground, cx + half_w + 3, y, T_DIRT)
 	# Waterfall amphitheater — rock rim only; interior = water (kill farm/hill banding)
 	for x in range(14, 34):
 		for y in range(10, 24):
@@ -659,6 +634,128 @@ func _paint_base() -> void:
 	_soften_path_edges()
 	## Building footings — dirt pads so facades sit on ground (not float)
 	_paint_building_footings()
+
+func _paint_miller_farmstead() -> void:
+	## REGION Miller Farmstead — WORLD FIRST (ref: yards + separated fields + barn court + pen)
+	## Grass is the canvas. Dirt only for lived-in yards / paths / tilled beds — no dirt sea.
+
+	# 1) Farmhouse front yard (compact apron)
+	_fill_dirt_blob(40, 91, 7, 4, false)
+
+	# 2) Twin barn courts — separate blobs with grass gap (not one merged rectangle)
+	_fill_dirt_blob(28, 104, 6, 3, false)
+	_fill_dirt_blob(48, 105, 6, 3, false)
+	_fill_dirt_blob(38, 106, 4, 2, false)
+
+	# 3) Path ribbons: house ↔ barns ↔ west fields (narrow, wobbling)
+	for y in range(88, 110):
+		var wob: int = int(1.9 * sin(float(y) * 0.41))
+		_set_path_cell(39 + wob, y, T_PATH if (y % 3 != 0) else T_PATH2)
+		_set_path_cell(40 + wob, y, T_PATH2 if (y % 4 == 0) else T_DIRT2)
+	for x in range(16, 50):
+		var wobx: int = int(1.5 * sin(float(x) * 0.36))
+		_set_path_cell(x, 90 + wobx, T_PATH if (x % 3 != 0) else T_DIRT2)
+	## Spur to west fields
+	for x in range(16, 34):
+		var wy: int = 82 + int(1.2 * sin(float(x) * 0.5))
+		_set_path_cell(x, wy, T_PATH2 if (x % 2 == 0) else T_DIRT)
+
+	# 4) Crop fields as SEPARATE beds + grass corridors (keep 16,78 hoeable)
+	var farm_beds := [
+		Rect2i(14, 78, 12, 8),
+		Rect2i(30, 78, 10, 7),
+		Rect2i(44, 79, 10, 6),
+		Rect2i(14, 90, 10, 6),
+		Rect2i(28, 94, 8, 5),
+	]
+	for bed in farm_beds:
+		_fill_rect(_ground, bed, T_DIRT)
+		_nibble_bed_organic(bed)
+		_fringe_soft(bed)
+		for row in range(0, bed.size.y - 1, 2):
+			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, maxi(bed.size.x - 2, 1), 1), T_FARM)
+
+	# 5) Animal pen — blob only (no solid dirt rectangle stamp)
+	_fill_dirt_blob(34, 116, 9, 4, false)
+	_fringe_soft(Rect2i(26, 113, 16, 7))
+
+	# 6) Meadow grass variants between beds (break flat green plate)
+	_paint_farm_meadow_variants()
+	_soften_farm_paths()
+
+
+func _nibble_bed_organic(bed: Rect2i) -> void:
+	## Extra irregular bites so tilled plots don't read as 16×10 bricks
+	var x0 := bed.position.x
+	var y0 := bed.position.y
+	var x1 := x0 + bed.size.x - 1
+	var y1 := y0 + bed.size.y - 1
+	for x in range(x0, x1 + 1):
+		if (absi(x * 23 + y0 * 11) % 5) == 0:
+			_set_cell(_ground, x, y0, T_GRASS4)
+		if (absi(x * 19 + y1 * 13) % 5) == 0:
+			_set_cell(_ground, x, y1, T_GRASS3)
+		if (absi(x * 29 + y0) % 7) == 0:
+			_set_cell(_ground, x, y0 - 1, T_GRASS2)
+		if (absi(x * 31 + y1) % 7) == 0:
+			_set_cell(_ground, x, y1 + 1, T_DIRT2)
+	for y in range(y0, y1 + 1):
+		if (absi(y * 17 + x0 * 7) % 5) == 0:
+			_set_cell(_ground, x0, y, T_GRASS2)
+		if (absi(y * 21 + x1 * 5) % 5) == 0:
+			_set_cell(_ground, x1, y, T_GRASS4)
+		## Mid-side grass intrusion (breaks long straight dirt walls)
+		if (absi(y * 13 + x0) % 4) == 0 and y > y0 + 1 and y < y1 - 1:
+			_set_cell(_ground, x0 + 1, y, T_GRASS3)
+		if (absi(y * 15 + x1) % 4) == 0 and y > y0 + 1 and y < y1 - 1:
+			_set_cell(_ground, x1 - 1, y, T_GRASS2)
+
+
+func _paint_farm_meadow_variants() -> void:
+	## Sparse controlled dither — never carpet GRASS2/3 (that recreates a checker TileMap)
+	for y in range(76, 112):
+		for x in range(12, 58):
+			var tid: int = _cell_tid(x, y)
+			if tid != T_GRASS:
+				continue
+			## Skip yard / path cores
+			if x >= 36 and x <= 45 and y >= 88 and y <= 94:
+				continue
+			var h: int = absi(x * 19 + y * 23) % 17
+			if h == 0:
+				_set_cell(_ground, x, y, T_GRASS3)
+			elif h == 1:
+				_set_cell(_ground, x, y, T_GRASS4)
+			elif h == 2 and ((x + y * 3) % 7) == 0:
+				_set_cell(_ground, x, y, T_DIRT2)
+
+
+func _soften_farm_paths() -> void:
+	## Break staircase path walls on the farmstead with grass bite + GD spit
+	for y in range(78, 112):
+		for x in range(14, 54):
+			var tid: int = _cell_tid(x, y)
+			if tid != T_PATH and tid != T_PATH2:
+				continue
+			## Occasional grass intrusion into path body
+			if (absi(x * 13 + y * 17) % 7) == 0:
+				_set_cell(_ground, x, y, T_GRASS3 if ((x + y) % 2) == 0 else T_GRASS4)
+				continue
+			for d in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
+				var nx: int = x + d.x
+				var ny: int = y + d.y
+				var nt: int = _cell_tid(nx, ny)
+				if not _is_grassish(nt):
+					continue
+				var r: int = absi(nx * 7 + ny * 11) % 5
+				if r == 0:
+					_set_cell(_ground, nx, ny, T_DIRT2)
+				elif r == 1:
+					var gd: int = T_GD_E if d.x < 0 else (T_GD_W if d.x > 0 else (T_GD_S if d.y < 0 else T_GD_N))
+					_set_cell(_ground, nx, ny, gd)
+				elif r == 2:
+					_set_cell(_ground, nx, ny, T_GRASS2)
+
 
 func _paint_station_yard() -> void:
 	## Gravel/dirt blob + rails under train (replaces solid plaza rectangle)
@@ -887,8 +984,6 @@ func _paint_building_footings() -> void:
 	## Soft dirt/deck pads under key buildings (embed facades)
 	var pads := [
 		Rect2i(36, 90, 10, 4),   # farmhouse
-		Rect2i(24, 104, 12, 4),  # barn
-		Rect2i(44, 106, 12, 3),  # barn2
 		Rect2i(72, 51, 10, 3),   # shop
 		Rect2i(100, 53, 10, 3),  # cafe
 		Rect2i(88, 63, 10, 3),   # bakery
@@ -916,6 +1011,9 @@ func _paint_building_footings() -> void:
 				else:
 					_set_cell(_ground, xx, yy, T_DIRT2)
 		_fringe_soft(pad)
+	## Barn courts — soft blobs (not rectangular pads that float facades)
+	_fill_dirt_blob(28, 106, 7, 3, false)
+	_fill_dirt_blob(48, 107, 7, 3, false)
 	## Re-assert station dual rails after any fringe nibble
 	for x in range(118, 186):
 		_set_cell(_ground, x, 18, T_RAIL)

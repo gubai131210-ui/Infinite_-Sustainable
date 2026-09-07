@@ -11,31 +11,32 @@
 | Gameplay Zoom | 路合理？建筑接地？过渡自然？变化够吗？ |
 | Close Zoom | 瓦片重复？接缝硬？边不自然？装饰过随机？ |
 
-## 打分卡（0–10）· P166 · 2026-09-07
+## 打分卡（0–10）· P167 Round1 · 2026-09-07
 
-证据：`00_overview`（decor 树簇可见）+ `GOLDEN_CAPTURE_DONE` + `smoke/21_plant_anim`
+证据：`01_farm` / `smoke/22_farm_p167` + `GOLDEN_CAPTURE_DONE`
 
 ```text
-Tile Repetition:        6
-Terrain Coherence:      7
-Visual Variety:         7
-Composition:            7
-Building Integration:   7
-Road Naturalness:       7
-Decoration Density:     7
+Tile Repetition:        5
+Terrain Coherence:      5
+Visual Variety:         5
+Composition:            6
+Building Integration:   5
+Road Naturalness:       4
+Decoration Density:     5
 Palette Consistency:    7
-World Cohesion:         7
+World Cohesion:         5
 ```
 
-### 本轮相对 P165
+### 本轮相对 P166
 
 | 项 | 变化 |
 |----|------|
-| 验证 | deferred decor 后 golden 重抓；中谷/房环树簇入画 |
-| 动画 | plant freeze → `smoke/21_plant_anim.png` |
-| 接缝 | 镇区草/土硬边仍在（未本轮改瓦） |
+| 农庄结构 | 拆 Dirt 海 → 分院/分田/草廊 |
+| 树 | 东侧树墙 → 两簇 grove + 留白 |
+| 河 | 农庄段半宽↑ + 岸 wobble |
+| 诚实 | Cohesion **5** — 仍失败于「完整世界」标准 |
 
 ## 证据槽
 
 - Critic：`VISUAL_CRITIC_OVERVIEW.md`  
-- itch 主图：**否**（密度略好，接缝仍割裂；需试玩签字 + itch URL）
+- itch 主图：**否**（World Cohesion < 8）

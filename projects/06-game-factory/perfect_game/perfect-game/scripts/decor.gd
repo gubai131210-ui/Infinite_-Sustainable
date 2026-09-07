@@ -117,21 +117,26 @@ func _trees() -> void:
 			if ((x + y) % 3) == 0:
 				continue
 			spots.append(Vector2(x + (y % 2), y + (x % 2)))
-	# Farm edges + river corridor (choppable for axe wood)
+	# Farm edges — CLUSTERED groves (not a vertical tree wall east of farmyard)
 	var farm_chop: Array[Vector2] = [
-		Vector2(10, 70), Vector2(14, 74), Vector2(8, 88), Vector2(12, 100),
-		Vector2(8, 110), Vector2(58, 70), Vector2(62, 78), Vector2(60, 90),
-		Vector2(64, 100), Vector2(58, 110), Vector2(20, 66), Vector2(30, 68),
-		Vector2(42, 66), Vector2(52, 68), Vector2(16, 62), Vector2(56, 62),
-		Vector2(6, 80), Vector2(18, 86), Vector2(54, 86), Vector2(66, 94),
+		Vector2(10, 70), Vector2(8, 88), Vector2(12, 100), Vector2(8, 110),
+		Vector2(20, 66), Vector2(16, 62), Vector2(6, 80), Vector2(18, 86),
+		## NW grove (river bend)
+		Vector2(14, 74), Vector2(12, 78), Vector2(16, 76),
+		## SE grove near barn (open meadow gap toward house)
+		Vector2(58, 108), Vector2(62, 110), Vector2(60, 114), Vector2(56, 112),
+		## NE orchard edge (sparse — leave farm readable)
+		Vector2(58, 72), Vector2(62, 70), Vector2(66, 74),
 	]
 	for p in farm_chop:
 		spots.append(p)
 	# River west bank denser (start lower so north skyline stays open)
+	# Skip mid-farm corridor (y 70–108) so trees don't form a fence through the yard
 	for y in range(36, 100, 2):
 		spots.append(Vector2(8 + (y % 3), y))
 		spots.append(Vector2(14 + (y % 2), y + 1))
-		spots.append(Vector2(44 + (y % 4), y))
+		if y < 68 or y > 108:
+			spots.append(Vector2(44 + (y % 4), y))
 	# Town fringe dense
 	for p in [
 		Vector2(66, 28), Vector2(66, 34), Vector2(66, 40), Vector2(66, 48), Vector2(66, 55), Vector2(66, 68),
@@ -221,11 +226,19 @@ func _forest_rim() -> void:
 				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.1, gy + 0.7), 5, false, 1.05)
 			if near_spine and h >= 8:
 				_spr("res://assets/processed/bush.png", Vector2(gx + 0.6, gy + 1.1), 3, false)
-	# Soft inner belts (east of river / west of town) to break empty mid-grass
-	for y in range(26, 74, 3):
+	# Soft inner belts (east of river / west of town) — stop before farm yard so no tree wall
+	for y in range(26, 64, 3):
 		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(46 + (y % 3), y), 5)
 		_spr("res://assets/processed/tree_%d.png" % ((y + 1) % 3), Vector2(54 + (y % 2), y + 1), 5)
 		_spr("res://assets/processed/bush.png", Vector2(50 + (y % 2) * 0.4, y + 0.5), 3, false)
+	## Farm east meadow: two intentional groves + open grass between (anti-average scatter)
+	for p in [
+		Vector2(62, 82), Vector2(64, 84), Vector2(60, 86),
+		Vector2(66, 98), Vector2(68, 100), Vector2(64, 102), Vector2(70, 104),
+	]:
+		_spr("res://assets/processed/tree_%d.png" % (int(p.x + p.y) % 3), p, 5, false, 1.0)
+	for p2 in [Vector2(63, 85), Vector2(67, 101), Vector2(61, 100)]:
+		_spr("res://assets/processed/bush.png", p2, 3, false)
 	# Town→lake / town→station corridors (accent trees only — canopy strip fills mass)
 	for x in range(110, 170, 3):
 		for y in range(28, 50, 3):
