@@ -196,9 +196,9 @@ func _forest_rim() -> void:
 			2:
 				path = "res://assets/processed/tree_pine_c.png"
 		_spr(path, Vector2(x + 0.3, y), 5, false, 1.2 + float(x % 3) * 0.08)
-	# Soft mid-map irregular groves (fill open grass sea between rim and town)
-	for gx in range(38, 128, 2):
-		for gy in range(24, 76, 2):
+	# Soft mid-map irregular groves — thinned (batched meadow canopy carries oil mass)
+	for gx in range(38, 128, 3):
+		for gy in range(24, 76, 3):
 			# keep town plaza / storefronts clear of grove trees
 			if gx >= 66 and gx <= 118 and gy >= 38 and gy <= 76:
 				continue
@@ -206,41 +206,41 @@ func _forest_rim() -> void:
 			if gx <= 42 and gy <= 30:
 				continue
 			var h := (gx * 7 + gy * 11) % 11
-			if h < 4:
+			if h < 6:
 				continue
 			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.25, gy + (gx % 2) * 0.25), 5, false, 0.95 + float(h % 3) * 0.06)
-			if h >= 8:
+			if h >= 9:
 				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.1, gy + 0.7), 5, false, 1.05)
 	# Soft inner belts (east of river / west of town) to break empty mid-grass
-	for y in range(26, 74, 2):
+	for y in range(26, 74, 3):
 		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(46 + (y % 3), y), 5)
 		_spr("res://assets/processed/tree_%d.png" % ((y + 1) % 3), Vector2(54 + (y % 2), y + 1), 5)
 		_spr("res://assets/processed/bush.png", Vector2(50 + (y % 2) * 0.4, y + 0.5), 3, false)
-	# Town→lake / town→station corridors (overview empty grass seas)
-	for x in range(110, 170, 2):
-		for y in range(28, 50, 2):
+	# Town→lake / town→station corridors (accent trees only — canopy strip fills mass)
+	for x in range(110, 170, 3):
+		for y in range(28, 50, 3):
 			if x >= 130 and x <= 178 and y <= 28:
 				continue  # station platform
 			var hh := (x * 13 + y * 17) % 9
-			if hh < 3:
+			if hh < 4:
 				continue
-			if hh <= 5:
+			if hh <= 6:
 				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.2, y + 0.2), 5, false, 1.0)
-			elif hh == 6:
+			elif hh == 7:
 				_spr("res://assets/processed/bush.png", Vector2(x, y), 3, false)
 			else:
 				_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x, y), 2, false)
-	for x in range(118, 170, 2):
-		for y in range(70, 100, 2):
+	for x in range(118, 170, 3):
+		for y in range(70, 100, 3):
 			## west of lake / south of terraces
 			if x >= 150 and y >= 86:
 				continue  # lake water
 			var hh2 := (x * 19 + y * 23) % 10
-			if hh2 < 4:
+			if hh2 < 5:
 				continue
-			if hh2 <= 6:
+			if hh2 <= 7:
 				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.15, y), 5, false, 0.98)
-			elif hh2 == 7:
+			elif hh2 == 8:
 				_spr("res://assets/processed/bush.png", Vector2(x, y + 0.2), 3, false)
 			else:
 				_spr("res://assets/processed/flower_%d.png" % ((x) % 4), Vector2(x + 0.3, y), 2, false)

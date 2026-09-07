@@ -469,3 +469,14 @@
 
 ### Overview 密度进度
 - [x] P142 · [x] P143 · [x] P144
+
+## 树冠油画层 + NPC 生活动感（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P145 | 40m | 中谷落叶树冠条带（广场镂空）+ 单树疏化 | prop_meadow_canopy + 00_overview |
+| P146 | 30m | NPC 脚影/步速/摆动；更常走动 | smoke/20_npc_life |
+| P147 | 25m | golden + Critic + push | origin/main |
+
+### 树冠 NPC 进度
+- [x] P145 · [x] P146 · [x] P147

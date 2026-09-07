@@ -24,13 +24,28 @@ func _ready() -> void:
 	add_to_group("npc")
 	_home = global_position
 	_anim_base_y = anim.position.y
+	z_index = 0
+	y_sort_enabled = true
 	_setup_sprite()
+	_add_foot_shadow()
 	area.body_entered.connect(_on_enter)
 	area.body_exited.connect(_on_exit)
 	_timer = randf_range(0.8, 2.2)
 	_bob_t = randf() * TAU
 	anim.play("idle")
 	call_deferred("_bind_db")
+
+func _add_foot_shadow() -> void:
+	var shadow := Polygon2D.new()
+	shadow.z_index = -1
+	shadow.color = Color(0.08, 0.08, 0.12, 0.28)
+	var pts := PackedVector2Array()
+	for i in range(10):
+		var a := TAU * float(i) / 10.0
+		pts.append(Vector2(cos(a) * 7.0, sin(a) * 2.8 + 6.0))
+	shadow.polygon = pts
+	add_child(shadow)
+	move_child(shadow, 0)
 
 func _bind_db() -> void:
 	var cdb := get_node_or_null("/root/CharacterDB")
@@ -78,9 +93,9 @@ func _setup_sprite() -> void:
 	var frames := SpriteFrames.new()
 	frames.add_animation("idle")
 	frames.add_animation("walk")
-	frames.set_animation_speed("idle", 2.0)
+	frames.set_animation_speed("idle", 2.5)
 	frames.set_animation_loop("idle", true)
-	frames.set_animation_speed("walk", 12.0)
+	frames.set_animation_speed("walk", 14.0)
 	frames.set_animation_loop("walk", true)
 	var cell_w := CELL
 	if tex.get_height() > 0 and tex.get_height() < CELL:
@@ -118,14 +133,15 @@ func _physics_process(delta: float) -> void:
 		var opts := [
 			Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN,
 			Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN,
+			Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN,
 			Vector2(-1, -1).normalized(), Vector2(1, -1).normalized(),
 			Vector2(-1, 1).normalized(), Vector2(1, 1).normalized(),
 			Vector2.ZERO,
 		]
 		_dir = opts[randi() % opts.size()]
-	var walk_spd := 34.0
+	var walk_spd := 42.0
 	velocity = _dir * walk_spd
-	if global_position.distance_to(_home) > 72.0 and _dir != Vector2.ZERO:
+	if global_position.distance_to(_home) > 88.0 and _dir != Vector2.ZERO:
 		_dir = (_home - global_position).normalized()
 		velocity = _dir * walk_spd
 	_play_move(delta, _dir.length() > 0.1)
@@ -139,15 +155,16 @@ func _play_move(delta: float, moving: bool) -> void:
 	if moving:
 		if anim.animation != "walk" or not anim.is_playing():
 			anim.play("walk")
-		anim.speed_scale = 1.15
-		_bob_t += delta * 10.0
-		anim.position.y = _anim_base_y + sin(_bob_t) * 1.1
+		anim.speed_scale = 1.35
+		_bob_t += delta * 14.0
+		## Exaggerated stride bob so plaza NPCs read "alive" at overview zoom
+		anim.position.y = _anim_base_y + sin(_bob_t) * 2.2
 	else:
 		if anim.animation != "idle" or not anim.is_playing():
 			anim.play("idle")
 		anim.speed_scale = 1.0
-		_bob_t += delta * 2.5
-		anim.position.y = _anim_base_y + sin(_bob_t) * 0.5
+		_bob_t += delta * 2.8
+		anim.position.y = _anim_base_y + sin(_bob_t) * 0.6
 
 func _on_enter(body: Node2D) -> void:
 	if body.is_in_group("player") and body.has_method("set_interact_prompt"):
