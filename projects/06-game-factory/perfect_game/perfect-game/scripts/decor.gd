@@ -5,6 +5,10 @@ extends Node2D
 const TS := 16
 
 func _ready() -> void:
+	## Defer heavy spawn — Entities is often still blocked during sibling _ready
+	call_deferred("_boot_decor")
+
+func _boot_decor() -> void:
 	_trees()
 	_forest_rim()
 	_bushes()
@@ -71,7 +75,8 @@ func _spr(path: String, tile: Vector2, z: int = 0, choppable: bool = false, scal
 	if choppable:
 		s.add_to_group("choppable")
 		s.set_meta("chop_hp", 2)
-	_entity_host().add_child(s)
+	## Deferred — dense P164 clusters must not add_child during parent _ready
+	_entity_host().add_child.call_deferred(s)
 	return s
 
 func _spr_atlas(path: String, tile: Vector2, z: int = 0, frame: int = 0, flip: bool = false) -> Sprite2D:
@@ -88,7 +93,7 @@ func _spr_atlas(path: String, tile: Vector2, z: int = 0, frame: int = 0, flip: b
 	s.flip_h = flip
 	s.y_sort_enabled = true
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_entity_host().add_child(s)
+	_entity_host().add_child.call_deferred(s)
 	return s
 
 func _trees() -> void:

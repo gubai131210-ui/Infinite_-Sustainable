@@ -1,5 +1,5 @@
 extends Node
-## Dual cozy quest lines: main day-trip + market festival (P13).
+## Triple cozy quest lines: main day-trip + market festival + evening letters (P165).
 
 signal progress_changed(hint: String)
 
@@ -20,27 +20,41 @@ const MARKET := [
 	{"id": "mkt_talk_hua", "hint": "集市：与花贩小菊交谈"},
 	{"id": "mkt_gift", "hint": "集市：送礼给任意村民（背包点选礼物后对话）"},
 	{"id": "mkt_cafe", "hint": "集市：去咖啡馆点一杯热可可"},
-	{"id": "mkt_done", "hint": "集市日完成：镇子更热闹了！继续过日子吧"},
+	{"id": "mkt_done", "hint": "集市日完成：镇子更热闹了！日落后再听暮色故事"},
+]
+
+const EVENING := [
+	{"id": "eve_fish", "hint": "暮色：去回声湖或河边钓到一条鱼"},
+	{"id": "eve_yu", "hint": "暮色：把今天的渔获说给青渔听"},
+	{"id": "eve_waterfall", "hint": "暮色：再去瀑布听一次回声（带上心事）"},
+	{"id": "eve_mail", "hint": "暮色：到农庄邮箱看看是否有回信"},
+	{"id": "eve_done", "hint": "暮色故事收束：橡木湾欢迎你留下来过日子"},
 ]
 
 var done: Dictionary = {}
 var _main_idx: int = 0
 var _mkt_idx: int = 0
+var _eve_idx: int = 0
 var active_line: String = "main"
 
 func _ready() -> void:
 	_emit_hint()
 
 func current_hint() -> String:
-	if active_line == "market" or _main_complete():
+	if not _main_complete():
+		return str(MAIN[mini(_main_idx, MAIN.size() - 1)]["hint"])
+	if not _market_complete():
 		return str(MARKET[mini(_mkt_idx, MARKET.size() - 1)]["hint"])
-	return str(MAIN[mini(_main_idx, MAIN.size() - 1)]["hint"])
+	return str(EVENING[mini(_eve_idx, EVENING.size() - 1)]["hint"])
 
 func _main_complete() -> bool:
 	return bool(done.get("done", false))
 
 func _market_complete() -> bool:
 	return bool(done.get("mkt_done", false))
+
+func _evening_complete() -> bool:
+	return bool(done.get("eve_done", false))
 
 func mark(step_id: String) -> void:
 	if done.get(step_id, false):
@@ -50,8 +64,12 @@ func mark(step_id: String) -> void:
 	_advance_main()
 	_maybe_auto_market_done()
 	_advance_market()
+	_maybe_auto_evening_done()
+	_advance_evening()
 	if _main_complete() and not _market_complete():
 		active_line = "market"
+	elif _market_complete() and not _evening_complete():
+		active_line = "evening"
 	_emit_hint()
 	if current_hint() != before_hint:
 		var bus := get_node_or_null("/root/GameBus")
@@ -66,11 +84,21 @@ func _advance_market() -> void:
 	while _mkt_idx < MARKET.size() - 1 and done.get(str(MARKET[_mkt_idx]["id"]), false):
 		_mkt_idx += 1
 
+func _advance_evening() -> void:
+	while _eve_idx < EVENING.size() - 1 and done.get(str(EVENING[_eve_idx]["id"]), false):
+		_eve_idx += 1
+
 func _maybe_auto_market_done() -> void:
 	for i in range(MARKET.size() - 1):
 		if not done.get(str(MARKET[i]["id"]), false):
 			return
 	done["mkt_done"] = true
+
+func _maybe_auto_evening_done() -> void:
+	for i in range(EVENING.size() - 1):
+		if not done.get(str(EVENING[i]["id"]), false):
+			return
+	done["eve_done"] = true
 
 func _emit_hint() -> void:
 	var h := current_hint()
@@ -79,14 +107,19 @@ func _emit_hint() -> void:
 	if bus != null and bus.has_method("set_quest_hint"):
 		bus.call("set_quest_hint", h)
 
-func restore_state(done_map: Dictionary, main_idx: int, mkt_idx: int, line: String) -> void:
+func restore_state(done_map: Dictionary, main_idx: int, mkt_idx: int, line: String, eve_idx: int = 0) -> void:
 	done = done_map.duplicate(true)
 	_main_idx = main_idx
 	_mkt_idx = mkt_idx
-	active_line = line if line in ["main", "market"] else "main"
+	_eve_idx = eve_idx
+	active_line = line if line in ["main", "market", "evening"] else "main"
 	_maybe_auto_market_done()
+	_maybe_auto_evening_done()
 	_advance_main()
 	_advance_market()
+	_advance_evening()
 	if _main_complete() and not _market_complete():
 		active_line = "market"
+	elif _market_complete() and not _evening_complete():
+		active_line = "evening"
 	_emit_hint()

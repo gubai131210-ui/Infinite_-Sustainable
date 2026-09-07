@@ -200,3 +200,5 @@ func _talk() -> void:
 	GameBus.show_dialogue(display_name, spoken, hearts)
 	if npc_id == "hua":
 		QuestLog.mark("mkt_talk_hua")
+	if npc_id == "yu":
+		QuestLog.mark("eve_yu")

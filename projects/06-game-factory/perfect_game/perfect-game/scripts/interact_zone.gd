@@ -57,10 +57,12 @@ func _do_interact() -> void:
 			elif roll < 85:
 				Inventory.add("fish", 1)
 				GameBus.show_toast("钓到一条鱼！")
+				QuestLog.mark("eve_fish")
 				interacted.emit("fish")
 			else:
 				Inventory.add("fish", 2)
 				GameBus.show_toast("大鱼！鱼 x2")
+				QuestLog.mark("eve_fish")
 				interacted.emit("fish_big")
 		"dialogue":
 			GameBus.show_dialogue(speaker, message)
@@ -87,6 +89,8 @@ func _do_interact() -> void:
 		"quest_zone":
 			if quest_step_id != "":
 				QuestLog.mark(quest_step_id)
+				if quest_step_id == "visit_waterfall":
+					QuestLog.mark("eve_waterfall")
 			if message != "" and message.length() > 12:
 				GameBus.show_dialogue(speaker if speaker != "" else "提示", message)
 			else:
@@ -193,7 +197,14 @@ func _show_mail() -> void:
 		body = "亲爱的农场主：\n\n你听见瀑布的回声了。\n纸条说得对——灯塔灯火还亮着，\n去回声湖边看看吧。\n\n—— 伊莱"
 	if bool(QuestLog.done.get("visit_lighthouse", false)):
 		body = "亲爱的农场主：\n\n灯塔的灯火还亮着。\n橡木湾的日常会一直继续——\n种地、交友、赶集、听雨。\n\n—— 镇长"
+	if bool(QuestLog.done.get("eve_fish", false)):
+		body = "亲爱的农场主：\n\n听说你今天钓到鱼了。\n去找青渔聊聊吧——\n她最爱听湖边的小故事。\n\n—— 玛贝尔"
+	if bool(QuestLog.done.get("eve_yu", false)):
+		body = "亲爱的农场主：\n\n青渔说你讲得很有趣。\n再去瀑布听一次回声吧——\n有人说回声会把心事收好。\n\n—— 伊莱"
+	if bool(QuestLog.done.get("eve_waterfall", false)):
+		body = "亲爱的农场主：\n\n回声已替你收好了心事。\n橡木湾欢迎你留下来过日子：\n日出下田，黄昏赶集，夜里听雨。\n\n—— 镇长"
 	GameBus.show_dialogue("信箱", body)
+	QuestLog.mark("eve_mail")
 	interacted.emit("mail")
 
 func _ruin_loot() -> void:

@@ -1,27 +1,30 @@
 # WAVE 路线图 — Oakhaven 接近完整星露谷
 
 **锁定：** `LOCKED_DECISIONS.md`  
-**长跑燃料（≥5h）：** `GOAL_5H_PACKAGES.md`（P01–P18）
+**长跑燃料：** `GOAL_5H_PACKAGES.md`（含 P160+ 视觉包）
 
 按 Pack 推进；每 Pack 走多 Agent 闭环再勾选。
 
-## Wave A+B（本会话推进中）
+## Wave A+B（已推进）
 
 - [x] 玩家四向 walk / NPC·动物行走  
-- [x] 站房/城镇/灯塔美术升档（初版）  
-- [x] TimeClock + 日夜 CanvasModulate + HUD 时钟金币（P01）  
-- [x] 作物湿土/摇摆/隔日生长 + 水体闪烁（P02）  
-- [x] 整数金币买卖 + user:// 存档（P03）  
-- [x] 轻松日常任务线打卡（P04 初版）  
-- [x] CC0 下载管线 Kenney farm（P05 下载；remap 待做）  
-- [ ] Visual Bible QA 脚本  
-- [ ] 精力系统（P08）  
-- [ ] NPC 日程（P07）  
+- [x] 站房/城镇/灯塔美术升档  
+- [x] TimeClock + 日夜 + HUD（P01）  
+- [x] 作物湿土/生长（P02）  
+- [x] 金币买卖 + 存档（P03）  
+- [x] 主线轻松日常（P04）  
+- [x] CC0 管线（P05）  
+- [x] 12 NPC 人设 + 昼夜台词（P06）  
+- [x] NPC 日程（P07）  
+- [x] 精力系统（P08）  
+- [x] 集市线（P13）  
+- [x] 暮色故事线（P165）  
 
-## Wave C+ — 见 GOAL_5H_PACKAGES P06+
+## 视觉 World-driven（近期）
 
-轻松日常人设种子：`docs/content/CHARACTERS_COZY.md`
+- [x] P160–P164 中谷/广场/树冠/密度  
+- [ ] Critic 商店页主图仍否  
 
 ## 关闭 Goal 条件
 
-仅当「接近完整星露谷」关闭清单（见 `GOAL_EXECUTE_STARDEW.md`）**全部有证据**才可 complete——**竖切完成 ≠ Goal 完成**。最低长跑路径 P01–P08 ≥5h。
+仅当：Critic itch 主图=是 + `PLAYTEST_EVIDENCE` 用户签字 + itch URL —— **竖切完成 ≠ Goal 完成**。

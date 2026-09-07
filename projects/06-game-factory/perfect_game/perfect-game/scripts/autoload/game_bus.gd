@@ -106,6 +106,7 @@ func save_game() -> void:
 		"quest_done": QuestLog.done.duplicate(true),
 		"quest_main_idx": QuestLog._main_idx,
 		"quest_mkt_idx": QuestLog._mkt_idx,
+		"quest_eve_idx": QuestLog._eve_idx,
 		"quest_line": QuestLog.active_line,
 		"friendship": Friendship.hearts.duplicate(true),
 		"selected_gift": Inventory.selected_gift,
@@ -160,8 +161,9 @@ func load_game() -> void:
 		var qdone: Dictionary = data["quest_done"]
 		var mi := int(data.get("quest_main_idx", data.get("quest_idx", 0)))
 		var mk := int(data.get("quest_mkt_idx", 0))
+		var ei := int(data.get("quest_eve_idx", 0))
 		var line := str(data.get("quest_line", "main"))
-		QuestLog.restore_state(qdone, mi, mk, line)
+		QuestLog.restore_state(qdone, mi, mk, line, ei)
 	if data.has("friendship") and typeof(data["friendship"]) == TYPE_DICTIONARY:
 		Friendship.hearts = data["friendship"]
 	if data.has("selected_gift"):
