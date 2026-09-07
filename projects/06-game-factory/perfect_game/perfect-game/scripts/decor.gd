@@ -208,9 +208,9 @@ func _forest_rim() -> void:
 			var h := (gx * 7 + gy * 11) % 11
 			if h < 4:
 				continue
-			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.25, gy + (gx % 2) * 0.25), 5, 0.95 + float(h % 3) * 0.06)
+			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.25, gy + (gx % 2) * 0.25), 5, false, 0.95 + float(h % 3) * 0.06)
 			if h >= 8:
-				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.1, gy + 0.7), 5, 1.05)
+				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.1, gy + 0.7), 5, false, 1.05)
 	# Soft inner belts (east of river / west of town) to break empty mid-grass
 	for y in range(26, 74, 2):
 		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(46 + (y % 3), y), 5)
@@ -225,7 +225,7 @@ func _forest_rim() -> void:
 			if hh < 3:
 				continue
 			if hh <= 5:
-				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.2, y + 0.2), 5, 1.0)
+				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.2, y + 0.2), 5, false, 1.0)
 			elif hh == 6:
 				_spr("res://assets/processed/bush.png", Vector2(x, y), 3, false)
 			else:
@@ -239,7 +239,7 @@ func _forest_rim() -> void:
 			if hh2 < 4:
 				continue
 			if hh2 <= 6:
-				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.15, y), 5, 0.98)
+				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.15, y), 5, false, 0.98)
 			elif hh2 == 7:
 				_spr("res://assets/processed/bush.png", Vector2(x, y + 0.2), 3, false)
 			else:
