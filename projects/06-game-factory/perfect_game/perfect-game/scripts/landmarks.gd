@@ -60,7 +60,7 @@ func _place() -> void:
 
 func _mountains() -> void:
 	## One seamless full-width skyline — draw above ground tiles, no Y-sort fights.
-	## Texture 3072×112; bottom anchored at north map edge (tile y=0).
+	## Texture 3072×144; bottom anchored at north map edge (tile y=0).
 	_spr("res://assets/processed/prop_skyline_wide.png", Vector2(96, 0), 1, 1.0, Vector2.ZERO, Color(1, 1, 1, 1), false)
 	for i in range(0, 6):
 		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(20 + i * 30, -5 + (i % 2)), 2, 1.6, Vector2.ZERO, Color(1, 1, 1, 1), false)
