@@ -249,6 +249,8 @@ func _forest_rim() -> void:
 				_spr("res://assets/processed/bush.png", Vector2(x, y + 0.2), 3, false)
 			else:
 				_spr("res://assets/processed/flower_%d.png" % ((x) % 4), Vector2(x + 0.3, y), 2, false)
+	## P164 — composition grove clusters (World-driven density, not uniform spam)
+	_mid_valley_clusters()
 	# Mid-map ground clutter (flowers/tufts — trees alone don't kill grass sea)
 	for x in range(38, 130, 2):
 		for y in range(28, 76, 2):
@@ -263,6 +265,34 @@ func _forest_rim() -> void:
 				_spr("res://assets/processed/bush.png", Vector2(x + 0.2, y + 0.2), 3, false)
 			elif h == 4:
 				_spr("res://assets/processed/prop_path_pebble.png", Vector2(x + 0.1, y + 0.1), 2, false)
+
+func _mid_valley_clusters() -> void:
+	## Named oil masses between farm↔town↔lake — fills overview dead green (Critic P163)
+	var centers: Array = [
+		Vector2(58, 78), Vector2(70, 66), Vector2(82, 84), Vector2(98, 78),
+		Vector2(112, 70), Vector2(124, 84), Vector2(52, 58), Vector2(134, 92),
+		Vector2(64, 48), Vector2(118, 54), Vector2(88, 92), Vector2(106, 96),
+	]
+	for ci in range(centers.size()):
+		var c: Vector2 = centers[ci]
+		## Keep plaza / storefronts clear
+		if c.x >= 70.0 and c.x <= 114.0 and c.y >= 40.0 and c.y <= 68.0:
+			continue
+		var n: int = 5 + absi(int(c.x) * 3 + int(c.y)) % 4
+		for i in range(n):
+			var ox: float = float((i * 5 + ci * 2) % 7) - 3.0
+			var oy: float = float((i * 3 + ci) % 5) - 2.0
+			var p := c + Vector2(ox * 0.85, oy * 0.85)
+			if p.x >= 70.0 and p.x <= 114.0 and p.y >= 42.0 and p.y <= 70.0:
+				continue
+			if i % 4 == 0:
+				_spr("res://assets/processed/tree_pine.png", p, 5, false, 1.0 + float(i % 3) * 0.05)
+			else:
+				_spr("res://assets/processed/tree_%d.png" % ((i + ci) % 3), p, 5, false, 0.95 + float(i % 3) * 0.06)
+			if i % 3 == 0:
+				_spr("res://assets/processed/bush.png", p + Vector2(0.7, 0.9), 3, false)
+			if i % 5 == 0:
+				_spr("res://assets/processed/flower_%d.png" % ((i + ci) % 4), p + Vector2(-0.4, 1.0), 2, false)
 
 func _props_fill() -> void:
 	for p in [

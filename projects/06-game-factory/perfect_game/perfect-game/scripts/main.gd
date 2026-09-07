@@ -141,7 +141,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 		["04_station", Vector2(156 * 16, 24 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(120 * 16, 112 * 16)],
-		["00_overview", Vector2(96 * 16, 62 * 16)],
+		["00_overview", Vector2(96 * 16, 68 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
 	var player_sprite := player.get_node_or_null("AnimatedSprite2D") as CanvasItem
@@ -160,8 +160,8 @@ func _capture_goldens(player: Node2D = null) -> void:
 			var hide_player := is_overview or str(s[0]) in ["07_waterfall", "04_station"]
 			player_sprite.visible = not hide_player
 		if is_overview:
-			## Slightly tighter poster crop — more town/farm weight, less empty north void
-			cam.zoom = Vector2(0.34, 0.34)
+			## Tighter poster crop — town/farm/lake weight (P164)
+			cam.zoom = Vector2(0.37, 0.37)
 		elif str(s[0]) == "07_waterfall":
 			cam.zoom = Vector2(1.05, 1.05)
 		elif str(s[0]) == "04_station":

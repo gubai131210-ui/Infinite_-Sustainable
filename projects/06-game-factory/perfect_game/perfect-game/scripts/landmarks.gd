@@ -79,10 +79,10 @@ func _mountains() -> void:
 	_spr("res://assets/processed/prop_pine_canopy.png", Vector2(96, 12), 3, 1.0, Vector2.ZERO, Color(1, 1, 1, 1), false)
 	_spr("res://assets/processed/prop_pine_canopy.png", Vector2(88, 18), 4, 1.02, Vector2.ZERO, Color(0.9, 0.97, 0.92, 0.75), false)
 	_spr("res://assets/processed/prop_pine_canopy.png", Vector2(104, 21), 4, 0.98, Vector2.ZERO, Color(0.78, 0.92, 0.84, 0.55), false)
-	## Mid-valley deciduous oil — staggered (break rigid horizontal bands / corridor windows)
-	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(88, 38), 2, 1.0, Vector2.ZERO, Color(1, 1, 1, 0.7), false)
-	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(104, 46), 2, 1.0, Vector2.ZERO, Color(0.92, 0.98, 0.9, 0.42), false)
-	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(72, 54), 2, 0.92, Vector2.ZERO, Color(0.88, 0.96, 0.86, 0.32), false)
+	## Mid-valley deciduous oil — slightly stronger mass for poster (P164)
+	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(88, 38), 2, 1.0, Vector2.ZERO, Color(1, 1, 1, 0.78), false)
+	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(104, 46), 2, 1.0, Vector2.ZERO, Color(0.92, 0.98, 0.9, 0.52), false)
+	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(72, 54), 2, 0.92, Vector2.ZERO, Color(0.88, 0.96, 0.86, 0.4), false)
 	# Sparse landmark accent pines only
 	for p in [Vector2(6, 14), Vector2(48, 13), Vector2(120, 14), Vector2(186, 13), Vector2(36, 18), Vector2(160, 16)]:
 		_spr("res://assets/processed/tree_pine.png", p, 5, 0.95)

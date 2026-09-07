@@ -561,6 +561,16 @@
 ### 广场软边进度
 - [x] P163（itch 主图仍否）
 
+## 中谷植被簇 + 海报框（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P164 | 35m | mid-valley grove clusters + canopy alpha + overview 0.37 | 00_overview + VISUAL_QA |
+
+### 中谷密度进度
+- [x] P164（itch 主图仍否；需试玩签字）
+
+
 
 
 
