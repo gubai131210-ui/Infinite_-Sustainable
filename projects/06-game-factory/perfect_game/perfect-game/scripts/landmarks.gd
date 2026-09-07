@@ -306,7 +306,7 @@ func _town() -> void:
 		_spr("res://assets/processed/prop_path_tuft.png", p2 + Vector2(1, 0), 2, 0.85)
 
 func _station() -> void:
-	# Hall + canopy + train south of pine strip (station window in canopy)
+	# Hall + canopy + train on south rails; dense lived-in clutter
 	_spr("res://assets/processed/prop_station.png", Vector2(152, 20), 0, 1.05, Vector2(96, 26))
 	_spr("res://assets/processed/prop_canopy.png", Vector2(158, 24), 0, 1.15)
 	_train = _spr("res://assets/processed/prop_train.png", Vector2(162, 26), 0, 1.2, Vector2.ZERO)
@@ -314,12 +314,23 @@ func _station() -> void:
 		_train_home = _train.position
 		_attach_train_steam(_train)
 	_spr("res://assets/processed/prop_tunnel.png", Vector2(186, 18), 0, 1.25, Vector2(32, 28))
-	_spr("res://assets/processed/prop_crate.png", Vector2(140, 22), 0)
-	_spr("res://assets/processed/prop_crate.png", Vector2(144, 24), 0)
-	_spr("res://assets/processed/prop_barrel.png", Vector2(146, 22), 0)
+	# Luggage / crates / barrels (platform left + right)
+	for p in [Vector2(140, 22), Vector2(143, 23), Vector2(146, 22), Vector2(168, 22), Vector2(171, 24)]:
+		_spr("res://assets/processed/prop_crate.png", p, 0, 0.95)
+	for p in [Vector2(145, 24), Vector2(170, 23), Vector2(148, 25)]:
+		_spr("res://assets/processed/prop_barrel.png", p, 0, 0.9)
+	_spr("res://assets/processed/prop_bench.png", Vector2(150, 23), 0, 1.0)
+	_spr("res://assets/processed/prop_bench.png", Vector2(166, 23), 0, 1.0)
 	_spr("res://assets/processed/prop_lamp.png", Vector2(148, 18), 0)
 	_spr("res://assets/processed/prop_lamp.png", Vector2(168, 18), 0)
+	_spr("res://assets/processed/prop_lamp.png", Vector2(156, 28), 0)
 	_spr("res://assets/processed/prop_signboard.png", Vector2(154, 14), 0)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(152, 22), 0, 0.9)
+	_spr("res://assets/processed/prop_flowerbed.png", Vector2(149, 16), 0, 0.85)
+	_spr("res://assets/processed/prop_flowerbed.png", Vector2(161, 16), 0, 0.85)
+	for p2 in [Vector2(144, 27), Vector2(150, 28), Vector2(158, 28), Vector2(164, 27), Vector2(170, 28)]:
+		_spr("res://assets/processed/prop_path_pebble.png", p2, 0, 0.9)
+		_spr("res://assets/processed/prop_path_tuft.png", p2 + Vector2(1, 0), 0, 0.85)
 	for x in range(132, 180, 2):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 30), 0)
 

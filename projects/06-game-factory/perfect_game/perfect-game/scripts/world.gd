@@ -437,17 +437,35 @@ func _paint_base() -> void:
 		for y in range(20, 28):
 			_set_cell(_water, x, y, T_WATER)
 			_set_cell(_ground, x, y, T_WATER)
-	# Soft bank fringe — mix cliff / water-edge / grass, irregular
-	for x in range(16, 32):
-		var edge_y := 27 + ((x * 3) % 3) - 1
-		if (x + edge_y) % 4 == 0:
-			_set_cell(_ground, x, edge_y, T_CLIFF)
-		elif (x * 2 + edge_y) % 3 == 0:
-			_set_cell(_ground, x, edge_y, T_WE_N)
-		else:
-			_set_cell(_ground, x, edge_y, T_GRASS3 if (x % 2) == 0 else T_DIRT)
-		if (x % 3) == 0:
-			_set_cell(_ground, x, edge_y + 1, T_GRASS2)
+	# Soft bank fringe — sand / WE / grass (avoid hard cliff ladder at pool mouth)
+	for x in range(15, 33):
+		for ey in range(26, 30):
+			var n: int = absi(x * 13 + ey * 17) % 6
+			if n <= 1:
+				_set_cell(_ground, x, ey, T_SAND)
+			elif n == 2:
+				_set_cell(_ground, x, ey, T_WE_N)
+			elif n == 3:
+				_set_cell(_ground, x, ey, T_DIRT2)
+			else:
+				_set_cell(_ground, x, ey, T_GRASS3 if (x % 2) == 0 else T_GRASS2)
+	# Convert outer amphitheater cliff ring → sand/WE speckles (soft land↔water)
+	for x in range(14, 34):
+		for y in range(10, 26):
+			var dx := x - 24
+			var dy := y - 15
+			var bowl := float(dx * dx) * 0.4 + float(dy * dy) * 1.05
+			if bowl < 40.0 or bowl > 58.0:
+				continue
+			if _is_waterish(_cell_tid(x, y)):
+				continue
+			var h: int = absi(x * 19 + y * 23) % 5
+			if h <= 1:
+				_set_cell(_ground, x, y, T_SAND)
+			elif h == 2:
+				_set_cell(_ground, x, y, T_WE_S if dy < 0 else T_WE_N)
+			elif h == 3:
+				_set_cell(_ground, x, y, T_GRASS3)
 	for p in [Vector2i(16, 24), Vector2i(17, 25), Vector2i(30, 24), Vector2i(31, 25), Vector2i(18, 26), Vector2i(29, 26)]:
 		_set_cell(_ground, p.x, p.y, T_CLIFF)
 	# Bridges
@@ -498,12 +516,8 @@ func _paint_base() -> void:
 	_paint_path_winding(Vector2i(70, 70), Vector2i(130, 70), 48)  # mid crosslink
 	_paint_path_winding(Vector2i(90, 48), Vector2i(28, 24), 70)  # town → waterfall
 
-	# Z4 rails + wider platform
-	for x in range(118, 186):
-		_set_cell(_ground, x, 18, T_RAIL)
-		_set_cell(_ground, x, 19, T_RAIL)
-		_set_cell(_ground, x, 20, T_RAIL)
-	_fill_rect(_ground, Rect2i(136, 12, 36, 16), T_PLAZA)
+	# Z4 rails + organic station yard (not a solid plaza slab)
+	_paint_station_yard()
 	# Tunnel cliff mouth on east end of rails
 	_fill_rect(_ground, Rect2i(178, 10, 10, 16), T_CLIFF)
 	_fill_rect(_ground, Rect2i(180, 14, 6, 8), T_HILL)
@@ -609,6 +623,39 @@ func _paint_base() -> void:
 	## Building footings — dirt pads so facades sit on ground (not float)
 	_paint_building_footings()
 
+func _paint_station_yard() -> void:
+	## Gravel/dirt blob + rails under train (replaces solid plaza rectangle)
+	for yy in range(14, 29):
+		for xx in range(136, 178):
+			var dx := xx - 156
+			var dy := yy - 21
+			var r2 := float(dx * dx) + float(dy * dy) * 1.85
+			if r2 > 268.0 and (absi(xx * 7 + yy * 11) % 4) != 0:
+				continue
+			var h: int = absi(xx * 17 + yy * 13) % 8
+			if h <= 1:
+				_set_cell(_ground, xx, yy, T_PLAZA2)
+			elif h <= 3:
+				_set_cell(_ground, xx, yy, T_PATH2)
+			elif h <= 5:
+				_set_cell(_ground, xx, yy, T_DIRT)
+			elif h == 6:
+				_set_cell(_ground, xx, yy, T_DIRT2)
+			else:
+				_set_cell(_ground, xx, yy, T_SAND)
+	_fringe_soft(Rect2i(138, 15, 36, 13))
+	## Dual rail bands: approach north of hall + track under train
+	for x in range(118, 186):
+		_set_cell(_ground, x, 18, T_RAIL)
+		_set_cell(_ground, x, 19, T_RAIL)
+		if x >= 140 and x <= 176:
+			_set_cell(_ground, x, 25, T_RAIL)
+			_set_cell(_ground, x, 26, T_RAIL)
+	## Wood sleeper accents beside platform edge
+	for x in range(142, 172, 3):
+		_set_cell(_ground, x, 24, T_BRIDGE)
+		_set_cell(_ground, x, 27, T_BRIDGE)
+
 func _soften_path_edges() -> void:
 	## Nibble path/plaza borders into grass + GD tiles (breaks overview brick-read)
 	var extras: Array = []
@@ -686,24 +733,27 @@ func _stitch_water_shores() -> void:
 					we = T_WE_N
 				edge_water.append([x, y, we])
 			if n_land:
-				land_fringe.append([x, y - 1, T_WE_S])
+				land_fringe.append([x, y - 1, T_SAND if (absi(x + y) % 3) == 0 else T_WE_S])
 			if s_land:
-				land_fringe.append([x, y + 1, T_WE_N])
+				land_fringe.append([x, y + 1, T_SAND if (absi(x * 2 + y) % 3) == 0 else T_WE_N])
 			if w_land:
-				land_fringe.append([x - 1, y, T_WE_E])
+				land_fringe.append([x - 1, y, T_DIRT2 if (absi(x + y * 2) % 3) == 0 else T_WE_E])
 			if e_land:
-				land_fringe.append([x + 1, y, T_WE_W])
+				land_fringe.append([x + 1, y, T_DIRT2 if (absi(x * 3 + y) % 3) == 0 else T_WE_W])
 			for d in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
 				var nx: int = x + d.x
 				var ny: int = y + d.y
 				if not _is_shoreable(_cell_tid(nx, ny)):
 					continue
-				var n: int = absi(nx * 19 + ny * 23) % 4
-				if n == 0:
+				var n: int = absi(nx * 19 + ny * 23) % 5
+				## Prefer sand/grass speckles over WE on land (less jagged hero shores)
+				if n <= 1:
 					land_fringe.append([nx, ny, T_SAND])
-				elif n == 1:
-					land_fringe.append([nx, ny, T_GRASS3])
 				elif n == 2:
+					land_fringe.append([nx, ny, T_GRASS3])
+				elif n == 3:
+					land_fringe.append([nx, ny, T_DIRT2])
+				else:
 					land_fringe.append([nx, ny, T_WE_S if d.y < 0 else T_WE_N])
 	for item in edge_water:
 		var ex: int = int(item[0])
@@ -753,7 +803,7 @@ func _paint_building_footings() -> void:
 		Rect2i(74, 52, 10, 3),   # shop
 		Rect2i(98, 52, 10, 3),   # cafe
 		Rect2i(86, 64, 10, 3),   # bakery
-		Rect2i(148, 22, 14, 4),  # station
+		Rect2i(140, 18, 28, 10),  # station yard
 		Rect2i(170, 102, 8, 4),  # lighthouse
 	]
 	for pad in pads:
