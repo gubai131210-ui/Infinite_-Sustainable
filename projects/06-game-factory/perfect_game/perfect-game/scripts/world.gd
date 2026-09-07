@@ -764,7 +764,8 @@ func _soften_path_edges() -> void:
 			var sx: int = x + d2.x * 2
 			var sy: int = y + d2.y * 2
 			if _is_grassish(_cell_tid(sx, sy)):
-				spit.append([sx, sy, T_DIRT2 if ((x + y) % 2) == 0 else T_GD_N])
+				var gd: int = T_GD_N if d2.y > 0 else (T_GD_S if d2.y < 0 else (T_GD_W if d2.x > 0 else T_GD_E))
+				spit.append([sx, sy, T_DIRT2 if ((x + y) % 2) == 0 else gd])
 	for item2 in spit:
 		_set_cell(_ground, int(item2[0]), int(item2[1]), int(item2[2]))
 
