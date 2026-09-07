@@ -482,9 +482,9 @@ func _door_and_chest() -> void:
 	var doors := [
 		{"id": "farmhouse", "prompt": "按 E 进入农舍", "pos": Vector2(40, 88)},
 		{"id": "barn", "prompt": "按 E 进入谷仓", "pos": Vector2(28, 102)},
-		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(78, 51)},
-		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(102, 51)},
-		{"id": "bakery", "prompt": "按 E 进入面包房", "pos": Vector2(90, 63)},
+		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(76, 50)},
+		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(104, 52)},
+		{"id": "bakery", "prompt": "按 E 进入面包房", "pos": Vector2(92, 62)},
 		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(152, 22)},
 		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(174, 100)},
 	]

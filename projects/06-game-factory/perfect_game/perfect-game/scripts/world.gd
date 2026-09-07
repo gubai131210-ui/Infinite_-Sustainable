@@ -222,39 +222,41 @@ func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
 			_set_cell(layer, x, y, tid)
 
 func _paint_plaza_soft(cx: int, cy: int, hw: int, hh: int) -> void:
-	## Soft oval plaza — heavy dither fringe + interior grass pockets
-	for y in range(cy - hh - 3, cy + hh + 4):
-		for x in range(cx - hw - 3, cx + hw + 4):
-			var dx: float = absf(float(x - cx)) / float(maxi(hw, 1))
-			var dy: float = absf(float(y - cy)) / float(maxi(hh, 1))
-			var edge: float = maxf(dx, dy)
-			var n: float = float((x * 17 + y * 31) % 11) / 11.0
-			var n2: float = float((x * 13 + y * 19) % 7) / 7.0
-			if edge < 0.55:
-				if n2 > 0.82:
-					_set_cell(_ground, x, y, T_DIRT2)
-				elif n > 0.7:
+	## Asymmetric stone core (ref plaza) — denser PLAZA, irregular oval, soft dirt fringe
+	for y in range(cy - hh - 4, cy + hh + 5):
+		for x in range(cx - hw - 4, cx + hw + 5):
+			## Stretch/skew breaks left-right mirror
+			var dx: float = absf(float(x - cx) + 1.8) / float(maxi(hw, 1))
+			var dy: float = absf(float(y - cy) - 0.6) / float(maxi(hh, 1))
+			var edge: float = maxf(dx * 0.92, dy * 1.08)
+			var n: float = float(absi(x * 17 + y * 31) % 11) / 11.0
+			var n2: float = float(absi(x * 13 + y * 19) % 7) / 7.0
+			if edge < 0.58:
+				## Solid-ish stone core (lived-in plaza, not dirt spray)
+				if n2 > 0.88:
 					_set_cell(_ground, x, y, T_PLAZA2)
+				elif n > 0.78:
+					_set_cell(_ground, x, y, T_DIRT2)
 				else:
 					_set_cell(_ground, x, y, T_PLAZA)
-			elif edge < 0.72:
-				if n > 0.35:
-					_set_cell(_ground, x, y, T_PLAZA if ((x + y) % 2 == 0) else T_PLAZA2)
-				elif n > 0.15:
+			elif edge < 0.74:
+				if n > 0.4:
+					_set_cell(_ground, x, y, T_PLAZA if ((x + y) % 3 != 0) else T_PLAZA2)
+				elif n > 0.18:
 					_set_cell(_ground, x, y, T_DIRT)
-				elif n2 > 0.5:
+				elif n2 > 0.45:
 					_set_cell(_ground, x, y, T_GRASS3)
-			elif edge < 0.88:
-				if n > 0.55:
+			elif edge < 0.9:
+				if n > 0.5:
 					_set_cell(_ground, x, y, T_DIRT)
-				elif n > 0.28:
+				elif n > 0.25:
 					_set_cell(_ground, x, y, T_GRASS3 if ((x + y) % 2 == 0) else T_GRASS2)
-				elif n2 > 0.6:
-					_set_cell(_ground, x, y, T_GRASS4)
-			elif edge < 1.05:
-				if n > 0.45:
-					_set_cell(_ground, x, y, T_GRASS4 if (x % 2 == 0) else T_DIRT)
 				elif n2 > 0.55:
+					_set_cell(_ground, x, y, T_GRASS4)
+			elif edge < 1.08:
+				if n > 0.48:
+					_set_cell(_ground, x, y, T_GRASS4 if (x % 2 == 0) else T_DIRT)
+				elif n2 > 0.5:
 					_set_cell(_ground, x, y, T_GRASS2)
 
 func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
@@ -573,9 +575,9 @@ func _paint_base() -> void:
 		for x in range(126, 184):
 			var dx := float(x - 155)
 			var dy := float(y - 104)
-			## Multi-frequency shoreline wobble (World-driven lake shape)
-			var wob: float = 0.12 * sin(dx * 0.31 + dy * 0.19) + 0.08 * cos(dx * 0.17 - dy * 0.27)
-			wob += 0.05 * sin((dx + dy) * 0.41)
+			## Multi-frequency shoreline wobble — stronger lobes (P163 break rectangle)
+			var wob: float = 0.18 * sin(dx * 0.28 + dy * 0.21) + 0.12 * cos(dx * 0.15 - dy * 0.33)
+			wob += 0.08 * sin((dx + dy) * 0.37) + 0.05 * cos(dx * 0.55)
 			var r2 := (dx * dx) * (1.0 + wob) + (dy * dy) * (1.65 + wob * 0.5)
 			if r2 < 820.0:
 				var tid := T_DEEP if r2 < 380.0 else T_WATER
@@ -887,9 +889,9 @@ func _paint_building_footings() -> void:
 		Rect2i(36, 90, 10, 4),   # farmhouse
 		Rect2i(24, 104, 12, 4),  # barn
 		Rect2i(44, 106, 12, 3),  # barn2
-		Rect2i(74, 52, 10, 3),   # shop
-		Rect2i(98, 52, 10, 3),   # cafe
-		Rect2i(86, 64, 10, 3),   # bakery
+		Rect2i(72, 51, 10, 3),   # shop
+		Rect2i(100, 53, 10, 3),  # cafe
+		Rect2i(88, 63, 10, 3),   # bakery
 		Rect2i(148, 19, 12, 4),  # station hall apron only (do not remash full yard/rails)
 		Rect2i(170, 102, 8, 4),  # lighthouse
 		## Residential ring aprons (P162 — embed house yards)

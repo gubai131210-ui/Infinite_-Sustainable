@@ -230,93 +230,104 @@ def bridge() -> Image.Image:
 
 
 def water_edge(side: str) -> Image.Image:
-    """Jagged grass↔sand↔water shore — Stardew-like soft bank (not a hard tile cut)."""
+    """Wider jagged sand lip + grass overhang — soft bank for close zoom."""
     img = grass(2).copy()
     wcols = [(52, 124, 198, 255), (58, 132, 208, 255), (44, 110, 180, 255)]
     shore = [(196, 172, 118, 255), (178, 152, 100, 255), (210, 188, 132, 255), (168, 145, 96, 255)]
     foam = (170, 220, 245, 255)
     for y in range(TS):
         for x in range(TS):
-            jag = ((x * 7) ^ (y * 11) ^ (x * y * 3)) % 7
-            wave = int(2.4 * math.sin(x * 0.95 + y * 0.45 + (0.0 if side in ("n", "s") else 1.2)))
-            # water depth band (deeper toward water side)
+            jag = ((x * 7) ^ (y * 11) ^ (x * y * 3)) % 9
+            wave = int(3.2 * math.sin(x * 1.05 + y * 0.55 + (0.0 if side in ("n", "s") else 1.2)))
+            wave2 = int(1.6 * math.cos(x * 0.4 - y * 0.7))
             if side == "n":
-                depth = (5 + wave - jag // 3) - y
+                depth = (6 + wave + wave2 - jag // 2) - y
             elif side == "s":
-                depth = y - (10 + wave + jag // 3)
+                depth = y - (9 + wave - wave2 + jag // 2)
             elif side == "e":
-                depth = x - (10 + wave + jag // 3)
+                depth = x - (9 + wave + wave2 + jag // 2)
             else:  # w
-                depth = (5 + wave - jag // 3) - x
-            if depth >= 3:
+                depth = (6 + wave - wave2 - jag // 2) - x
+            if depth >= 4:
                 px(img, x, y, wcols[(x + y) % 3])
-                if (x + y * 3) % 11 == 0:
+                if (x + y * 3) % 9 == 0:
                     px(img, x, y, foam)
-            elif depth >= 0:
+            elif depth >= 1:
                 px(img, x, y, shore[(x * 3 + y) % 4])
-            elif depth >= -2 and rng.random() > 0.45:
-                # sand speckles into grass
-                px(img, x, y, shore[(x + y) % 4])
-    # grass blade overhang onto sand/water lip
-    for _ in range(16):
+            elif depth >= -3:
+                # thick sand→grass dither
+                if rng.random() > 0.35 + abs(depth) * 0.08:
+                    px(img, x, y, shore[(x + y) % 4])
+    for _ in range(28):
         if side == "n":
-            x, y = rng.randrange(1, 15), rng.randrange(4, 11)
+            x, y = rng.randrange(0, 16), rng.randrange(3, 12)
         elif side == "s":
-            x, y = rng.randrange(1, 15), rng.randrange(5, 12)
+            x, y = rng.randrange(0, 16), rng.randrange(4, 13)
         elif side == "e":
-            x, y = rng.randrange(5, 12), rng.randrange(1, 15)
+            x, y = rng.randrange(4, 13), rng.randrange(0, 16)
         else:
-            x, y = rng.randrange(4, 11), rng.randrange(1, 15)
+            x, y = rng.randrange(3, 12), rng.randrange(0, 16)
         c = img.getpixel((x, y))
-        if c[2] > 150 or c[0] > 160:  # water or sand
+        if c[2] > 140 or c[0] > 155:
             blade = (48 + rng.randrange(0, 30), 110 + rng.randrange(0, 40), 40 + rng.randrange(0, 20), 255)
             px(img, x, y, blade)
+            if rng.random() > 0.4:
+                px(img, min(15, x + 1), max(0, y - 1), blade)
     return img
 
 
 def grass_dirt(side: str) -> Image.Image:
-    """Strong irregular grass↔dirt seam — grass tufts overhang dirt (Stardew stitch)."""
+    """Stronger multi-frequency grass↔dirt seam with dense tuft overhang."""
     img = grass(2).copy()
     dcols = [(148, 108, 68, 255), (128, 92, 55, 255), (165, 122, 80, 255), (138, 100, 62, 255)]
     for y in range(TS):
         for x in range(TS):
-            # multi-frequency jagged boundary
-            jag = ((x * 5) ^ (y * 9) ^ (x * y)) % 7
-            wave = int(2.2 * math.sin(x * 0.9 + y * 0.4))
+            jag = ((x * 5) ^ (y * 9) ^ (x * y)) % 9
+            wave = int(2.8 * math.sin(x * 0.95 + y * 0.42))
+            wave2 = int(1.4 * math.cos(x * 0.35 - y * 0.6))
             hit = False
             if side == "n":
-                hit = y > (6 + wave - jag // 3)
+                hit = y > (5 + wave - wave2 - jag // 3)
             elif side == "s":
-                hit = y < (9 + wave + jag // 3)
+                hit = y < (10 + wave + wave2 + jag // 3)
             elif side == "e":
-                hit = x < (9 + wave + jag // 3)
+                hit = x < (10 + wave + wave2 + jag // 3)
             elif side == "w":
-                hit = x > (6 + wave - jag // 3)
+                hit = x > (5 + wave - wave2 - jag // 3)
             elif side == "ne":
-                hit = y > (7 + wave) and x < (9 - wave)
+                hit = y > (6 + wave) and x < (10 - wave2)
             elif side == "nw":
-                hit = y > (7 + wave) and x > (6 + wave)
+                hit = y > (6 + wave) and x > (5 + wave2)
             elif side == "se":
-                hit = y < (9 - wave) and x < (9 - wave)
+                hit = y < (10 - wave) and x < (10 - wave2)
             elif side == "sw":
-                hit = y < (9 - wave) and x > (6 + wave)
+                hit = y < (10 - wave) and x > (5 + wave2)
             if hit:
                 px(img, x, y, dcols[(x + y) % 4])
-    # dense grass blade overhang onto dirt side
-    for _ in range(18):
+            elif not hit and rng.random() > 0.82:
+                # dirt spit into grass
+                if side in ("n", "ne", "nw") and y > 4:
+                    px(img, x, y, dcols[(x + y) % 4])
+                elif side in ("s", "se", "sw") and y < 11:
+                    px(img, x, y, dcols[(x + y) % 4])
+                elif side == "e" and x < 11:
+                    px(img, x, y, dcols[(x + y) % 4])
+                elif side == "w" and x > 4:
+                    px(img, x, y, dcols[(x + y) % 4])
+    for _ in range(26):
         if side in ("n", "ne", "nw"):
-            x, y = rng.randrange(1, 15), rng.randrange(7, 15)
+            x, y = rng.randrange(0, 16), rng.randrange(6, 16)
         elif side in ("s", "se", "sw"):
-            x, y = rng.randrange(1, 15), rng.randrange(1, 9)
+            x, y = rng.randrange(0, 16), rng.randrange(0, 10)
         elif side == "e":
-            x, y = rng.randrange(1, 9), rng.randrange(1, 15)
+            x, y = rng.randrange(0, 10), rng.randrange(0, 16)
         else:
-            x, y = rng.randrange(7, 15), rng.randrange(1, 15)
+            x, y = rng.randrange(6, 16), rng.randrange(0, 16)
         blade = (48 + rng.randrange(0, 30), 110 + rng.randrange(0, 40), 40 + rng.randrange(0, 20), 255)
         tip = (90 + rng.randrange(0, 40), 160 + rng.randrange(0, 40), 70 + rng.randrange(0, 20), 255)
         px(img, x, y, blade)
         px(img, x, max(0, y - 1), tip)
-        if rng.random() > 0.5:
+        if rng.random() > 0.4:
             px(img, min(15, x + 1), y, blade)
     return img
 

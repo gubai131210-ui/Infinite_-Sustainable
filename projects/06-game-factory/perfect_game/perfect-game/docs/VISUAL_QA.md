@@ -11,13 +11,13 @@
 | Gameplay Zoom | 路合理？建筑接地？过渡自然？变化够吗？ |
 | Close Zoom | 瓦片重复？接缝硬？边不自然？装饰过随机？ |
 
-## 打分卡（0–10）· P162 · 2026-09-07
+## 打分卡（0–10）· P163 · 2026-09-07
 
-证据：`00_overview` / `03_town` / `06_lake` + `GOLDEN_CAPTURE_DONE` · 0 script errors
+证据：`00_overview` / `03_town` / `06_lake` + `GOLDEN_CAPTURE_DONE`
 
 ```text
-Tile Repetition:        5
-Terrain Coherence:      6
+Tile Repetition:        6
+Terrain Coherence:      7
 Visual Variety:         6
 Composition:            7
 Building Integration:   7
@@ -27,13 +27,13 @@ Palette Consistency:    7
 World Cohesion:         6
 ```
 
-### 本轮相对 P161
+### 本轮相对 P162
 
 | 项 | 变化 |
 |----|------|
-| 路/田 | dirt-stitch 不再吃 PATH → 减少棋盘噪点 |
-| 湖岸 | 陆地 fringe 禁 WE（仅沙/草/dirt）；WE 留在水层 |
-| 镇区 | +6 民宅 + 院落 footing；广场 oval 略放大 |
+| 广场 | 石芯加实 + 非对称 oval；店/摊/雕像破镜像 |
+| 接缝瓦 | water_edge / grass_dirt 加宽锯齿与草叶 overhang |
+| 湖形 | 更强 wobble lobes |
 
 ## 证据槽
 
