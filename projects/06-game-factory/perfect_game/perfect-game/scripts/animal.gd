@@ -20,10 +20,13 @@ var _fed_today: bool = false
 
 func _ready() -> void:
 	add_to_group("animal")
+	y_sort_enabled = true
+	z_as_relative = true
 	_home = global_position
 	_anim_base_y = anim.position.y
 	_bob_t = randf() * TAU
 	_setup_sprite()
+	_setup_shadow()
 	area.body_entered.connect(_on_enter)
 	area.body_exited.connect(_on_exit)
 	_timer = randf_range(0.5, 2.0)
@@ -100,6 +103,19 @@ func _setup_sprite() -> void:
 			frames.add_frame("idle", at)
 	anim.sprite_frames = frames
 	anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+func _setup_shadow() -> void:
+	var shadow := Polygon2D.new()
+	shadow.name = "GroundShadow"
+	shadow.z_index = -1
+	shadow.color = Color(0.08, 0.08, 0.12, 0.28)
+	var sw := 6.0 if animal_kind == "chicken" else (9.0 if animal_kind == "sheep" else 11.0)
+	var pts := PackedVector2Array()
+	for i in range(10):
+		var a := TAU * float(i) / 10.0
+		pts.append(Vector2(cos(a) * sw, sin(a) * (sw * 0.35) + 4.0))
+	shadow.polygon = pts
+	add_child(shadow)
 
 func _physics_process(delta: float) -> void:
 	_timer -= delta

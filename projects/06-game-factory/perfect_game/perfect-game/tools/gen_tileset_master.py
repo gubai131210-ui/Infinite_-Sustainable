@@ -40,26 +40,38 @@ def fill(img, c):
 
 
 def grass(variant: int = 0) -> Image.Image:
-    bases = [(70, 140, 58), (78, 152, 64), (62, 128, 52), (84, 158, 70)]
+    """Soft mottled meadow — close base hues so atlas seams read less as a grid."""
+    bases = [(74, 146, 62), (78, 150, 66), (70, 140, 58), (82, 154, 68)]
     b = bases[variant % 4]
     img = Image.new("RGBA", (TS, TS), (*b, 255))
-    # mottled patches (break flat fill / stripe look)
-    for _ in range(40):
+    # Large soft blobs (oil-meadow feel at overview zoom)
+    for _ in range(5):
+        cx, cy = rng.randrange(TS), rng.randrange(TS)
+        rad = rng.randrange(3, 7)
+        tint = (
+            max(0, min(255, b[0] + rng.randrange(-18, 22))),
+            max(0, min(255, b[1] + rng.randrange(-16, 24))),
+            max(0, min(255, b[2] + rng.randrange(-12, 16))),
+            255,
+        )
+        for yy in range(TS):
+            for xx in range(TS):
+                if (xx - cx) * (xx - cx) + (yy - cy) * (yy - cy) <= rad * rad and rng.random() > 0.25:
+                    px(img, xx, yy, tint)
+    # Fine dither (low contrast — avoid pepper noise that grids at zoom-out)
+    for _ in range(28):
         x, y = rng.randrange(TS), rng.randrange(TS)
-        bright = (min(255, b[0] + 28), min(255, b[1] + 34), min(255, b[2] + 22), 255)
-        dark = (max(0, b[0] - 24), max(0, b[1] - 28), max(0, b[2] - 18), 255)
-        mid = (b[0] + 8, b[1] + 10, b[2] + 4, 255)
-        px(img, x, y, [dark, bright, mid][rng.randrange(3)])
-    for _ in range(6):
+        bright = (min(255, b[0] + 14), min(255, b[1] + 16), min(255, b[2] + 10), 255)
+        dark = (max(0, b[0] - 12), max(0, b[1] - 14), max(0, b[2] - 10), 255)
+        px(img, x, y, bright if rng.random() > 0.5 else dark)
+    # Sparse blade / flower speck
+    for _ in range(4):
         x, y = rng.randrange(1, 14), rng.randrange(2, 14)
-        px(img, x, y, (48, 110, 40, 255))
-        px(img, x, y - 1, (96, 170, 78, 255))
-        if rng.random() > 0.5:
-            px(img, x + 1, y, (55, 120, 45, 255))
-    # occasional flower speck
-    if variant % 2 == 0 and rng.random() > 0.55:
+        px(img, x, y, (52, 118, 44, 255))
+        px(img, x, y - 1, (102, 172, 84, 255))
+    if variant % 2 == 0 and rng.random() > 0.45:
         fx, fy = rng.randrange(2, 14), rng.randrange(2, 14)
-        px(img, fx, fy, (220, 90, 120, 255) if rng.random() > 0.5 else (240, 220, 90, 255))
+        px(img, fx, fy, (220, 96, 124, 255) if rng.random() > 0.5 else (236, 214, 96, 255))
     return img
 
 
@@ -247,6 +259,47 @@ def water_edge(side: str) -> Image.Image:
     return img
 
 
+def grass_dirt(side: str) -> Image.Image:
+    """Irregular grass↔dirt seam (Stardew stitch). side = edge of the DIRT region."""
+    img = grass(1).copy()
+    dcol = (148, 108, 68, 255)
+    dcol2 = (128, 92, 55, 255)
+    for y in range(TS):
+        for x in range(TS):
+            jag = (x * 3 + y * 5) % 4
+            hit = False
+            if side == "n":
+                hit = y > 7 - jag // 2
+            elif side == "s":
+                hit = y < 8 + jag // 2
+            elif side == "e":
+                hit = x < 8 + jag // 2
+            elif side == "w":
+                hit = x > 7 - jag // 2
+            elif side == "ne":
+                hit = y > 8 - jag // 2 and x < 8 + jag // 2
+            elif side == "nw":
+                hit = y > 8 - jag // 2 and x > 7 - jag // 2
+            elif side == "se":
+                hit = y < 8 + jag // 2 and x < 8 + jag // 2
+            elif side == "sw":
+                hit = y < 8 + jag // 2 and x > 7 - jag // 2
+            if hit:
+                px(img, x, y, dcol if ((x + y) % 2) == 0 else dcol2)
+    for _ in range(8):
+        if side in ("n", "ne", "nw"):
+            x, y = rng.randrange(2, 14), rng.randrange(8, 14)
+        elif side in ("s", "se", "sw"):
+            x, y = rng.randrange(2, 14), rng.randrange(2, 8)
+        elif side == "e":
+            x, y = rng.randrange(2, 8), rng.randrange(2, 14)
+        else:
+            x, y = rng.randrange(8, 14), rng.randrange(2, 14)
+        px(img, x, y, (62, 128, 52, 255))
+        px(img, x, max(0, y - 1), (96, 170, 78, 255))
+    return img
+
+
 def main() -> None:
     tiles = [
         grass(0),
@@ -266,7 +319,6 @@ def main() -> None:
         water_edge("e"),
         water_edge("w"),
     ]
-    # extend atlas to 8x4 = 32 for extra edges
     extra = [
         water_edge("n"),
         water_edge("s"),
@@ -274,24 +326,21 @@ def main() -> None:
         grass(3),
         path(),
         dirt(),
-        cliff(),
+        grass_dirt("n"),
         plaza(),
-        water(False),
+        grass_dirt("s"),
         sand(),
         farmland(),
         bridge(),
-        rail(),
-        hill(),
-        stairs(),
-        grass(0),
+        grass_dirt("e"),
+        grass_dirt("w"),
+        grass_dirt("ne"),
+        grass_dirt("nw"),
     ]
     tiles.extend(extra)
     cols, rows = 8, 4
     atlas = Image.new("RGBA", (cols * TS, rows * TS), (0, 0, 0, 0))
     for i, t in enumerate(tiles[:32]):
-        r, c = divmod(i, cols)
-        # wait: divmod(i, cols) gives (quot, rem) = (row if row-major by cols...)
-        # i=0 -> 0,0; i=8 -> 1,0
         row, col = divmod(i, cols)
         atlas.paste(t, (col * TS, row * TS))
     save(atlas, "tileset_master.png")

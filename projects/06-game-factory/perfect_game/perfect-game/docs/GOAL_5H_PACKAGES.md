@@ -380,4 +380,15 @@
 | P120 | 25m | Critic + push；催用户验动画 | origin/main |
 
 ### 帧动画拼接进度
-- [x] P118 · [x] P119 · [ ] P120  
+- [x] P118 · [x] P119 · [x] P120  
+
+## 草土过渡与建筑嵌地（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P121 | 40m | grass↔dirt 过渡瓦 + 缝合 pass | tileset + 01_farm |
+| P122 | 30m | 农舍/谷仓脚垫 doormat/岩石嵌地 | farm golden |
+| P123 | 25m | 走路帧 MCP 冒烟 + Critic + push | smoke/17 + origin/main |
+
+### 草土嵌地进度
+- [x] P121 · [x] P122 · [x] P123  

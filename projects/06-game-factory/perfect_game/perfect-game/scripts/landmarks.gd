@@ -41,16 +41,16 @@ func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll:
 	s.modulate = tint
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	s.y_sort_enabled = y_sort
-	## Soft grounding shadow (Stardew stitch: props don't float)
+	## Soft grounding shadow (small oval at feet — large props use smaller relative shadow)
 	var shadow := Polygon2D.new()
 	shadow.z_index = -1
-	shadow.color = Color(0.08, 0.08, 0.12, 0.28)
-	var sw := maxf(6.0, float(tex.get_width()) * scale_mul * 0.28)
-	var sh := maxf(2.5, sw * 0.35)
+	shadow.color = Color(0.08, 0.08, 0.12, 0.22)
+	var sw := clampf(float(tex.get_width()) * scale_mul * 0.18, 5.0, 14.0)
+	var sh := clampf(sw * 0.32, 2.0, 5.0)
 	var pts := PackedVector2Array()
 	for i in range(10):
 		var a := TAU * float(i) / 10.0
-		pts.append(Vector2(cos(a) * sw, sin(a) * sh + 2.0))
+		pts.append(Vector2(cos(a) * sw, sin(a) * sh + 1.0))
 	shadow.polygon = pts
 	root.add_child(shadow)
 	root.add_child(s)
@@ -160,7 +160,15 @@ func _process(delta: float) -> void:
 
 func _farm() -> void:
 	_spr("res://assets/processed/prop_farmhouse_darkroof.png", Vector2(40, 88), 8, 1.05, Vector2(48, 28))
+	## Deck/porch strip — Stardew farmhouse sits on raised wood, not floating
+	_spr("res://assets/processed/prop_doormat.png", Vector2(40, 91), 5, 1.2)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(42, 91), 5, 1.15)
+	_spr("res://assets/processed/prop_bench.png", Vector2(36, 91), 5, 0.9)
+	_spr("res://assets/processed/prop_crate.png", Vector2(44, 91), 5, 0.95)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(34, 92), 4, 0.85)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(46, 93), 4, 0.8)
 	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 8, 1.25, Vector2(56, 32))
+	_spr("res://assets/processed/prop_doormat.png", Vector2(28, 105), 5, 1.1)
 	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 8, 1.2, Vector2(52, 30))
 	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 8, 1.35, Vector2(18, 40))
 	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 8, 1.35, Vector2(18, 40))

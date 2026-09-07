@@ -28,7 +28,13 @@ const T_GRASS3 := 18
 const T_GRASS4 := 19
 const T_PATH2 := 20  # organic path variant (atlas extras)
 const T_DIRT2 := 21
+const T_GD_N := 22   # grass↔dirt north edge of dirt
 const T_PLAZA2 := 23
+const T_GD_S := 24
+const T_GD_E := 28
+const T_GD_W := 29
+const T_GD_NE := 30
+const T_GD_NW := 31
 
 # Zone rects from R5_WORLD_BLUEPRINT
 const ZONES := {
@@ -93,7 +99,7 @@ func _spawn_zone_labels() -> void:
 		markers.add_child(lab)
 
 func _fringe_soft(bed: Rect2i) -> void:
-	## Irregular grass/dirt/sand nibbles on bed rim — breaks hard tile seams
+	## Irregular grass/dirt nibbles on bed rim — NO sand (sand reads as hard tan blocks)
 	var x0 := bed.position.x
 	var y0 := bed.position.y
 	var x1 := x0 + bed.size.x - 1
@@ -101,10 +107,9 @@ func _fringe_soft(bed: Rect2i) -> void:
 	for x in range(x0 - 1, x1 + 2):
 		var n: int = absi(x * 13 + y0 * 7) % 5
 		if n <= 2:
-			_set_cell(_ground, x, y0 - 1, T_GRASS3 if (n == 0) else T_DIRT)
+			_set_cell(_ground, x, y0 - 1, T_GD_S if (n == 0) else T_GRASS3)
 		if n >= 2:
-			_set_cell(_ground, x, y1 + 1, T_GRASS2 if (n == 4) else T_SAND)
-		## Bite into bed edge
+			_set_cell(_ground, x, y1 + 1, T_GD_N if (n == 4) else T_GRASS2)
 		if (x % 3) == 0:
 			_set_cell(_ground, x, y0, T_GRASS4)
 		if (x % 4) == 1:
@@ -112,9 +117,9 @@ func _fringe_soft(bed: Rect2i) -> void:
 	for y in range(y0, y1 + 1):
 		var m: int = absi(y * 11 + x0 * 5) % 4
 		if m <= 1:
-			_set_cell(_ground, x0 - 1, y, T_GRASS2)
+			_set_cell(_ground, x0 - 1, y, T_GD_E)
 		if m >= 2:
-			_set_cell(_ground, x1 + 1, y, T_GRASS3)
+			_set_cell(_ground, x1 + 1, y, T_GD_W)
 		if (y % 3) == 0:
 			_set_cell(_ground, x0, y, T_GRASS4)
 		if (y % 3) == 1:
@@ -491,6 +496,77 @@ func _paint_base() -> void:
 	for y in range(14, 24):
 		for x in range(44, 48):
 			_set_cell(_ground, x, y, T_STAIRS)
+	## Stardew-like grass↔dirt seam autotile pass
+	_stitch_dirt_seams()
+	## Building footings — dirt pads so facades sit on ground (not float)
+	_paint_building_footings()
+
+func _is_dirtish(tid: int) -> bool:
+	return tid == T_DIRT or tid == T_DIRT2 or tid == T_FARM or tid == T_PATH or tid == T_PATH2 or tid == T_SAND
+
+func _is_grassish(tid: int) -> bool:
+	return tid == T_GRASS or tid == T_GRASS2 or tid == T_GRASS3 or tid == T_GRASS4
+
+func _cell_tid(x: int, y: int) -> int:
+	if x < 0 or y < 0 or x >= W or y >= H:
+		return -1
+	var data: Variant = _ground.get_cell_atlas_coords(Vector2i(x, y))
+	if typeof(data) != TYPE_VECTOR2I:
+		return -1
+	var ac: Vector2i = data
+	if ac.x < 0:
+		return -1
+	return ac.x + ac.y * 8
+
+func _stitch_dirt_seams() -> void:
+	## For each dirtish cell, if neighbor is grass, place transition on the GRASS side
+	## (keeps farmland interior intact; seams read as soft like Stardew)
+	var to_set: Array = []
+	for y in range(H):
+		for x in range(W):
+			var tid: int = _cell_tid(x, y)
+			if not _is_dirtish(tid):
+				continue
+			# north neighbor grass → put GD_S on that grass cell (dirt below jag)
+			if _is_grassish(_cell_tid(x, y - 1)):
+				to_set.append([x, y - 1, T_GD_S])
+			if _is_grassish(_cell_tid(x, y + 1)):
+				to_set.append([x, y + 1, T_GD_N])
+			if _is_grassish(_cell_tid(x - 1, y)):
+				to_set.append([x - 1, y, T_GD_E])
+			if _is_grassish(_cell_tid(x + 1, y)):
+				to_set.append([x + 1, y, T_GD_W])
+			# outer corners on grass diagonal
+			if _is_grassish(_cell_tid(x - 1, y - 1)):
+				to_set.append([x - 1, y - 1, T_GD_NE])
+			if _is_grassish(_cell_tid(x + 1, y - 1)):
+				to_set.append([x + 1, y - 1, T_GD_NW])
+	for item in to_set:
+		_set_cell(_ground, int(item[0]), int(item[1]), int(item[2]))
+
+func _paint_building_footings() -> void:
+	## Soft dirt/deck pads under key buildings (embed facades)
+	var pads := [
+		Rect2i(36, 90, 10, 4),   # farmhouse
+		Rect2i(24, 104, 12, 4),  # barn
+		Rect2i(44, 106, 12, 3),  # barn2
+		Rect2i(74, 52, 10, 3),   # shop
+		Rect2i(98, 52, 10, 3),   # cafe
+		Rect2i(86, 64, 10, 3),   # bakery
+		Rect2i(144, 18, 14, 4),  # station
+		Rect2i(170, 102, 8, 4),  # lighthouse
+	]
+	for pad in pads:
+		for yy in range(pad.position.y, pad.position.y + pad.size.y):
+			for xx in range(pad.position.x, pad.position.x + pad.size.x):
+				var h: int = absi(xx * 17 + yy * 13) % 5
+				if h <= 2:
+					_set_cell(_ground, xx, yy, T_DIRT)
+				elif h == 3:
+					_set_cell(_ground, xx, yy, T_PATH2)
+				else:
+					_set_cell(_ground, xx, yy, T_DIRT2)
+		_fringe_soft(pad)
 
 func _build_water_collisions() -> void:
 	for c in _colliders.get_children():
