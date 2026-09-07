@@ -153,6 +153,26 @@ func _farm() -> void:
 	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 8, 1.35, Vector2(18, 40))
 	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 8, 1.35, Vector2(18, 40))
 	_spr("res://assets/processed/prop_chimney.png", Vector2(41, 86), 9, 1.1)
+	## Decorative mature beds OUTSIDE playable hoe rows (west bed ~14-29,y78-86)
+	## Place along south pen / barn apron so FarmPlots stay clear
+	var farm_crops: Array[String] = ["greens", "wheat", "tomato", "radish", "pumpkin"]
+	for row in range(3):
+		for col in range(7):
+			var cx := 18 + col * 2
+			var cy := 94 + row * 2
+			var kind: String = farm_crops[(row + col) % farm_crops.size()]
+			var stage: int = 2 + ((row + col) % 2)
+			var crop_path: String = "res://assets/processed/crop_%s_%d.png" % [kind, stage]
+			_spr(crop_path, Vector2(cx, cy), 4, 1.05)
+	for col in range(5):
+		var kind2: String = farm_crops[col % farm_crops.size()]
+		var edge_path: String = "res://assets/processed/crop_%s_3.png" % kind2
+		_spr(edge_path, Vector2(58 + col * 2, 88), 4, 1.0)
+	_spr("res://assets/processed/prop_crate.png", Vector2(22, 100), 5, 1.1)
+	_spr("res://assets/processed/prop_barrel.png", Vector2(56, 100), 5, 1.05)
+	_spr("res://assets/processed/chicken.png", Vector2(30, 114), 6, 1.0)
+	_spr("res://assets/processed/chicken.png", Vector2(38, 116), 6, 0.95)
+	_spr("res://assets/processed/cow.png", Vector2(34, 118), 6, 1.05)
 	for x in range(24, 46, 2):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 112), 4, 1.0, Vector2(14, 10))
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 122), 4, 1.0, Vector2(14, 10))
@@ -163,7 +183,7 @@ func _farm() -> void:
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(14, 10))
 
 func _town() -> void:
-	## Overview silhouette: fewer tiny props, larger hero facades
+	## Overview silhouette: lived-in residential ring + hero facades
 	_spr("res://assets/processed/prop_statue.png", Vector2(90, 70), 7, 1.2, Vector2(18, 22))
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(84, 66), 4, 1.0)
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(96, 66), 4, 1.0)
@@ -176,6 +196,8 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_stall_blue.png", Vector2(104, 70), 6, 1.1, Vector2(28, 16))
 	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(70, 58), 6, 1.0, Vector2(26, 16))
 	_spr("res://assets/processed/prop_stall.png", Vector2(110, 58), 6, 1.0, Vector2(26, 16))
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(82, 74), 6, 0.95, Vector2(24, 14))
+	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(98, 74), 6, 0.95, Vector2(24, 14))
 	for p in [Vector2(84, 54), Vector2(96, 54), Vector2(84, 66), Vector2(96, 66)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
 	# Houses ring — keep clear of hero facade footprints
@@ -188,6 +210,10 @@ func _town() -> void:
 		[Vector2(106, 76), "thatch"],
 		[Vector2(48, 50), "green"],
 		[Vector2(132, 50), "red"],
+		[Vector2(62, 34), "slate"],
+		[Vector2(118, 34), "thatch"],
+		[Vector2(66, 88), "green"],
+		[Vector2(114, 88), "red"],
 	]
 	for h in houses:
 		var path := "res://assets/processed/prop_house_redroof.png"
@@ -200,7 +226,15 @@ func _town() -> void:
 				path = "res://assets/processed/prop_house_thatch.png"
 			"green":
 				path = "res://assets/processed/prop_house_greenroof.png"
-		_spr(path, h[0], 8, 1.2, Vector2(42, 34))
+		var hp := h[0] as Vector2
+		_spr(path, hp, 8, 1.2, Vector2(42, 34))
+		## Yard props (fence + flower + crate) — ref residential density
+		_spr("res://assets/processed/prop_fence.png", hp + Vector2(-2, 4), 4, 0.9, Vector2(12, 8))
+		_spr("res://assets/processed/prop_flowerbed.png", hp + Vector2(2, 5), 4, 0.95)
+		if int(hp.x + hp.y) % 2 == 0:
+			_spr("res://assets/processed/prop_crate.png", hp + Vector2(-3, 3), 5, 0.85)
+		else:
+			_spr("res://assets/processed/prop_barrel.png", hp + Vector2(3, 3), 5, 0.85)
 	for x in range(68, 114, 3):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 80), 4, 1.0, Vector2(12, 8))
 

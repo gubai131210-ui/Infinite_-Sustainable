@@ -121,6 +121,9 @@ func _capture_goldens(player: Node2D = null) -> void:
 	# Refresh weather label if HUD listens
 	if hud != null and wx != null and hud.has_method("_on_weather"):
 		hud.call("_on_weather", "clear")
+	## Storefront poster goldens: hide debug HUD / toast chrome
+	if hud != null:
+		hud.visible = false
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/qa/golden"))
 	var shots := [
 		["01_farm", Vector2(40 * 16, 98 * 16)],
@@ -135,9 +138,13 @@ func _capture_goldens(player: Node2D = null) -> void:
 		["00_overview", Vector2(100 * 16, 36 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
+	var player_sprite := player.get_node_or_null("Sprite2D") as CanvasItem
 	for s in shots:
 		player.global_position = s[1]
-		if str(s[0]) == "00_overview":
+		var is_overview := str(s[0]) == "00_overview"
+		if player_sprite != null:
+			player_sprite.visible = not is_overview
+		if is_overview:
 			cam.zoom = Vector2(0.34, 0.34)
 		elif str(s[0]) == "07_waterfall":
 			cam.zoom = Vector2(1.55, 1.55)

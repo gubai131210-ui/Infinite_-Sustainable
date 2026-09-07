@@ -71,23 +71,24 @@ func _cache_water_cells() -> void:
 	for cell in _water.get_used_cells():
 		_water_cells.append(cell)
 func _spawn_zone_labels() -> void:
+	## Poster-scale placards (readable at overview zoom 0.34)
 	var markers := $ZoneMarkers
 	var labels := {
-		"米勒农庄": Vector2(40, 90),
-		"橡木河": Vector2(28, 50),
-		"镇中心广场": Vector2(90, 48),
-		"橡木火车站": Vector2(150, 22),
-		"梯田": Vector2(140, 55),
-		"回声湖·灯塔": Vector2(170, 108),
+		"米勒农庄": Vector2(32, 92),
+		"橡木河": Vector2(18, 48),
+		"橡木火车站": Vector2(142, 8),
+		"回声湖": Vector2(162, 112),
 	}
 	for label_text in labels.keys():
 		var lab := Label.new()
 		lab.text = str(label_text)
 		lab.position = labels[label_text] * TS
-		lab.z_index = 30
+		lab.z_index = 40
+		lab.add_theme_font_size_override("font_size", 20)
 		lab.add_theme_color_override("font_color", Color(1, 1, 1))
-		lab.add_theme_color_override("font_outline_color", Color(0, 0, 0))
-		lab.add_theme_constant_override("outline_size", 4)
+		lab.add_theme_color_override("font_outline_color", Color(0.05, 0.05, 0.08))
+		lab.add_theme_constant_override("outline_size", 8)
+		lab.scale = Vector2(2.4, 2.4)
 		markers.add_child(lab)
 
 func world_size() -> Vector2:
