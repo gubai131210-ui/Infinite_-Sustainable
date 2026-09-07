@@ -549,14 +549,16 @@ func _paint_base() -> void:
 				var tid := T_DEEP if r2 < 360.0 else T_WATER
 				_set_cell(_water, x, y, tid)
 				_set_cell(_ground, x, y, tid)
-			elif r2 < 980.0:
+			elif r2 < 1020.0:
 				_set_cell(_ground, x, y, T_SAND)
-			elif r2 < 1120.0:
-				# shore fringe — pick edge tile by direction to center
-				if absf(dx) > absf(dy):
+			elif r2 < 1280.0:
+				# wider shore fringe — pick edge tile by direction to center
+				if absf(dx) > absf(dy) * 1.2:
 					_set_cell(_ground, x, y, T_WE_W if dx > 0.0 else T_WE_E)
-				else:
+				elif absf(dy) > absf(dx) * 0.7:
 					_set_cell(_ground, x, y, T_WE_N if dy > 0.0 else T_WE_S)
+				else:
+					_set_cell(_ground, x, y, T_SAND if ((x + y) % 3) == 0 else T_GRASS3)
 	# Lighthouse peninsula
 	_fill_rect(_ground, Rect2i(168, 98, 10, 12), T_CLIFF)
 	_fill_rect(_ground, Rect2i(170, 100, 6, 8), T_SAND)
@@ -600,6 +602,8 @@ func _paint_base() -> void:
 			_set_cell(_ground, x, y, T_STAIRS)
 	## Stardew-like grass↔dirt seam autotile pass
 	_stitch_dirt_seams()
+	## Water↔land shore autotile (river + lake hard edges)
+	_stitch_water_shores()
 	## Extra path/plaza fringe soften (overview hard edges)
 	_soften_path_edges()
 	## Building footings — dirt pads so facades sit on ground (not float)
@@ -634,6 +638,21 @@ func _is_dirtish(tid: int) -> bool:
 func _is_grassish(tid: int) -> bool:
 	return tid == T_GRASS or tid == T_GRASS2 or tid == T_GRASS3 or tid == T_GRASS4
 
+func _is_waterish(tid: int) -> bool:
+	return tid == T_WATER or tid == T_DEEP
+
+func _is_shoreable(tid: int) -> bool:
+	## Land tiles that can host a water-edge fringe (not structures / beds)
+	if tid < 0:
+		return false
+	if _is_waterish(tid):
+		return false
+	if tid == T_CLIFF or tid == T_HILL or tid == T_BRIDGE or tid == T_RAIL or tid == T_STAIRS:
+		return false
+	if tid == T_FARM or tid == T_PLAZA or tid == T_PLAZA2:
+		return false
+	return true
+
 func _cell_tid(x: int, y: int) -> int:
 	if x < 0 or y < 0 or x >= W or y >= H:
 		return -1
@@ -644,6 +663,56 @@ func _cell_tid(x: int, y: int) -> int:
 	if ac.x < 0:
 		return -1
 	return ac.x + ac.y * 8
+
+func _stitch_water_shores() -> void:
+	## 1) Soften OUTER water cells themselves (replace solid blue with WE facing land)
+	## 2) Place WE_* on adjacent land for a second fringe ring
+	var edge_water: Array = []
+	var land_fringe: Array = []
+	for y in range(H):
+		for x in range(W):
+			if not _is_waterish(_cell_tid(x, y)):
+				continue
+			var n_land := _is_shoreable(_cell_tid(x, y - 1))
+			var s_land := _is_shoreable(_cell_tid(x, y + 1))
+			var w_land := _is_shoreable(_cell_tid(x - 1, y))
+			var e_land := _is_shoreable(_cell_tid(x + 1, y))
+			if n_land or s_land or w_land or e_land:
+				## Prefer cardinal with strongest land contact; WE side = water bite toward land
+				var we: int = T_WE_S if n_land else (T_WE_N if s_land else (T_WE_E if w_land else T_WE_W))
+				if n_land and (e_land or w_land):
+					we = T_WE_S
+				elif s_land and (e_land or w_land):
+					we = T_WE_N
+				edge_water.append([x, y, we])
+			if n_land:
+				land_fringe.append([x, y - 1, T_WE_S])
+			if s_land:
+				land_fringe.append([x, y + 1, T_WE_N])
+			if w_land:
+				land_fringe.append([x - 1, y, T_WE_E])
+			if e_land:
+				land_fringe.append([x + 1, y, T_WE_W])
+			for d in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
+				var nx: int = x + d.x
+				var ny: int = y + d.y
+				if not _is_shoreable(_cell_tid(nx, ny)):
+					continue
+				var n: int = absi(nx * 19 + ny * 23) % 4
+				if n == 0:
+					land_fringe.append([nx, ny, T_SAND])
+				elif n == 1:
+					land_fringe.append([nx, ny, T_GRASS3])
+				elif n == 2:
+					land_fringe.append([nx, ny, T_WE_S if d.y < 0 else T_WE_N])
+	for item in edge_water:
+		var ex: int = int(item[0])
+		var ey: int = int(item[1])
+		var et: int = int(item[2])
+		## Soft edge on Water layer only — keep ground as water for collision
+		_set_cell(_water, ex, ey, et)
+	for item in land_fringe:
+		_set_cell(_ground, int(item[0]), int(item[1]), int(item[2]))
 
 func _stitch_dirt_seams() -> void:
 	## For each dirtish cell, if neighbor is grass, place transition on the GRASS side

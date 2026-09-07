@@ -229,33 +229,47 @@ def bridge() -> Image.Image:
 
 
 def water_edge(side: str) -> Image.Image:
-    """Grass tile with water bite on one side."""
-    img = grass(0)
-    w = (58, 128, 192, 255)
-    shore = (170, 145, 100, 255)
+    """Jagged grass↔sand↔water shore — Stardew-like soft bank (not a hard tile cut)."""
+    img = grass(2).copy()
+    wcols = [(52, 124, 198, 255), (58, 132, 208, 255), (44, 110, 180, 255)]
+    shore = [(196, 172, 118, 255), (178, 152, 100, 255), (210, 188, 132, 255), (168, 145, 96, 255)]
+    foam = (170, 220, 245, 255)
     for y in range(TS):
         for x in range(TS):
-            hit = False
-            if side == "n" and y < 6:
-                hit = True
-            elif side == "s" and y > 9:
-                hit = True
-            elif side == "e" and x > 9:
-                hit = True
-            elif side == "w" and x < 6:
-                hit = True
-            if hit:
-                px(img, x, y, w)
-    # shore fringe
-    for y in range(TS):
-        for x in range(TS):
-            if img.getpixel((x, y))[:3] == w[:3]:
-                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < TS and 0 <= ny < TS:
-                        c = img.getpixel((nx, ny))
-                        if c[1] > 100 and c[0] < 120:
-                            px(img, nx, ny, shore)
+            jag = ((x * 7) ^ (y * 11) ^ (x * y * 3)) % 7
+            wave = int(2.4 * math.sin(x * 0.95 + y * 0.45 + (0.0 if side in ("n", "s") else 1.2)))
+            # water depth band (deeper toward water side)
+            if side == "n":
+                depth = (5 + wave - jag // 3) - y
+            elif side == "s":
+                depth = y - (10 + wave + jag // 3)
+            elif side == "e":
+                depth = x - (10 + wave + jag // 3)
+            else:  # w
+                depth = (5 + wave - jag // 3) - x
+            if depth >= 3:
+                px(img, x, y, wcols[(x + y) % 3])
+                if (x + y * 3) % 11 == 0:
+                    px(img, x, y, foam)
+            elif depth >= 0:
+                px(img, x, y, shore[(x * 3 + y) % 4])
+            elif depth >= -2 and rng.random() > 0.45:
+                # sand speckles into grass
+                px(img, x, y, shore[(x + y) % 4])
+    # grass blade overhang onto sand/water lip
+    for _ in range(16):
+        if side == "n":
+            x, y = rng.randrange(1, 15), rng.randrange(4, 11)
+        elif side == "s":
+            x, y = rng.randrange(1, 15), rng.randrange(5, 12)
+        elif side == "e":
+            x, y = rng.randrange(5, 12), rng.randrange(1, 15)
+        else:
+            x, y = rng.randrange(4, 11), rng.randrange(1, 15)
+        c = img.getpixel((x, y))
+        if c[2] > 150 or c[0] > 160:  # water or sand
+            blade = (48 + rng.randrange(0, 30), 110 + rng.randrange(0, 40), 40 + rng.randrange(0, 20), 255)
+            px(img, x, y, blade)
     return img
 
 

@@ -310,13 +310,22 @@ def statue() -> Image.Image:
 
 
 def fence() -> Image.Image:
+    """Continuous rail fence — dual rails + posts so adjacent tiles read as one run."""
     img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.rectangle([0, 5, 16, 7], fill=(140, 105, 65, 255))
-    d.rectangle([0, 10, 16, 12], fill=(125, 90, 55, 255))
-    for x in (2, 12):
-        d.rectangle([x, 2, x + 2, 14], fill=(100, 70, 40, 255))
-        d.point((x, 2), fill=(160, 130, 90, 255))
+    # dual horizontal rails (edge-to-edge so tiling connects)
+    d.rectangle([0, 4, 15, 6], fill=(148, 112, 70, 255))
+    d.rectangle([0, 5, 15, 5], fill=(168, 130, 88, 255))
+    d.rectangle([0, 9, 15, 11], fill=(128, 94, 58, 255))
+    d.rectangle([0, 10, 15, 10], fill=(150, 114, 72, 255))
+    # posts
+    for x in (1, 13):
+        d.rectangle([x, 1, x + 2, 14], fill=(98, 68, 40, 255))
+        d.rectangle([x, 1, x + 1, 3], fill=(168, 132, 92, 255))
+        d.point((x + 1, 14), fill=(70, 48, 28, 255))
+    # mid post for denser look when spaced
+    d.rectangle([7, 2, 9, 13], fill=(108, 76, 46, 255))
+    d.point((7, 2), fill=(160, 125, 85, 255))
     return img
 
 

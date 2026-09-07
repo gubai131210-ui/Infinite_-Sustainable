@@ -55,7 +55,8 @@ func _spr(path: String, tile: Vector2, z: int = 0, scale_mul: float = 1.0, coll:
 	root.add_child(shadow)
 	root.add_child(s)
 	root.position = tile * TS
-	root.z_index = z
+	## Entities y_sort requires shared z_index with Player (non-sorting skyline keeps z)
+	root.z_index = 0 if y_sort else z
 	root.y_sort_enabled = y_sort
 	root.set_meta("sprite", s)
 	add_child(root)
@@ -211,14 +212,17 @@ func _farm() -> void:
 	_spr("res://assets/processed/prop_crate.png", Vector2(22, 100), 5, 1.1)
 	_spr("res://assets/processed/prop_barrel.png", Vector2(56, 100), 5, 1.05)
 	## Live chickens/cows come from decor._animals — no static doubles
-	for x in range(24, 46, 2):
-		_spr("res://assets/processed/prop_fence.png", Vector2(x, 112), 4, 1.0, Vector2(14, 10))
-		_spr("res://assets/processed/prop_fence.png", Vector2(x, 122), 4, 1.0, Vector2(14, 10))
-	for y in range(112, 122, 2):
-		_spr("res://assets/processed/prop_fence.png", Vector2(24, y), 4, 1.0, Vector2(10, 14))
-		_spr("res://assets/processed/prop_fence.png", Vector2(44, y), 4, 1.0, Vector2(10, 14))
-	for x in range(14, 60, 3):
-		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(14, 10))
+	## Dense rail fence (1-tile step so rails connect edge-to-edge)
+	## South side leaves a 3-tile gate so player/animals can enter the pen
+	for x in range(24, 46, 1):
+		_spr("res://assets/processed/prop_fence.png", Vector2(x, 112), 0, 1.0, Vector2(14, 10))
+		if x < 32 or x > 35:
+			_spr("res://assets/processed/prop_fence.png", Vector2(x, 122), 0, 1.0, Vector2(14, 10))
+	for y in range(112, 123, 1):
+		_spr("res://assets/processed/prop_fence.png", Vector2(24, y), 0, 1.0, Vector2(10, 14))
+		_spr("res://assets/processed/prop_fence.png", Vector2(44, y), 0, 1.0, Vector2(10, 14))
+	for x in range(14, 60, 1):
+		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 0, 1.0, Vector2(14, 10))
 
 func _town() -> void:
 	## Overview silhouette: lived-in residential ring + hero facades

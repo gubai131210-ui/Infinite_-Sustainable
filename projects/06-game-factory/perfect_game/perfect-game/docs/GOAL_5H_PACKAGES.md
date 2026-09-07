@@ -436,3 +436,14 @@
 
 ### 立面 y-sort 进度
 - [x] P133 · [x] P134 · [x] P135
+
+## 河岸缝合 + 栏杆密铺（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P136 | 40m | jagged water_edge + `_stitch_water_shores`（外圈水瓦软边） | 02_river / 06_lake |
+| P137 | 30m | fence 双轨密铺；landmarks `z_index=0` 与 Player y-sort | 01_farm 畜栏 |
+| P138 | 25m | golden + Critic + push | origin/main |
+
+### 河岸栏杆进度
+- [x] P136 · [x] P137 · [x] P138
