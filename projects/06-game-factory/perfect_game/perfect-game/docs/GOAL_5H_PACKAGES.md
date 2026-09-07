@@ -209,3 +209,15 @@
 
 ### 参考图层次进度
 - [x] P65 · P66 · P67 · P68  
+
+## 无缝天际线与镇区剪影（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P69 | 40m | 全宽无缝 skyline 单精灵 | overview 无竖缝 |
+| P70 | 25m | 瀑布碗口嵌入天际线 | waterfall golden |
+| P71 | 30m | 镇区 hero 店面/面包房 | town/overview |
+| P72 | 25m | golden + Critic + push | origin/main |
+
+### 无缝天际线进度
+- [x] P69 · P70 · P71 · P72  

@@ -1,21 +1,21 @@
-# 视觉 Critic — golden vs overview（2026-09-07 · P65–P68）
+# 视觉 Critic — golden vs overview（2026-09-07 · P69–P72）
 
 ## 结论
-更接近 overview：**是**（北缘可读到浅蓝天空+云+绿丘层；晴天锁定；路径缀边加密；店面立面加深）。  
+更接近 overview：**是**（单条无缝全宽天际线可读到蓝天+云+绿丘；瀑布碗口对齐；镇区 hero 店面/面包房剪影）。  
 达到「商店页可直接当主图」：**否**。
 
 ## 本轮证据
-- MCP 冷启动 / capture：`0` error；`GOLDEN_CAPTURE_DONE`
-- `prop_ridge_organic` 改为天空→远蓝峰→绿丘（非灰岩主轮廓）；overview 可见云带
-- golden 强制 `force_clear_for_test`（避免雨天 modulate 把天空压成灰）
-- shop/cafe 石基+木板墙+花箱；`prop_path_pebble` + denser tufts；路径 fringe 更多草 dither
-- overview 取景上移至 y=40 以收进北缘
+- MCP capture `0` error · `GOLDEN_CAPTURE_DONE`
+- `prop_skyline_wide.png` 3072×144 单精灵（去竖缝铺贴）；z=1 + 关 Y-sort 保证压过地砖
+- 瀑布窗口对齐世界 x≈24；遗迹带留白；河岸减掉挡天空的小山贴片
+- shop/cafe 放大 + `prop_bakery`；摊位 6→4；房屋数量收敛
+- 先前 P65–P68 已推到 `origin/main`（`4948dc7`）
 
 ## 仍差
-1. 北缘脊带仍有竖缝/拼贴感，未达参考图油画层次与「云→松→瀑」一体感  
-2. 立面仍是 PIL，非手绘店面级；镇区建筑在 overview 仍偏小图标  
-3. 土路/石砖与草地过渡仍偏砖缝，缀边未完全消掉 tile 感  
-4. GitHub 推送可能仍 443；用户签字试玩 + itch URL 仍缺  
+1. 天空带仍偏窄，未达参考图「大片云层 + 远峰油画层次」  
+2. 瀑布崖仍偏砖块；云→松→瀑一体感不足  
+3. 路径/石砖 fringe 仍偏 tile；立面仍是 PIL 非手绘  
+4. 用户签字试玩 + itch 上传 URL 仍缺  
 
 ## Goal
 **不可 complete**。

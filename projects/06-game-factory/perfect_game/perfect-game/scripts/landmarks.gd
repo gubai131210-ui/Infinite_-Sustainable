@@ -12,7 +12,7 @@ var _lh_t: float = 0.0
 func _ready() -> void:
 	_place()
 
-func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll: Vector2 = Vector2.ZERO, tint: Color = Color(1, 1, 1, 1)) -> Node2D:
+func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll: Vector2 = Vector2.ZERO, tint: Color = Color(1, 1, 1, 1), y_sort: bool = true) -> Node2D:
 	var abs_path := ProjectSettings.globalize_path(path)
 	var img := Image.new()
 	if img.load(abs_path) != OK:
@@ -39,11 +39,11 @@ func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll:
 	s.scale = Vector2(scale_mul, scale_mul)
 	s.modulate = tint
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	s.y_sort_enabled = true
+	s.y_sort_enabled = y_sort
 	root.add_child(s)
 	root.position = tile * TS
 	root.z_index = z
-	root.y_sort_enabled = true
+	root.y_sort_enabled = y_sort
 	root.set_meta("sprite", s)
 	add_child(root)
 	return root
@@ -59,30 +59,15 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## Ref layers: tall sky + blue peaks + green hills (not grey rock wall)
-	## Anchor near y=0 so overview zoom (top≈-179) still catches sky band
-	for x in range(-10, 202, 16):
-		_spr("res://assets/processed/prop_ridge_organic.png", Vector2(x, 1), -3, 1.2)
-	for i in range(0, 14):
-		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(4 + i * 14, -6 + (i % 3)), -2, 1.85)
-	# Extra far blue peaks only outside waterfall / ruins windows
-	for x in range(0, 192, 22):
-		if x >= 10 and x <= 44:
-			continue
-		if x >= 60 and x <= 118:
-			continue
-		_spr("res://assets/processed/prop_mountains.png", Vector2(x, 6), -1, 1.15, Vector2(48, 24), Color(0.75, 0.82, 1.05, 0.9))
-	# Waterfall cliff posts only (local rock, not full-width ridge)
+	## One seamless full-width skyline — draw above ground tiles, no Y-sort fights.
+	## Texture 3072×112; bottom anchored at north map edge (tile y=0).
+	_spr("res://assets/processed/prop_skyline_wide.png", Vector2(96, 0), 1, 1.0, Vector2.ZERO, Color(1, 1, 1, 1), false)
+	for i in range(0, 6):
+		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(20 + i * 30, -5 + (i % 2)), 2, 1.6, Vector2.ZERO, Color(1, 1, 1, 1), false)
 	for dx in [-5, -3, -1, 1, 3, 5]:
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 10), 1, 1.3)
-	# Sparse landmark pines — never a north tree wall
+		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 10), 3, 1.3)
 	for p in [Vector2(6, 12), Vector2(50, 11), Vector2(126, 12), Vector2(186, 11)]:
-		_spr("res://assets/processed/tree_pine.png", p, 2, 0.85)
-	# Soft green hill base under ridge (read as rolling highland)
-	for x in range(6, 186, 12):
-		if x >= 14 and x <= 40:
-			continue
-		_spr("res://assets/processed/prop_hills.png", Vector2(x, 14), 2, 1.05)
+		_spr("res://assets/processed/tree_pine.png", p, 4, 0.85)
 
 func _ruins() -> void:
 	## Irregular mossy arches woven with canopy (break flat grid rows)
@@ -114,22 +99,20 @@ func _ruins() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(82, 18), 6, 0.9)
 
 func _river() -> void:
-	## Cloud → bowl → dual fall (open sky above; pines only as side posts)
-	for p in [Vector2(12, 11), Vector2(36, 11)]:
+	## Bowl-integrated fall: open sky from skyline window; pines as side posts only
+	for p in [Vector2(12, 12), Vector2(36, 12)]:
 		_spr("res://assets/processed/tree_pine.png", p, 3, 0.95)
 	for dx in range(-5, 6, 2):
 		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 8), 2, 1.5)
 	for dx in [-3, -1, 1, 3]:
 		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 11), 3, 1.35)
-	_spr("res://assets/processed/prop_hills.png", Vector2(17, 13), 3, 1.2)
-	_spr("res://assets/processed/prop_hills.png", Vector2(31, 13), 3, 1.2)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 15), 5, 1.25)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 15), 5, 1.2)
 	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 15), 7, 1.65, Vector2(52, 68))
 	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.3, Vector2(40, 52), Color(0.9, 0.95, 1.0, 0.88))
 	_spr("res://assets/processed/prop_rocks.png", Vector2(20, 20), 9, 1.1)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(28, 20), 9, 1.05)
-	for p in [Vector2(14, 19), Vector2(34, 19), Vector2(16, 23), Vector2(32, 23)]:
+	for p in [Vector2(14, 20), Vector2(34, 20)]:
 		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 11, 1.0)
 	_spr("res://assets/processed/bush.png", Vector2(20, 23), 10, 1.0)
 	_spr("res://assets/processed/bush.png", Vector2(28, 23), 10, 1.0)
@@ -183,33 +166,30 @@ func _farm() -> void:
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(14, 10))
 
 func _town() -> void:
-	_spr("res://assets/processed/prop_statue.png", Vector2(90, 48), 7, 1.2, Vector2(18, 22))
+	## Overview silhouette: fewer tiny props, larger hero facades
+	_spr("res://assets/processed/prop_statue.png", Vector2(90, 48), 7, 1.25, Vector2(18, 22))
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(90, 42), 4, 1.0)
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(90, 54), 4, 1.0)
-	_spr("res://assets/processed/prop_stall.png", Vector2(78, 38), 6, 1.15, Vector2(30, 18))
-	_spr("res://assets/processed/prop_stall_blue.png", Vector2(102, 38), 6, 1.15, Vector2(30, 18))
-	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(78, 58), 6, 1.1, Vector2(30, 18))
-	_spr("res://assets/processed/prop_stall.png", Vector2(102, 58), 6, 1.15, Vector2(30, 18))
-	_spr("res://assets/processed/prop_stall_blue.png", Vector2(70, 48), 6, 1.05, Vector2(28, 16))
-	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(110, 48), 6, 1.05, Vector2(28, 16))
-	for p in [Vector2(82, 44), Vector2(98, 44), Vector2(82, 52), Vector2(98, 52)]:
+	# 4 market stalls (was 6) — readable massing
+	_spr("res://assets/processed/prop_stall.png", Vector2(78, 40), 6, 1.25, Vector2(32, 20))
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(102, 40), 6, 1.25, Vector2(32, 20))
+	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(78, 56), 6, 1.2, Vector2(32, 20))
+	_spr("res://assets/processed/prop_stall.png", Vector2(102, 56), 6, 1.2, Vector2(32, 20))
+	for p in [Vector2(84, 46), Vector2(96, 46), Vector2(84, 52), Vector2(96, 52)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
-	_spr("res://assets/processed/prop_shop_awning.png", Vector2(72, 30), 8, 1.45, Vector2(64, 44))
-	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(108, 30), 8, 1.45, Vector2(64, 44))
+	# Hero shop / cafe / bakery
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(70, 28), 9, 1.55, Vector2(72, 52))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(110, 28), 9, 1.55, Vector2(72, 52))
+	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 66), 9, 1.4, Vector2(56, 40))
 	var houses := [
-		[Vector2(66, 38), "red"],
-		[Vector2(66, 54), "thatch"],
-		[Vector2(114, 38), "slate"],
-		[Vector2(114, 54), "green"],
-		[Vector2(74, 64), "slate"],
-		[Vector2(90, 66), "red"],
-		[Vector2(106, 64), "thatch"],
-		[Vector2(82, 28), "green"],
-		[Vector2(98, 28), "red"],
-		[Vector2(70, 70), "thatch"],
-		[Vector2(110, 70), "slate"],
-		[Vector2(58, 48), "green"],
-		[Vector2(122, 48), "red"],
+		[Vector2(62, 36), "red"],
+		[Vector2(62, 54), "thatch"],
+		[Vector2(118, 36), "slate"],
+		[Vector2(118, 54), "green"],
+		[Vector2(74, 70), "slate"],
+		[Vector2(106, 70), "thatch"],
+		[Vector2(56, 46), "green"],
+		[Vector2(124, 46), "red"],
 	]
 	for h in houses:
 		var path := "res://assets/processed/prop_house_redroof.png"
@@ -222,9 +202,9 @@ func _town() -> void:
 				path = "res://assets/processed/prop_house_thatch.png"
 			"green":
 				path = "res://assets/processed/prop_house_greenroof.png"
-		_spr(path, h[0], 8, 1.15, Vector2(40, 32))
+		_spr(path, h[0], 8, 1.25, Vector2(44, 36))
 	for x in range(68, 114, 3):
-		_spr("res://assets/processed/prop_fence.png", Vector2(x, 74), 4, 1.0, Vector2(12, 8))
+		_spr("res://assets/processed/prop_fence.png", Vector2(x, 76), 4, 1.0, Vector2(12, 8))
 
 func _station() -> void:
 	# Upgraded hall + canopy + crawling train; collision shorter so door is approachable
