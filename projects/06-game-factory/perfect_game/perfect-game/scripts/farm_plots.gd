@@ -211,7 +211,8 @@ func _add_wet_tile(cell: Vector2i) -> void:
 func _start_sway(root: Node2D, stage: int) -> void:
 	if stage <= 0:
 		return
-	var tw := create_tween().set_loops()
+	## Bind tween to crop node so refresh/queue_free does not leave infinite FarmPlots tweens
+	var tw := root.create_tween().set_loops()
 	var amp := 2.0 + float(stage) * 0.8
 	var dur := randf_range(0.9, 1.4)
 	tw.tween_property(root, "rotation_degrees", amp, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)

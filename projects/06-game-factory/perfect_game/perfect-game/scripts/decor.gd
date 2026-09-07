@@ -633,7 +633,7 @@ func _spawn_waterfall_mist(at: Vector2) -> void:
 func _sway_trees() -> void:
 	for c in get_children():
 		if c is Sprite2D and c.has_meta("sway") and bool(c.get_meta("sway")):
-			var tw := create_tween().set_loops()
+			var tw := c.create_tween().set_loops()
 			var amp := randf_range(1.2, 3.2)
 			var dur := randf_range(1.8, 3.0)
 			tw.tween_property(c, "rotation_degrees", amp, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
