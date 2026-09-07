@@ -447,3 +447,14 @@
 
 ### 河岸栏杆进度
 - [x] P136 · [x] P137 · [x] P138
+
+## 镇店招立面 + 广场密度（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P139 | 45m | 重绘 shop/cafe/bakery（石基/展窗货品/多层雨棚） | prop_*_awning + bakery |
+| P140 | 30m | 广场灯/椅/院树/门垫/碎石密度 | 03_town / 09_storefronts |
+| P141 | 25m | golden + Critic + push | origin/main |
+
+### 镇店招进度
+- [x] P139 · [x] P140 · [x] P141

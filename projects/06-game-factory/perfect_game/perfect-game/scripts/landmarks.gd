@@ -229,10 +229,23 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_statue.png", Vector2(90, 70), 7, 1.2, Vector2(18, 22))
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(84, 66), 4, 1.0)
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(96, 66), 4, 1.0)
+	_spr("res://assets/processed/prop_bench.png", Vector2(86, 72), 4, 1.05)
+	_spr("res://assets/processed/prop_bench.png", Vector2(94, 72), 4, 1.05)
+	_spr("res://assets/processed/prop_lamp.png", Vector2(80, 64), 5, 1.1)
+	_spr("res://assets/processed/prop_lamp.png", Vector2(100, 64), 5, 1.1)
+	_spr("res://assets/processed/prop_lamp.png", Vector2(72, 52), 5, 1.05)
+	_spr("res://assets/processed/prop_lamp.png", Vector2(108, 52), 5, 1.05)
 	# Hero shop / cafe / bakery — short coll so south door tiles stay walkable
-	_spr("res://assets/processed/prop_shop_awning.png", Vector2(78, 50), 10, 1.65, Vector2(52, 28))
-	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(102, 50), 10, 1.65, Vector2(52, 28))
-	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 62), 10, 1.5, Vector2(40, 22))
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(78, 50), 10, 1.55, Vector2(52, 28))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(102, 50), 10, 1.55, Vector2(52, 28))
+	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 62), 10, 1.45, Vector2(40, 22))
+	# Door mats + crates at storefront feet (overview lived-in clutter)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(78, 54), 3, 1.0)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(102, 54), 3, 1.0)
+	_spr("res://assets/processed/prop_crate.png", Vector2(72, 54), 4, 0.95)
+	_spr("res://assets/processed/prop_barrel.png", Vector2(108, 54), 4, 0.95)
+	_spr("res://assets/processed/prop_crate.png", Vector2(86, 58), 4, 0.9)
+	_spr("res://assets/processed/prop_barrel.png", Vector2(94, 58), 4, 0.9)
 	# Stalls south/side — never covering facade signs
 	_spr("res://assets/processed/prop_stall.png", Vector2(76, 70), 6, 1.1, Vector2(28, 16))
 	_spr("res://assets/processed/prop_stall_blue.png", Vector2(104, 70), 6, 1.1, Vector2(28, 16))
@@ -240,8 +253,11 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_stall.png", Vector2(110, 58), 6, 1.0, Vector2(26, 16))
 	_spr("res://assets/processed/prop_stall_blue.png", Vector2(82, 74), 6, 0.95, Vector2(24, 14))
 	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(98, 74), 6, 0.95, Vector2(24, 14))
-	for p in [Vector2(84, 54), Vector2(96, 54), Vector2(84, 66), Vector2(96, 66)]:
+	for p in [Vector2(84, 54), Vector2(96, 54), Vector2(84, 66), Vector2(96, 66), Vector2(88, 68), Vector2(92, 68)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
+	# Shade trees in residential yards (overview density — not plaza center)
+	for tp in [Vector2(58, 44), Vector2(122, 44), Vector2(50, 62), Vector2(130, 62), Vector2(70, 82), Vector2(110, 82)]:
+		_spr("res://assets/processed/tree_%d.png" % (int(tp.x + tp.y) % 3), tp, 6, 1.15)
 	# Houses ring — keep clear of hero facade footprints
 	var houses := [
 		[Vector2(54, 40), "red"],
@@ -273,12 +289,17 @@ func _town() -> void:
 		## Yard props (fence + flower + crate) — ref residential density
 		_spr("res://assets/processed/prop_fence.png", hp + Vector2(-2, 4), 4, 0.9, Vector2(12, 8))
 		_spr("res://assets/processed/prop_flowerbed.png", hp + Vector2(2, 5), 4, 0.95)
+		_spr("res://assets/processed/prop_chair.png", hp + Vector2(1, 4), 4, 0.85)
 		if int(hp.x + hp.y) % 2 == 0:
 			_spr("res://assets/processed/prop_crate.png", hp + Vector2(-3, 3), 5, 0.85)
 		else:
 			_spr("res://assets/processed/prop_barrel.png", hp + Vector2(3, 3), 5, 0.85)
 	for x in range(68, 114, 3):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 80), 4, 1.0, Vector2(12, 8))
+	## Plaza pebble accents (break empty grass between stalls)
+	for p2 in [Vector2(88, 66), Vector2(92, 68), Vector2(86, 70), Vector2(94, 70), Vector2(90, 74)]:
+		_spr("res://assets/processed/prop_path_pebble.png", p2, 2, 0.9)
+		_spr("res://assets/processed/prop_path_tuft.png", p2 + Vector2(1, 0), 2, 0.85)
 
 func _station() -> void:
 	# Upgraded hall + canopy + crawling train; collision shorter so door is approachable
