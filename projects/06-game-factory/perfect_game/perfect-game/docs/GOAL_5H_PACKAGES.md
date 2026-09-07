@@ -570,7 +570,23 @@
 ### 中谷密度进度
 - [x] P164（itch 主图仍否；需试玩签字）
 
+## 暮色故事线 + decor 启动修复（≠ complete）
 
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P165 | 40m | 第三任务线 EVENING + NPC 长台词；deferred decor 消 add_child 错 | QuestLog + 0 errors |
+
+### 故事线进度
+- [x] P165（itch 主图仍否）
+
+## Golden 重抓 + 播种动画冒烟（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P166 | 25m | decor 修复后 golden 全套 + plant freeze 冒烟 + Critic | GOLDEN_CAPTURE_DONE + smoke/21 |
+
+### 验证进度
+- [x] P166（itch 主图仍否；需试玩签字）
 
 
 

@@ -30,6 +30,8 @@
 | 走路帧 | `walk_down` frame **5** · `smoke/17_walk_anim.png` |
 | 锄地帧（freeze） | `hoe_down` frame **2** · `smoke/18_hoe_anim.png` |
 | 浇水帧（freeze） | `water_down` frame **2** · `smoke/19_water_anim.png` |
+| 播种帧（freeze） | `plant_down` frame **2** · `smoke/21_plant_anim.png`（P166） |
+| Golden 重抓（decor 后） | P166 `GOLDEN_CAPTURE_DONE` · 0 script errors |
 | 畜栏 | 鸡/牛/羊 spawn + `pen_min`/`pen_max` clamp 南围栏内 |
 | Golden 重抓 | P126 `GOLDEN_CAPTURE_DONE`（含 blob fringe） |
 | 院子 blob / 门廊 | P127–P129：农舍 apron blob + bridge 木台 + 碎屑；区标默认隐藏；golden 再抓 |
