@@ -524,3 +524,13 @@
 
 ### 河岸车站进度
 - [x] P154 · [x] P155 · [x] P156
+
+## World-driven 中谷构图（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P160 | 50m | REGION 模板 + 实心路脊 + mid-valley dirt ridge + 湖 wobble + canopy 错位 | `P160_MID_VALLEY.md` + golden + VISUAL_QA |
+
+### World-driven 进度
+- [x] P160（itch 主图仍否；需试玩签字）
+

@@ -258,7 +258,7 @@ func _paint_plaza_soft(cx: int, cy: int, hw: int, hh: int) -> void:
 					_set_cell(_ground, x, y, T_GRASS2)
 
 func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
-	## Soft organic dirt — multi-frequency wobble + dense fringe dither
+	## Continuous 2–3 tile dirt spine (readable at overview) + soft organic shoulders
 	for i in range(steps + 1):
 		var t: float = float(i) / float(maxi(steps, 1))
 		var wobble_x: float = 7.2 * sin(t * PI * 4.2 + float(a.x) * 0.13)
@@ -269,42 +269,56 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 		var y: int = int(lerpf(float(a.y), float(b.y), t) + wobble_y)
 		x = clampi(x, 2, W - 4)
 		y = clampi(y, 2, H - 4)
-		_set_cell(_ground, x, y, T_PATH if (i % 3 != 0) else T_PATH2)
-		_set_cell(_ground, x + 1, y, T_PATH2 if (i % 2 == 0) else T_PATH)
-		if i % 3 != 1:
-			_set_cell(_ground, x, y + 1, T_PATH if (i % 5 != 0) else T_DIRT2)
-		if i % 4 == 0:
-			_set_cell(_ground, x + 1, y + 1, T_DIRT if (i % 8 == 0) else T_DIRT2)
+		## Never punch PATH through water bowl (ground/water desync)
+		if _water_blocks_path(x, y) or _water_blocks_path(x + 1, y):
+			continue
+		## Solid spine — avoid spray-dot corridors at overview zoom
+		_set_path_cell(x, y, T_PATH if (i % 3 != 0) else T_PATH2)
+		_set_path_cell(x + 1, y, T_PATH2 if (i % 2 == 0) else T_PATH)
+		_set_path_cell(x, y + 1, T_PATH if (i % 5 != 0) else T_DIRT2)
+		_set_path_cell(x + 1, y + 1, T_PATH2 if (i % 4 == 0) else T_DIRT)
+		if i % 2 == 0:
+			_set_path_cell(x + 2, y, T_DIRT2 if (i % 6 == 0) else T_PATH)
+			_set_path_cell(x - 1, y + 1, T_DIRT if (i % 5 == 0) else T_PATH2)
 		# Organic fringe: dirt nubs + grass dither (less brick corridor)
 		var ox := (i % 5) - 2
 		var oy := ((i * 3) % 5) - 2
 		if i % 2 == 0:
-			_set_cell(_ground, x - 1 + ox, y + oy, T_DIRT)
-			_set_cell(_ground, x + 2 - ox, y, T_DIRT)
+			_set_path_cell(x - 1 + ox, y + oy, T_DIRT)
+			_set_path_cell(x + 2 - ox, y, T_DIRT)
 		if i % 3 == 0:
-			_set_cell(_ground, x + ox, y - 1, T_DIRT)
-			_set_cell(_ground, x + 1 + ox, y + 2, T_DIRT)
+			_set_path_cell(x + ox, y - 1, T_DIRT)
+			_set_path_cell(x + 1 + ox, y + 2, T_DIRT)
 		if i % 4 == 0:
-			_set_cell(_ground, x - 1, y + 1 + oy, T_GRASS2)
-			_set_cell(_ground, x + 2, y - 1, T_GRASS3)
+			_set_path_cell(x - 1, y + 1 + oy, T_GRASS2)
+			_set_path_cell(x + 2, y - 1, T_GRASS3)
 		if i % 5 == 0:
-			_set_cell(_ground, x + 1, y - 1 + oy, T_GRASS3)
-			_set_cell(_ground, x - 1, y + 1, T_GRASS2)
-			_set_cell(_ground, x + 3, y + oy, T_GRASS4)
+			_set_path_cell(x + 1, y - 1 + oy, T_GRASS3)
+			_set_path_cell(x - 1, y + 1, T_GRASS2)
+			_set_path_cell(x + 3, y + oy, T_GRASS4)
 		if i % 6 == 0:
-			_set_cell(_ground, x + ox, y + 2, T_GRASS)
-			_set_cell(_ground, x + 2 + ox, y + 1, T_DIRT)
+			_set_path_cell(x + ox, y + 2, T_GRASS)
+			_set_path_cell(x + 2 + ox, y + 1, T_DIRT)
 		if i % 7 == 0:
-			_set_cell(_ground, x + 2, y + 1, T_GRASS4)
-			_set_cell(_ground, x - 1, y - 1, T_DIRT)
-			_set_cell(_ground, x - 2, y + oy, T_GRASS3)
-		# Extra soft shoulder — breaks remaining tile corridor feel
+			_set_path_cell(x + 2, y + 1, T_GRASS4)
+			_set_path_cell(x - 1, y - 1, T_DIRT)
+			_set_path_cell(x - 2, y + oy, T_GRASS3)
 		if i % 2 == 1:
-			_set_cell(_ground, x - 2 + ox, y + oy, T_GRASS3 if (i % 4 == 1) else T_DIRT)
-			_set_cell(_ground, x + 3 - ox, y + 1, T_GRASS2 if (i % 3 == 0) else T_DIRT)
+			_set_path_cell(x - 2 + ox, y + oy, T_GRASS3 if (i % 4 == 1) else T_DIRT)
+			_set_path_cell(x + 3 - ox, y + 1, T_GRASS2 if (i % 3 == 0) else T_DIRT)
 		if i % 8 == 0:
-			_set_cell(_ground, x + ox, y - 2, T_GRASS4)
-			_set_cell(_ground, x + 1 + ox, y + 3, T_GRASS)
+			_set_path_cell(x + ox, y - 2, T_GRASS4)
+			_set_path_cell(x + 1 + ox, y + 3, T_GRASS)
+
+func _water_blocks_path(x: int, y: int) -> bool:
+	if _water.get_cell_source_id(Vector2i(x, y)) != -1:
+		return true
+	return _is_waterish(_cell_tid(x, y))
+
+func _set_path_cell(x: int, y: int, tid: int) -> void:
+	if _water_blocks_path(x, y):
+		return
+	_set_cell(_ground, x, y, tid)
 
 func _paint_base() -> void:
 	# Coherent meadow patches (8×8 cells) — large soft fields kill overview checkerboard
@@ -515,6 +529,8 @@ func _paint_base() -> void:
 	_paint_path_winding(Vector2i(110, 48), Vector2i(168, 100), 75)  # town → lake
 	_paint_path_winding(Vector2i(70, 70), Vector2i(130, 70), 48)  # mid crosslink
 	_paint_path_winding(Vector2i(90, 48), Vector2i(28, 24), 70)  # town → waterfall
+	## Mid-valley composition — dirt meadows along spines (World-driven, not micro clutter)
+	_paint_mid_valley_meadows()
 
 	# Z4 rails + organic station yard (not a solid plaza slab)
 	_paint_station_yard()
@@ -552,20 +568,22 @@ func _paint_base() -> void:
 				for yy in range(y0 + 3, y0 + 10):
 					_set_cell(_ground, x, yy, T_STAIRS)
 
-	# Z6 lake + soft shore ring (sand + water-edge tiles)
+	# Z6 lake — irregular organic bowl (break perfect circle) + soft shore ring
 	for y in range(86, 122):
 		for x in range(126, 184):
 			var dx := float(x - 155)
 			var dy := float(y - 104)
-			# slight ellipse wobble
-			var r2 := dx * dx + dy * dy * 1.85
-			if r2 < 780.0:
-				var tid := T_DEEP if r2 < 360.0 else T_WATER
+			## Multi-frequency shoreline wobble (World-driven lake shape)
+			var wob: float = 0.12 * sin(dx * 0.31 + dy * 0.19) + 0.08 * cos(dx * 0.17 - dy * 0.27)
+			wob += 0.05 * sin((dx + dy) * 0.41)
+			var r2 := (dx * dx) * (1.0 + wob) + (dy * dy) * (1.65 + wob * 0.5)
+			if r2 < 820.0:
+				var tid := T_DEEP if r2 < 380.0 else T_WATER
 				_set_cell(_water, x, y, tid)
 				_set_cell(_ground, x, y, tid)
-			elif r2 < 1020.0:
+			elif r2 < 1080.0:
 				_set_cell(_ground, x, y, T_SAND)
-			elif r2 < 1280.0:
+			elif r2 < 1380.0:
 				# wider shore fringe — pick edge tile by direction to center
 				if absf(dx) > absf(dy) * 1.2:
 					_set_cell(_ground, x, y, T_WE_W if dx > 0.0 else T_WE_E)
@@ -620,6 +638,15 @@ func _paint_base() -> void:
 	_stitch_water_shores()
 	## Extra path/plaza fringe soften (overview hard edges)
 	_soften_path_edges()
+	## Re-assert corridor spines after lake/terrace/yard stomps (stop at shores — no PATH through water)
+	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 95)
+	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 80)  # town → station (after yard)
+	_paint_path_winding(Vector2i(90, 55), Vector2i(145, 98), 75)  # toward lake west shore (not bowl center)
+	_paint_path_winding(Vector2i(110, 48), Vector2i(148, 98), 70)  # town → lake approach
+	_paint_path_winding(Vector2i(55, 80), Vector2i(90, 62), 40)
+	_paint_path_winding(Vector2i(100, 72), Vector2i(128, 92), 40)
+	## Light soften on final spines only
+	_soften_path_edges()
 	## Building footings — dirt pads so facades sit on ground (not float)
 	_paint_building_footings()
 
@@ -656,6 +683,41 @@ func _paint_station_yard() -> void:
 	for x in range(142, 172, 3):
 		_set_cell(_ground, x, 24, T_BRIDGE)
 		_set_cell(_ground, x, 27, T_BRIDGE)
+
+func _paint_mid_valley_meadows() -> void:
+	## Density gradients along farm↔town↔lake spines — fills overview "dead green"
+	## without uniform decoration spam (GAME_VISION / WORLD_DESIGN MID_VALLEY)
+	var blobs: Array = [
+		Vector2i(55, 78), Vector2i(68, 72), Vector2i(78, 68),
+		Vector2i(100, 70), Vector2i(112, 78), Vector2i(120, 88),
+		Vector2i(52, 60), Vector2i(64, 55), Vector2i(108, 58),
+		Vector2i(130, 70), Vector2i(140, 82), Vector2i(85, 82),
+	]
+	for b in blobs:
+		var cx: int = int(b.x)
+		var cy: int = int(b.y)
+		var hw: int = 4 + absi(cx * 3 + cy) % 3
+		var hh: int = 3 + absi(cx + cy * 2) % 3
+		_fill_dirt_blob(cx, cy, hw, hh, false)
+	## Continuous mid-ridge shoulders (overview-readable brown mass, not spray)
+	for i in range(90):
+		var t: float = float(i) / 89.0
+		var x: int = int(lerpf(48.0, 88.0, t) + 2.5 * sin(t * PI * 3.2))
+		var y: int = int(lerpf(88.0, 58.0, t) + 2.0 * cos(t * PI * 2.4))
+		for ox in range(-1, 3):
+			for oy in range(-1, 2):
+				_set_path_cell(x + ox, y + oy, T_DIRT if ((x + ox + y + oy) % 3) != 0 else T_DIRT2)
+	for i in range(70):
+		var t2: float = float(i) / 69.0
+		var x2: int = int(lerpf(90.0, 140.0, t2) + 3.0 * sin(t2 * PI * 2.8))
+		var y2: int = int(lerpf(62.0, 98.0, t2) + 2.2 * sin(t2 * PI * 4.1))
+		for ox in range(-1, 3):
+			for oy in range(-1, 2):
+				_set_path_cell(x2 + ox, y2 + oy, T_PATH if ((i + ox) % 4) == 0 else T_DIRT)
+	## Sparse secondary path links (composition, not noise)
+	_paint_path_winding(Vector2i(55, 80), Vector2i(90, 62), 40)
+	_paint_path_winding(Vector2i(100, 72), Vector2i(130, 95), 45)
+	_paint_path_winding(Vector2i(70, 55), Vector2i(110, 55), 35)
 
 func _soften_path_edges() -> void:
 	## Nibble path/plaza borders into grass + GD tiles (breaks overview brick-read)

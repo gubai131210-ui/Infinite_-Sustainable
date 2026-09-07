@@ -196,7 +196,7 @@ func _forest_rim() -> void:
 			2:
 				path = "res://assets/processed/tree_pine_c.png"
 		_spr(path, Vector2(x + 0.3, y), 5, false, 1.2 + float(x % 3) * 0.08)
-	# Soft mid-map irregular groves — thinned (batched meadow canopy carries oil mass)
+	# Soft mid-map irregular groves — density along spines, clear plaza (P160 World-driven)
 	for gx in range(38, 128, 3):
 		for gy in range(24, 76, 3):
 			# keep town plaza / storefronts clear of grove trees
@@ -206,11 +206,16 @@ func _forest_rim() -> void:
 			if gx <= 42 and gy <= 30:
 				continue
 			var h := (gx * 7 + gy * 11) % 11
-			if h < 6:
+			## denser along farm↔town corridor (y 55–88), thinner elsewhere
+			var near_spine: bool = gy >= 55 and gy <= 88 and gx >= 42 and gx <= 100
+			var thresh := 4 if near_spine else 6
+			if h < thresh:
 				continue
 			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.25, gy + (gx % 2) * 0.25), 5, false, 0.95 + float(h % 3) * 0.06)
 			if h >= 9:
 				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.1, gy + 0.7), 5, false, 1.05)
+			if near_spine and h >= 8:
+				_spr("res://assets/processed/bush.png", Vector2(gx + 0.6, gy + 1.1), 3, false)
 	# Soft inner belts (east of river / west of town) to break empty mid-grass
 	for y in range(26, 74, 3):
 		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(46 + (y % 3), y), 5)
