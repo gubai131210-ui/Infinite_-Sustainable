@@ -43,6 +43,11 @@ func _atlas_frame(path: String, frame: int = 0, fw: int = -1, fh: int = -1) -> T
 	at.region = Rect2(frame * fw, 0, fw, fh)
 	return at
 
+func _entity_host() -> Node:
+	## Flatten onto Entities so Player/trees/NPCs share one y_sort sibling list
+	var p := get_parent()
+	return p if p != null else self
+
 func _spr(path: String, tile: Vector2, z: int = 0, choppable: bool = false, scale_mul: float = 1.0) -> Sprite2D:
 	var tex := _load_tex(path)
 	if tex == null:
@@ -54,7 +59,8 @@ func _spr(path: String, tile: Vector2, z: int = 0, choppable: bool = false, scal
 	s.offset = Vector2(0, -th * 0.5)
 	s.scale = Vector2(scale_mul, scale_mul)
 	s.position = tile * TS
-	s.z_index = z
+	## z ignored for world props — Entities y_sort requires shared z_index
+	s.z_index = 0
 	s.y_sort_enabled = true
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	if "tree" in path:
@@ -65,7 +71,7 @@ func _spr(path: String, tile: Vector2, z: int = 0, choppable: bool = false, scal
 	if choppable:
 		s.add_to_group("choppable")
 		s.set_meta("chop_hp", 2)
-	add_child(s)
+	_entity_host().add_child(s)
 	return s
 
 func _spr_atlas(path: String, tile: Vector2, z: int = 0, frame: int = 0, flip: bool = false) -> Sprite2D:
@@ -78,11 +84,11 @@ func _spr_atlas(path: String, tile: Vector2, z: int = 0, frame: int = 0, flip: b
 	var th := float(tex.get_height())
 	s.offset = Vector2(0, -th * 0.5)
 	s.position = tile * TS
-	s.z_index = z
+	s.z_index = 0
 	s.flip_h = flip
 	s.y_sort_enabled = true
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	add_child(s)
+	_entity_host().add_child(s)
 	return s
 
 func _trees() -> void:
@@ -407,7 +413,7 @@ func _npcs() -> void:
 			n.position = Vector2(90, 48) * TS
 		n.sprite_path = "res://assets/processed/%s" % str(info["spr"])
 		n.z_index = 0
-		add_child(n)
+		_entity_host().add_child(n)
 
 func _animals() -> void:
 	## All livestock inside south pen only (avoid tree canopy z-fight)
@@ -432,7 +438,7 @@ func _animals() -> void:
 		a.set_meta("pen_min", Vector2(25, 113) * TS)
 		a.set_meta("pen_max", Vector2(43, 121) * TS)
 		a.set_meta("wander_radius", 28.0)
-		add_child(a)
+		_entity_host().add_child(a)
 
 func _door_and_chest() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(36, 90), 4)
