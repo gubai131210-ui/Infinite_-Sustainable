@@ -190,10 +190,9 @@ func _forest_rim() -> void:
 	# Soft mid-map irregular groves (fill open grass sea between rim and town)
 	for gx in range(42, 120, 4):
 		for gy in range(28, 68, 4):
-			# keep town plaza / paths relatively clear
-			if gx >= 68 and gx <= 116 and gy >= 34 and gy <= 66:
-				if ((gx + gy) % 5) != 0:
-					continue
+			# keep town plaza / storefronts clear of grove trees
+			if gx >= 62 and gx <= 120 and gy >= 36 and gy <= 78:
+				continue
 			if ((gx * 7 + gy * 11) % 9) < 5:
 				continue
 			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.3, gy + (gx % 2) * 0.3), 5)
@@ -510,14 +509,14 @@ func _door_and_chest() -> void:
 	_market_festival()
 
 func _market_festival() -> void:
-	## P13 cozy market day — denser plaza stalls + banner labels
-	for p in [Vector2(82, 46), Vector2(88, 50), Vector2(96, 46), Vector2(84, 52)]:
+	## Market day south of hero storefronts (do not cover GENERAL STORE / CAFE)
+	for p in [Vector2(78, 70), Vector2(90, 72), Vector2(102, 70), Vector2(84, 76)]:
 		_spr("res://assets/processed/prop_stall_yellow.png", p, 5)
-	_spr("res://assets/processed/prop_stall_blue.png", Vector2(98, 50), 5)
-	_spr("res://assets/processed/prop_canopy.png", Vector2(90, 42), 5)
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(96, 76), 5)
+	_spr("res://assets/processed/prop_canopy.png", Vector2(90, 74), 5)
 	var lab := Label.new()
 	lab.text = "今日集市"
-	lab.position = Vector2(86, 40) * TS + Vector2(-20, -28)
+	lab.position = Vector2(86, 72) * TS + Vector2(-20, -28)
 	lab.z_index = 25
 	lab.add_theme_font_size_override("font_size", 13)
 	lab.add_theme_color_override("font_color", Color(0.55, 0.2, 0.15))
@@ -527,7 +526,7 @@ func _market_festival() -> void:
 	var board := preload("res://scenes/interact_zone.tscn").instantiate()
 	board.prompt_text = "按 E 看镇告示栏"
 	board.mode = "bulletin"
-	board.position = Vector2(90, 42) * TS
+	board.position = Vector2(90, 74) * TS
 	add_child(board)
 	# Soft mid-map path flowers between farm ↔ town
 	for x in range(50, 78, 3):

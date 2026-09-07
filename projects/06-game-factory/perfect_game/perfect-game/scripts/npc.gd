@@ -80,7 +80,7 @@ func _setup_sprite() -> void:
 	frames.add_animation("walk")
 	frames.set_animation_speed("idle", 2.0)
 	frames.set_animation_loop("idle", true)
-	frames.set_animation_speed("walk", 10.0)
+	frames.set_animation_speed("walk", 12.0)
 	frames.set_animation_loop("walk", true)
 	var cell_w := CELL
 	if tex.get_height() > 0 and tex.get_height() < CELL:
@@ -113,16 +113,21 @@ func _physics_process(delta: float) -> void:
 
 	_timer -= delta
 	if _timer <= 0.0:
-		_timer = randf_range(1.0, 2.6)
+		_timer = randf_range(0.7, 1.9)
+		# Bias toward walking so plaza feels alive (P101)
 		var opts := [
 			Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN,
-			Vector2.LEFT, Vector2.RIGHT, Vector2.ZERO,
+			Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN,
+			Vector2(-1, -1).normalized(), Vector2(1, -1).normalized(),
+			Vector2(-1, 1).normalized(), Vector2(1, 1).normalized(),
+			Vector2.ZERO,
 		]
 		_dir = opts[randi() % opts.size()]
-	velocity = _dir * 28.0
-	if global_position.distance_to(_home) > 56.0 and _dir != Vector2.ZERO:
+	var walk_spd := 34.0
+	velocity = _dir * walk_spd
+	if global_position.distance_to(_home) > 72.0 and _dir != Vector2.ZERO:
 		_dir = (_home - global_position).normalized()
-		velocity = _dir * 28.0
+		velocity = _dir * walk_spd
 	_play_move(delta, _dir.length() > 0.1)
 	move_and_slide()
 
@@ -134,9 +139,9 @@ func _play_move(delta: float, moving: bool) -> void:
 	if moving:
 		if anim.animation != "walk" or not anim.is_playing():
 			anim.play("walk")
-		anim.speed_scale = 1.0
-		_bob_t += delta * 8.0
-		anim.position.y = _anim_base_y + sin(_bob_t) * 0.8
+		anim.speed_scale = 1.15
+		_bob_t += delta * 10.0
+		anim.position.y = _anim_base_y + sin(_bob_t) * 1.1
 	else:
 		if anim.animation != "idle" or not anim.is_playing():
 			anim.play("idle")

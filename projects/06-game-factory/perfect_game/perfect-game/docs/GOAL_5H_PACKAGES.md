@@ -295,3 +295,15 @@
 
 ### 团块林冠进度
 - [x] P95 · P96 · P97 · P98  
+
+## 店招构图与广场软边（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P99 | 35m | 店招 bitmap + 摊位下移 + 09_storefronts | town/storefronts |
+| P100 | 30m | 广场软椭圆 + 路径肩 denser dither | plaza/paths |
+| P101 | 25m | NPC 更常走动 / flip / bob | ambient life |
+| P102 | 25m | golden + Critic + push | origin/main |
+
+### 店招构图进度
+- [x] P99 · P100 · P101 · P102  

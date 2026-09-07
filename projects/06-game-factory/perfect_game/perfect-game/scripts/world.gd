@@ -124,8 +124,42 @@ func _fill_rect(layer: TileMapLayer, r: Rect2i, tid: int) -> void:
 		for x in range(r.position.x, r.position.x + r.size.x):
 			_set_cell(layer, x, y, tid)
 
+func _paint_plaza_soft(cx: int, cy: int, hw: int, hh: int) -> void:
+	## Soft oval plaza — heavy dither fringe + interior grass pockets
+	for y in range(cy - hh - 3, cy + hh + 4):
+		for x in range(cx - hw - 3, cx + hw + 4):
+			var dx: float = absf(float(x - cx)) / float(maxi(hw, 1))
+			var dy: float = absf(float(y - cy)) / float(maxi(hh, 1))
+			var edge: float = maxf(dx, dy)
+			var n: float = float((x * 17 + y * 31) % 11) / 11.0
+			var n2: float = float((x * 13 + y * 19) % 7) / 7.0
+			if edge < 0.55:
+				if n2 > 0.82:
+					_set_cell(_ground, x, y, T_DIRT)
+				else:
+					_set_cell(_ground, x, y, T_PLAZA)
+			elif edge < 0.72:
+				if n > 0.35:
+					_set_cell(_ground, x, y, T_PLAZA)
+				elif n > 0.15:
+					_set_cell(_ground, x, y, T_DIRT)
+				elif n2 > 0.5:
+					_set_cell(_ground, x, y, T_GRASS3)
+			elif edge < 0.88:
+				if n > 0.55:
+					_set_cell(_ground, x, y, T_DIRT)
+				elif n > 0.28:
+					_set_cell(_ground, x, y, T_GRASS3 if ((x + y) % 2 == 0) else T_GRASS2)
+				elif n2 > 0.6:
+					_set_cell(_ground, x, y, T_GRASS4)
+			elif edge < 1.05:
+				if n > 0.45:
+					_set_cell(_ground, x, y, T_GRASS4 if (x % 2 == 0) else T_DIRT)
+				elif n2 > 0.55:
+					_set_cell(_ground, x, y, T_GRASS2)
+
 func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
-	## Soft organic dirt — multi-frequency wobble + irregular fringe (less brick)
+	## Soft organic dirt — multi-frequency wobble + dense fringe dither
 	for i in range(steps + 1):
 		var t: float = float(i) / float(maxi(steps, 1))
 		var wobble_x: float = 7.2 * sin(t * PI * 4.2 + float(a.x) * 0.13)
@@ -165,6 +199,13 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 			_set_cell(_ground, x + 2, y + 1, T_GRASS4)
 			_set_cell(_ground, x - 1, y - 1, T_DIRT)
 			_set_cell(_ground, x - 2, y + oy, T_GRASS3)
+		# Extra soft shoulder — breaks remaining tile corridor feel
+		if i % 2 == 1:
+			_set_cell(_ground, x - 2 + ox, y + oy, T_GRASS3 if (i % 4 == 1) else T_DIRT)
+			_set_cell(_ground, x + 3 - ox, y + 1, T_GRASS2 if (i % 3 == 0) else T_DIRT)
+		if i % 8 == 0:
+			_set_cell(_ground, x + ox, y - 2, T_GRASS4)
+			_set_cell(_ground, x + 1 + ox, y + 3, T_GRASS)
 
 func _paint_base() -> void:
 	# Full grass with noisy variants (avoid diagonal stripe modulo)
@@ -291,27 +332,32 @@ func _paint_base() -> void:
 		_water.erase_cell(Vector2i(x, 62))
 		_water.erase_cell(Vector2i(x, 63))
 
-	# Z3 plaza (irregular fringe — less brick rectangle)
-	_fill_rect(_ground, Rect2i(74, 38, 36, 24), T_PLAZA)
-	for x in range(72, 112):
+	# Z3 plaza — soft oval core + dither fringe (less brick rectangle)
+	_paint_plaza_soft(90, 50, 20, 14)
+	for x in range(70, 114):
 		if (x * 3 + 5) % 7 != 0:
-			_set_cell(_ground, x, 36 + ((x * 2) % 2), T_PLAZA)
+			_set_cell(_ground, x, 35 + ((x * 2) % 2), T_DIRT if (x % 3 == 0) else T_PLAZA)
 		if (x * 5 + 1) % 6 != 0:
-			_set_cell(_ground, x, 62 + ((x) % 2), T_PLAZA)
-		if (x + 2) % 5 == 0:
+			_set_cell(_ground, x, 64 + ((x) % 2), T_DIRT if (x % 4 == 0) else T_PLAZA)
+		if (x + 2) % 4 == 0:
+			_set_cell(_ground, x, 36, T_GRASS3)
+			_set_cell(_ground, x, 63, T_GRASS2)
+		if (x + 4) % 5 == 0:
 			_set_cell(_ground, x, 37, T_DIRT)
-		if (x + 4) % 6 == 0:
-			_set_cell(_ground, x, 61, T_GRASS3)
-	for y in range(38, 62):
+			_set_cell(_ground, x, 62, T_GRASS4)
+	for y in range(36, 66):
 		if (y * 2 + 3) % 5 != 0:
-			_set_cell(_ground, 72 + (y % 2), y, T_PLAZA)
-			_set_cell(_ground, 111 - (y % 2), y, T_PLAZA)
-		if y % 4 == 0:
-			_set_cell(_ground, 71, y, T_DIRT)
-			_set_cell(_ground, 112, y, T_GRASS2)
-		if y % 5 == 1:
-			_set_cell(_ground, 73, y, T_GRASS4)
-			_set_cell(_ground, 110, y, T_DIRT)
+			_set_cell(_ground, 70 + (y % 2), y, T_DIRT if (y % 3 == 0) else T_PLAZA)
+			_set_cell(_ground, 113 - (y % 2), y, T_GRASS3 if (y % 4 == 0) else T_PLAZA)
+		if y % 3 == 0:
+			_set_cell(_ground, 69, y, T_DIRT)
+			_set_cell(_ground, 114, y, T_GRASS2)
+		if y % 4 == 1:
+			_set_cell(_ground, 71, y, T_GRASS4)
+			_set_cell(_ground, 112, y, T_DIRT)
+		if y % 5 == 2:
+			_set_cell(_ground, 72, y, T_GRASS3)
+			_set_cell(_ground, 111, y, T_GRASS2)
 	# Organic winding dirt paths (stronger wobble + more links)
 	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 95)
 	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 80)

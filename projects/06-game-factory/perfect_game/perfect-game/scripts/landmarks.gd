@@ -159,29 +159,30 @@ func _farm() -> void:
 
 func _town() -> void:
 	## Overview silhouette: fewer tiny props, larger hero facades
-	_spr("res://assets/processed/prop_statue.png", Vector2(90, 48), 7, 1.25, Vector2(18, 22))
-	_spr("res://assets/processed/prop_flowerbed.png", Vector2(90, 42), 4, 1.0)
-	_spr("res://assets/processed/prop_flowerbed.png", Vector2(90, 54), 4, 1.0)
-	# 4 market stalls (was 6) — readable massing
-	_spr("res://assets/processed/prop_stall.png", Vector2(78, 40), 6, 1.25, Vector2(32, 20))
-	_spr("res://assets/processed/prop_stall_blue.png", Vector2(102, 40), 6, 1.25, Vector2(32, 20))
-	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(78, 56), 6, 1.2, Vector2(32, 20))
-	_spr("res://assets/processed/prop_stall.png", Vector2(102, 56), 6, 1.2, Vector2(32, 20))
-	for p in [Vector2(84, 46), Vector2(96, 46), Vector2(84, 52), Vector2(96, 52)]:
+	_spr("res://assets/processed/prop_statue.png", Vector2(90, 70), 7, 1.2, Vector2(18, 22))
+	_spr("res://assets/processed/prop_flowerbed.png", Vector2(84, 66), 4, 1.0)
+	_spr("res://assets/processed/prop_flowerbed.png", Vector2(96, 66), 4, 1.0)
+	# Hero shop / cafe / bakery — plaza center (must land inside 03/09 goldens)
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(78, 50), 10, 1.65, Vector2(80, 56))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(102, 50), 10, 1.65, Vector2(80, 56))
+	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 62), 10, 1.5, Vector2(60, 46))
+	# Stalls south/side — never covering facade signs
+	_spr("res://assets/processed/prop_stall.png", Vector2(76, 70), 6, 1.1, Vector2(28, 16))
+	_spr("res://assets/processed/prop_stall_blue.png", Vector2(104, 70), 6, 1.1, Vector2(28, 16))
+	_spr("res://assets/processed/prop_stall_yellow.png", Vector2(70, 58), 6, 1.0, Vector2(26, 16))
+	_spr("res://assets/processed/prop_stall.png", Vector2(110, 58), 6, 1.0, Vector2(26, 16))
+	for p in [Vector2(84, 54), Vector2(96, 54), Vector2(84, 66), Vector2(96, 66)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
-	# Hero shop / cafe / bakery — larger for overview/town readable signs
-	_spr("res://assets/processed/prop_shop_awning.png", Vector2(68, 26), 9, 1.65, Vector2(78, 56))
-	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(112, 26), 9, 1.65, Vector2(78, 56))
-	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 64), 9, 1.5, Vector2(60, 44))
+	# Houses ring — keep clear of hero facade footprints
 	var houses := [
-		[Vector2(62, 36), "red"],
-		[Vector2(62, 54), "thatch"],
-		[Vector2(118, 36), "slate"],
-		[Vector2(118, 54), "green"],
-		[Vector2(74, 70), "slate"],
-		[Vector2(106, 70), "thatch"],
-		[Vector2(56, 46), "green"],
-		[Vector2(124, 46), "red"],
+		[Vector2(54, 40), "red"],
+		[Vector2(54, 58), "thatch"],
+		[Vector2(126, 40), "slate"],
+		[Vector2(126, 58), "green"],
+		[Vector2(74, 76), "slate"],
+		[Vector2(106, 76), "thatch"],
+		[Vector2(48, 50), "green"],
+		[Vector2(132, 50), "red"],
 	]
 	for h in houses:
 		var path := "res://assets/processed/prop_house_redroof.png"
@@ -194,9 +195,9 @@ func _town() -> void:
 				path = "res://assets/processed/prop_house_thatch.png"
 			"green":
 				path = "res://assets/processed/prop_house_greenroof.png"
-		_spr(path, h[0], 8, 1.25, Vector2(44, 36))
+		_spr(path, h[0], 8, 1.2, Vector2(42, 34))
 	for x in range(68, 114, 3):
-		_spr("res://assets/processed/prop_fence.png", Vector2(x, 76), 4, 1.0, Vector2(12, 8))
+		_spr("res://assets/processed/prop_fence.png", Vector2(x, 80), 4, 1.0, Vector2(12, 8))
 
 func _station() -> void:
 	# Upgraded hall + canopy + crawling train; collision shorter so door is approachable
