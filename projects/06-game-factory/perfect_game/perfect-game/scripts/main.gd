@@ -130,7 +130,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 		["04_station", Vector2(155 * 16, 18 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(168 * 16, 105 * 16)],
-		["00_overview", Vector2(100 * 16, 40 * 16)],
+		["00_overview", Vector2(100 * 16, 36 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
 	for s in shots:

@@ -256,13 +256,27 @@ func _paint_base() -> void:
 		_water.erase_cell(Vector2i(x, 62))
 		_water.erase_cell(Vector2i(x, 63))
 
-	# Z3 plaza (slightly irregular edge)
-	_fill_rect(_ground, Rect2i(72, 36, 40, 28), T_PLAZA)
+	# Z3 plaza (irregular fringe — less brick rectangle)
+	_fill_rect(_ground, Rect2i(74, 38, 36, 24), T_PLAZA)
 	for x in range(72, 112):
-		if (x + 3) % 7 == 0:
-			_set_cell(_ground, x, 35, T_PLAZA)
-		if (x + 5) % 6 == 0:
-			_set_cell(_ground, x, 64, T_PLAZA)
+		if (x * 3 + 5) % 7 != 0:
+			_set_cell(_ground, x, 36 + ((x * 2) % 2), T_PLAZA)
+		if (x * 5 + 1) % 6 != 0:
+			_set_cell(_ground, x, 62 + ((x) % 2), T_PLAZA)
+		if (x + 2) % 5 == 0:
+			_set_cell(_ground, x, 37, T_DIRT)
+		if (x + 4) % 6 == 0:
+			_set_cell(_ground, x, 61, T_GRASS3)
+	for y in range(38, 62):
+		if (y * 2 + 3) % 5 != 0:
+			_set_cell(_ground, 72 + (y % 2), y, T_PLAZA)
+			_set_cell(_ground, 111 - (y % 2), y, T_PLAZA)
+		if y % 4 == 0:
+			_set_cell(_ground, 71, y, T_DIRT)
+			_set_cell(_ground, 112, y, T_GRASS2)
+		if y % 5 == 1:
+			_set_cell(_ground, 73, y, T_GRASS4)
+			_set_cell(_ground, 110, y, T_DIRT)
 	# Organic winding dirt paths (stronger wobble + more links)
 	_paint_path_winding(Vector2i(42, 92), Vector2i(90, 50), 95)
 	_paint_path_winding(Vector2i(90, 50), Vector2i(148, 22), 80)

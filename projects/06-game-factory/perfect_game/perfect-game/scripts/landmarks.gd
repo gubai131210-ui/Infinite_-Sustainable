@@ -59,13 +59,9 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## One seamless full-width skyline — draw above ground tiles, no Y-sort fights.
-	## Texture 3072×144; bottom anchored at north map edge (tile y=0).
+	## Tall seamless skyline only — no extra cloud/cliff stack (avoids fake seams).
 	_spr("res://assets/processed/prop_skyline_wide.png", Vector2(96, 0), 1, 1.0, Vector2.ZERO, Color(1, 1, 1, 1), false)
-	for i in range(0, 6):
-		_spr("res://assets/processed/prop_cloud_%d.png" % (i % 3), Vector2(20 + i * 30, -5 + (i % 2)), 2, 1.6, Vector2.ZERO, Color(1, 1, 1, 1), false)
-	for dx in [-5, -3, -1, 1, 3, 5]:
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 10), 3, 1.3)
+	# Landmark pines away from waterfall bowl
 	for p in [Vector2(6, 12), Vector2(50, 11), Vector2(126, 12), Vector2(186, 11)]:
 		_spr("res://assets/processed/tree_pine.png", p, 4, 0.85)
 
@@ -99,25 +95,22 @@ func _ruins() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(82, 18), 6, 0.9)
 
 func _river() -> void:
-	## Bowl-integrated fall: open sky from skyline window; pines as side posts only
-	for p in [Vector2(12, 12), Vector2(36, 12)]:
-		_spr("res://assets/processed/tree_pine.png", p, 3, 0.95)
-	for dx in range(-5, 6, 2):
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 8), 2, 1.5)
-	for dx in [-3, -1, 1, 3]:
-		_spr("res://assets/processed/prop_cliff.png", Vector2(24 + dx, 11), 3, 1.35)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 15), 5, 1.25)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 15), 5, 1.2)
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 15), 7, 1.65, Vector2(52, 68))
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.3, Vector2(40, 52), Color(0.9, 0.95, 1.0, 0.88))
-	_spr("res://assets/processed/prop_rocks.png", Vector2(20, 20), 9, 1.1)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(28, 20), 9, 1.05)
-	for p in [Vector2(14, 20), Vector2(34, 20)]:
+	## Soft bowl: few organic cliffs + dual fall + side pines (no brick stack wall)
+	for p in [Vector2(12, 13), Vector2(36, 13)]:
+		_spr("res://assets/processed/tree_pine.png", p, 4, 1.0)
+	_spr("res://assets/processed/prop_cliff.png", Vector2(20, 9), 3, 1.4)
+	_spr("res://assets/processed/prop_cliff.png", Vector2(28, 9), 3, 1.35)
+	_spr("res://assets/processed/prop_cliff.png", Vector2(24, 11), 4, 1.2)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 15), 5, 1.2)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 15), 5, 1.15)
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 15), 7, 1.7, Vector2(48, 64))
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.25, Vector2(36, 48), Color(0.92, 0.96, 1.0, 0.85))
+	_spr("res://assets/processed/prop_rocks.png", Vector2(20, 21), 9, 1.05)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(28, 21), 9, 1.0)
+	for p in [Vector2(14, 21), Vector2(34, 21)]:
 		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 11, 1.0)
 	_spr("res://assets/processed/bush.png", Vector2(20, 23), 10, 1.0)
 	_spr("res://assets/processed/bush.png", Vector2(28, 23), 10, 1.0)
-	for yy in range(17, 24):
-		_spr("res://assets/processed/prop_fence.png", Vector2(35, yy), 6, 0.85)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)

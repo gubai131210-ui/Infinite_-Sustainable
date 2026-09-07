@@ -221,3 +221,16 @@
 
 ### 无缝天际线进度
 - [x] P69 · P70 · P71 · P72  
+
+## 天空加高与可读店招（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P73 | 35m | 更高天空+软碗口 | overview |
+| P74 | 30m | 有机崖/瀑减砖感 | waterfall |
+| P75 | 25m | SHOP/CAFE/BAKERY 招牌 | town/overview |
+| P76 | 25m | 广场毛边 dither | town |
+| P77 | 25m | golden + Critic + push | origin/main |
+
+### 天空加高进度
+- [x] P73 · P74 · P75 · P76 · P77  
