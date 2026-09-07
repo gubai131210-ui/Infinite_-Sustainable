@@ -803,12 +803,16 @@ func _paint_building_footings() -> void:
 		Rect2i(74, 52, 10, 3),   # shop
 		Rect2i(98, 52, 10, 3),   # cafe
 		Rect2i(86, 64, 10, 3),   # bakery
-		Rect2i(140, 18, 28, 10),  # station yard
+		Rect2i(148, 19, 12, 4),  # station hall apron only (do not remash full yard/rails)
 		Rect2i(170, 102, 8, 4),  # lighthouse
 	]
 	for pad in pads:
 		for yy in range(pad.position.y, pad.position.y + pad.size.y):
 			for xx in range(pad.position.x, pad.position.x + pad.size.x):
+				var cur: int = _cell_tid(xx, yy)
+				## Preserve rails / sleepers / cliffs painted by station yard
+				if cur == T_RAIL or cur == T_BRIDGE or cur == T_CLIFF or cur == T_STAIRS:
+					continue
 				var h: int = absi(xx * 17 + yy * 13) % 5
 				if h <= 2:
 					_set_cell(_ground, xx, yy, T_DIRT)
@@ -817,6 +821,16 @@ func _paint_building_footings() -> void:
 				else:
 					_set_cell(_ground, xx, yy, T_DIRT2)
 		_fringe_soft(pad)
+	## Re-assert station dual rails after any fringe nibble
+	for x in range(118, 186):
+		_set_cell(_ground, x, 18, T_RAIL)
+		_set_cell(_ground, x, 19, T_RAIL)
+		if x >= 140 and x <= 176:
+			_set_cell(_ground, x, 25, T_RAIL)
+			_set_cell(_ground, x, 26, T_RAIL)
+	for x in range(142, 172, 3):
+		_set_cell(_ground, x, 24, T_BRIDGE)
+		_set_cell(_ground, x, 27, T_BRIDGE)
 	## Farmhouse raised wood porch (bridge tiles as deck planks + step)
 	for xx in range(37, 46):
 		_set_cell(_ground, xx, 90, T_BRIDGE)
