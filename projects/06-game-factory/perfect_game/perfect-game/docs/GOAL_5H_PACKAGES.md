@@ -259,3 +259,15 @@
 
 ### 密冠瀑地貌进度
 - [x] P83 · P84 · P85 · P86  
+
+## 松海与瀑嵌入（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P87 | 40m | 重叠放大北松海 | overview |
+| P88 | 35m | 重绘大瀑碗 landform | waterfall |
+| P89 | 25m | 池口接河 + 草地杂色 | river/overview |
+| P90 | 25m | golden + Critic + push | origin/main |
+
+### 松海瀑嵌入进度
+- [x] P87 · P88 · P89 · P90  

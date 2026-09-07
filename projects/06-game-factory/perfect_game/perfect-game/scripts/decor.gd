@@ -43,15 +43,16 @@ func _atlas_frame(path: String, frame: int = 0, fw: int = -1, fh: int = -1) -> T
 	at.region = Rect2(frame * fw, 0, fw, fh)
 	return at
 
-func _spr(path: String, tile: Vector2, z: int = 5, choppable: bool = false) -> Sprite2D:
+func _spr(path: String, tile: Vector2, z: int = 5, choppable: bool = false, scale_mul: float = 1.0) -> Sprite2D:
 	var tex := _load_tex(path)
 	if tex == null:
 		return null
 	var s := Sprite2D.new()
 	s.texture = tex
 	s.centered = true
-	var th := float(tex.get_height())
+	var th := float(tex.get_height()) * scale_mul
 	s.offset = Vector2(0, -th * 0.5)
+	s.scale = Vector2(scale_mul, scale_mul)
 	s.position = tile * TS
 	s.z_index = z
 	s.y_sort_enabled = true
@@ -172,21 +173,32 @@ func _forest_rim() -> void:
 			if ((x + y * 3) % 4) == 0:
 				continue
 			_spr("res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 2), y), 5)
-	# Dense continuous N pine canopy under skyline (y 14–28) — leave waterfall + station gaps
-	for x in range(1, 191, 2):
-		if x >= 15 and x <= 38:
-			continue  # waterfall sky corridor
-		if x >= 128 and x <= 180:
-			if (x % 5) != 0:
-				continue  # sparse near station tracks
-		for y in range(14, 28, 2):
-			# denser than prior shelf: skip less often
-			if ((x * 3 + y * 5) % 11) == 0:
+	# N pine SEA — overlapping larger pines (not a sparse shelf). Narrow waterfall gap only.
+	for x in range(1, 191, 1):
+		if x >= 18 and x <= 32:
+			continue  # narrow waterfall sky corridor
+		if x >= 132 and x <= 178 and (x % 4) != 0:
+			continue  # keep station tracks readable
+		for y in range(12, 30, 1):
+			# High density: only rare skips
+			if ((x * 5 + y * 7) % 13) == 0:
 				continue
-			# Prefer pines for dark continuous canopy (ref look)
-			var pine_n := ((x + y) % 3) != 2
-			var path_n := "res://assets/processed/tree_pine.png" if pine_n else "res://assets/processed/tree_%d.png" % (x % 3)
-			_spr(path_n, Vector2(x + (y % 2) * 0.45, y + (x % 2) * 0.25), 5)
+			var sc := 1.15 + float((x + y) % 4) * 0.12
+			# Almost all pines for dark continuous sea
+			if ((x + y) % 7) == 0:
+				_spr("res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 3) * 0.2, y + (x % 2) * 0.15), 5, false, sc)
+			else:
+				_spr("res://assets/processed/tree_pine.png", Vector2(x + (y % 3) * 0.25, y + (x % 2) * 0.2), 5, false, sc)
+	# Second overlapping pass for mass (offset half-step)
+	for x in range(2, 190, 2):
+		if x >= 18 and x <= 32:
+			continue
+		if x >= 132 and x <= 178:
+			continue
+		for y in range(13, 29, 2):
+			if ((x + y * 3) % 5) == 0:
+				continue
+			_spr("res://assets/processed/tree_pine.png", Vector2(x + 0.55, y + 0.4), 6, false, 1.35)
 	# Soft mid-map irregular groves (fill open grass sea between rim and town)
 	for gx in range(42, 120, 4):
 		for gy in range(28, 68, 4):
@@ -203,6 +215,18 @@ func _forest_rim() -> void:
 	for y in range(28, 70, 3):
 		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(48 + (y % 3), y), 5)
 		_spr("res://assets/processed/tree_%d.png" % ((y + 1) % 3), Vector2(56 + (y % 2), y + 1), 5)
+	# Mid-map ground clutter (flowers/tufts — trees alone don't kill grass sea)
+	for x in range(40, 125, 2):
+		for y in range(30, 72, 2):
+			if x >= 70 and x <= 114 and y >= 36 and y <= 64:
+				continue  # plaza
+			var h := (x * 17 + y * 31) % 11
+			if h == 0:
+				_spr("res://assets/processed/prop_path_tuft.png", Vector2(x + 0.3, y), 2, false)
+			elif h == 1 or h == 2:
+				_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x, y), 2, false)
+			elif h == 3:
+				_spr("res://assets/processed/bush.png", Vector2(x + 0.2, y + 0.2), 3, false)
 
 func _props_fill() -> void:
 	for p in [

@@ -95,18 +95,18 @@ func _ruins() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(82, 18), 6, 0.9)
 
 func _river() -> void:
-	## Single landform bowl (cliff+fall+mist) + flanking pines — less prop-float stack
-	for p in [Vector2(10, 14), Vector2(14, 17), Vector2(34, 14), Vector2(38, 17), Vector2(12, 20), Vector2(36, 20)]:
-		_spr("res://assets/processed/tree_pine.png", p, 4, 1.1)
-	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 14), 6, 1.55, Vector2(56, 72))
-	# Soft secondary veil only
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 16), 7, 1.15, Vector2.ZERO, Color(0.9, 0.95, 1.0, 0.55))
-	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 20), 8, 1.1)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 20), 8, 1.05)
-	for p in [Vector2(14, 23), Vector2(34, 23)]:
-		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 10, 1.05)
-	_spr("res://assets/processed/bush.png", Vector2(20, 24), 9, 1.0)
-	_spr("res://assets/processed/bush.png", Vector2(28, 24), 9, 1.0)
+	## Landform bowl seated on amphitheater tiles + flanking pine sea edge
+	for p in [Vector2(9, 15), Vector2(13, 18), Vector2(35, 15), Vector2(39, 18), Vector2(11, 21), Vector2(37, 21)]:
+		_spr("res://assets/processed/tree_pine.png", p, 5, 1.2)
+	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 13), 6, 1.35, Vector2(64, 80))
+	_spr("res://assets/processed/prop_rocks.png", Vector2(17, 22), 8, 1.15)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(31, 22), 8, 1.1)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(21, 24), 8, 1.0)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(27, 24), 8, 1.0)
+	for p in [Vector2(14, 25), Vector2(34, 25)]:
+		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 10, 1.1)
+	_spr("res://assets/processed/bush.png", Vector2(19, 25), 9, 1.0)
+	_spr("res://assets/processed/bush.png", Vector2(29, 25), 9, 1.0)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)
