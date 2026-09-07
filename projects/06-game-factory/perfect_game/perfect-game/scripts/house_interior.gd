@@ -59,17 +59,19 @@ func _configure_zones() -> void:
 		_zone("shop_buy", "按 E 买种子礼包(30金)", Vector2(11 * TS, 6 * TS))
 	elif id == "cafe":
 		var z := preload("res://scenes/interact_zone.tscn").instantiate()
-		z.prompt_text = "按 E 点一杯热可可（+10 精力）"
+		z.prompt_text = "按 E 点热可可（10金 · +10 精力）"
 		z.mode = "stamina_sip"
 		z.stamina_restore = 10
+		z.gold_cost = 10
 		z.message = "热可可暖手，精力 +10"
 		z.position = Vector2(9 * TS, 5 * TS)
 		add_child(z)
 	elif id == "bakery":
 		var counter := preload("res://scenes/interact_zone.tscn").instantiate()
-		counter.prompt_text = "按 E 试吃南瓜派（+15 精力）"
+		counter.prompt_text = "按 E 买南瓜派（15金 · +15 精力）"
 		counter.mode = "stamina_sip"
 		counter.stamina_restore = 15
+		counter.gold_cost = 15
 		counter.message = "刚出炉的南瓜派，精力 +15"
 		counter.position = Vector2(9 * TS, 5 * TS)
 		add_child(counter)

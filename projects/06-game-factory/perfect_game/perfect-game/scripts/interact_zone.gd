@@ -10,6 +10,7 @@ extends Area2D
 @export var stamina_restore: int = 0
 @export var recipe_id: String = ""
 @export var food_id: String = ""
+@export var gold_cost: int = 0
 
 signal interacted(message: String)
 
@@ -92,11 +93,21 @@ func _do_interact() -> void:
 				GameBus.show_toast(message if message != "" else "到访打卡")
 			interacted.emit(quest_step_id)
 		"stamina_sip":
+			var cost := gold_cost
+			if cost > 0:
+				if GameBus.gold < cost:
+					GameBus.show_toast("金币不够（需要 %d）" % cost)
+					return
+				GameBus.add_gold(-cost)
 			var amt := stamina_restore if stamina_restore > 0 else 10
 			Stamina.restore(amt)
-			GameBus.show_toast(message if message != "" else ("恢复精力 +%d" % amt))
+			var tip := message if message != "" else ("恢复精力 +%d" % amt)
+			if cost > 0:
+				tip = "%s（-%d金）" % [tip, cost]
+			GameBus.show_toast(tip)
 			QuestLog.mark("mkt_cafe")
 			interacted.emit("sip")
+			GameBus.save_game()
 		"cook":
 			_do_cook()
 		"eat":

@@ -26,7 +26,8 @@ func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll:
 		var shape := RectangleShape2D.new()
 		shape.size = coll
 		cs.shape = shape
-		cs.position = Vector2(0, -coll.y * 0.25)
+		## Bias collision upward so south door approach stays clear
+		cs.position = Vector2(0, -coll.y * 0.55)
 		body.add_child(cs)
 		root = body
 	else:
@@ -162,10 +163,10 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_statue.png", Vector2(90, 70), 7, 1.2, Vector2(18, 22))
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(84, 66), 4, 1.0)
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(96, 66), 4, 1.0)
-	# Hero shop / cafe / bakery — plaza center (must land inside 03/09 goldens)
-	_spr("res://assets/processed/prop_shop_awning.png", Vector2(78, 50), 10, 1.65, Vector2(80, 56))
-	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(102, 50), 10, 1.65, Vector2(80, 56))
-	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 62), 10, 1.5, Vector2(60, 46))
+	# Hero shop / cafe / bakery — short coll so south door tiles stay walkable
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(78, 50), 10, 1.65, Vector2(52, 28))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(102, 50), 10, 1.65, Vector2(52, 28))
+	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 62), 10, 1.5, Vector2(40, 22))
 	# Stalls south/side — never covering facade signs
 	_spr("res://assets/processed/prop_stall.png", Vector2(76, 70), 6, 1.1, Vector2(28, 16))
 	_spr("res://assets/processed/prop_stall_blue.png", Vector2(104, 70), 6, 1.1, Vector2(28, 16))
