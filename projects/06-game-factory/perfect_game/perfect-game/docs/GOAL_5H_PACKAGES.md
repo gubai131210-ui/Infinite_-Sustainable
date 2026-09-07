@@ -534,3 +534,13 @@
 ### World-driven 进度
 - [x] P160（itch 主图仍否；需试玩签字）
 
+## 树冠裂带 + 路缘 fringe + 软湖岸（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P161 | 45m | 不规则松/落叶冠 lobe + path GD fringe/spit + 湖岸沙缘 dither | prop_*_canopy + golden + VISUAL_QA |
+
+### 树冠湖岸进度
+- [x] P161（itch 主图仍否）
+
+

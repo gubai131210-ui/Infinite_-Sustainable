@@ -583,14 +583,22 @@ func _paint_base() -> void:
 				_set_cell(_ground, x, y, tid)
 			elif r2 < 1080.0:
 				_set_cell(_ground, x, y, T_SAND)
-			elif r2 < 1380.0:
-				# wider shore fringe — pick edge tile by direction to center
-				if absf(dx) > absf(dy) * 1.2:
-					_set_cell(_ground, x, y, T_WE_W if dx > 0.0 else T_WE_E)
-				elif absf(dy) > absf(dx) * 0.7:
-					_set_cell(_ground, x, y, T_WE_N if dy > 0.0 else T_WE_S)
+			elif r2 < 1480.0:
+				## Soft dither fringe — prefer sand/grass over hard WE rings
+				var n: int = absi(x * 17 + y * 13) % 7
+				if n <= 2:
+					_set_cell(_ground, x, y, T_SAND)
+				elif n <= 4:
+					_set_cell(_ground, x, y, T_GRASS3 if (n == 3) else T_GRASS4)
+				elif n == 5:
+					if absf(dx) > absf(dy) * 1.2:
+						_set_cell(_ground, x, y, T_WE_W if dx > 0.0 else T_WE_E)
+					elif absf(dy) > absf(dx) * 0.7:
+						_set_cell(_ground, x, y, T_WE_N if dy > 0.0 else T_WE_S)
+					else:
+						_set_cell(_ground, x, y, T_SAND)
 				else:
-					_set_cell(_ground, x, y, T_SAND if ((x + y) % 3) == 0 else T_GRASS3)
+					_set_cell(_ground, x, y, T_DIRT2)
 	# Lighthouse peninsula
 	_fill_rect(_ground, Rect2i(168, 98, 10, 12), T_CLIFF)
 	_fill_rect(_ground, Rect2i(170, 100, 6, 8), T_SAND)
@@ -720,27 +728,45 @@ func _paint_mid_valley_meadows() -> void:
 	_paint_path_winding(Vector2i(70, 55), Vector2i(110, 55), 35)
 
 func _soften_path_edges() -> void:
-	## Nibble path/plaza borders into grass + GD tiles (breaks overview brick-read)
+	## Nibble path/plaza/dirt borders into grass + GD tiles (Stardew-like fringe)
 	var extras: Array = []
 	for y in range(H):
 		for x in range(W):
 			var tid: int = _cell_tid(x, y)
-			if tid != T_PATH and tid != T_PATH2 and tid != T_PLAZA and tid != T_PLAZA2:
+			if tid != T_PATH and tid != T_PATH2 and tid != T_PLAZA and tid != T_PLAZA2 and tid != T_DIRT and tid != T_DIRT2:
 				continue
 			for d in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
 				var nx: int = x + d.x
 				var ny: int = y + d.y
 				if not _is_grassish(_cell_tid(nx, ny)):
 					continue
-				var n: int = absi(nx * 13 + ny * 17) % 6
-				if n == 0:
+				var n: int = absi(nx * 13 + ny * 17) % 5
+				if n <= 1:
 					extras.append([nx, ny, T_GD_S if d.y < 0 else (T_GD_N if d.y > 0 else (T_GD_E if d.x < 0 else T_GD_W))])
-				elif n == 1:
-					extras.append([nx, ny, T_GRASS3])
 				elif n == 2:
 					extras.append([nx, ny, T_DIRT2])
+				elif n == 3:
+					extras.append([nx, ny, T_GRASS3])
+				## n==4: leave grass (breathing speckles)
 	for item in extras:
 		_set_cell(_ground, int(item[0]), int(item[1]), int(item[2]))
+	## Second pass: spit dirt into grass 1 cell out (organic shoulders)
+	var spit: Array = []
+	for y in range(2, H - 2):
+		for x in range(2, W - 2):
+			var tid2: int = _cell_tid(x, y)
+			if tid2 != T_PATH and tid2 != T_PATH2 and tid2 != T_DIRT:
+				continue
+			if (absi(x * 19 + y * 23) % 7) != 0:
+				continue
+			var dirs: Array[Vector2i] = [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]
+			var d2: Vector2i = dirs[absi(x + y) % 4]
+			var sx: int = x + d2.x * 2
+			var sy: int = y + d2.y * 2
+			if _is_grassish(_cell_tid(sx, sy)):
+				spit.append([sx, sy, T_DIRT2 if ((x + y) % 2) == 0 else T_GD_N])
+	for item2 in spit:
+		_set_cell(_ground, int(item2[0]), int(item2[1]), int(item2[2]))
 
 func _is_dirtish(tid: int) -> bool:
 	return tid == T_DIRT or tid == T_DIRT2 or tid == T_FARM or tid == T_PATH or tid == T_PATH2 or tid == T_SAND
@@ -796,13 +822,13 @@ func _stitch_water_shores() -> void:
 					we = T_WE_N
 				edge_water.append([x, y, we])
 			if n_land:
-				land_fringe.append([x, y - 1, T_SAND if (absi(x + y) % 3) == 0 else T_WE_S])
+				land_fringe.append([x, y - 1, T_SAND if (absi(x + y) % 2) == 0 else T_WE_S])
 			if s_land:
-				land_fringe.append([x, y + 1, T_SAND if (absi(x * 2 + y) % 3) == 0 else T_WE_N])
+				land_fringe.append([x, y + 1, T_SAND if (absi(x * 2 + y) % 2) == 0 else T_WE_N])
 			if w_land:
-				land_fringe.append([x - 1, y, T_DIRT2 if (absi(x + y * 2) % 3) == 0 else T_WE_E])
+				land_fringe.append([x - 1, y, T_SAND if (absi(x + y * 2) % 3) != 0 else T_WE_E])
 			if e_land:
-				land_fringe.append([x + 1, y, T_DIRT2 if (absi(x * 3 + y) % 3) == 0 else T_WE_W])
+				land_fringe.append([x + 1, y, T_SAND if (absi(x * 3 + y) % 3) != 0 else T_WE_W])
 			for d in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
 				var nx: int = x + d.x
 				var ny: int = y + d.y
@@ -810,13 +836,12 @@ func _stitch_water_shores() -> void:
 					continue
 				var n: int = absi(nx * 19 + ny * 23) % 5
 				## Prefer sand/grass speckles over WE on land (less jagged hero shores)
-				if n <= 1:
+				if n <= 2:
 					land_fringe.append([nx, ny, T_SAND])
-				elif n == 2:
-					land_fringe.append([nx, ny, T_GRASS3])
 				elif n == 3:
-					land_fringe.append([nx, ny, T_DIRT2])
+					land_fringe.append([nx, ny, T_GRASS3])
 				else:
+					land_fringe.append([nx, ny, T_DIRT2])
 					land_fringe.append([nx, ny, T_WE_S if d.y < 0 else T_WE_N])
 	for item in edge_water:
 		var ex: int = int(item[0])
