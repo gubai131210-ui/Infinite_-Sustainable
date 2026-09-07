@@ -80,8 +80,8 @@ func _mountains() -> void:
 	_spr("res://assets/processed/prop_pine_canopy.png", Vector2(96, 19), 4, 1.0, Vector2.ZERO, Color(0.88, 0.96, 0.9, 1), false)
 	_spr("res://assets/processed/prop_pine_canopy.png", Vector2(96, 22), 4, 1.0, Vector2.ZERO, Color(0.75, 0.9, 0.82, 0.85), false)
 	## Mid-valley deciduous oil canopy (overview mass; plaza cutout baked in)
-	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(96, 40), 2, 1.0, Vector2.ZERO, Color(1, 1, 1, 0.92), false)
-	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(96, 48), 2, 1.0, Vector2.ZERO, Color(0.9, 0.98, 0.88, 0.75), false)
+	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(96, 40), 2, 1.0, Vector2.ZERO, Color(1, 1, 1, 0.82), false)
+	_spr("res://assets/processed/prop_meadow_canopy.png", Vector2(96, 48), 2, 1.0, Vector2.ZERO, Color(0.9, 0.98, 0.88, 0.55), false)
 	# Sparse landmark accent pines only
 	for p in [Vector2(6, 14), Vector2(48, 13), Vector2(120, 14), Vector2(186, 13)]:
 		_spr("res://assets/processed/tree_pine.png", p, 5, 0.95)
@@ -119,11 +119,15 @@ func _river() -> void:
 	## Amphitheater bowl above canopy/skyline (non-y-sort) so hero shot reads falls
 	for p in [Vector2(9, 15), Vector2(13, 18), Vector2(35, 15), Vector2(39, 18), Vector2(11, 21), Vector2(37, 21)]:
 		_spr("res://assets/processed/tree_pine.png", p, 5, 1.2)
-	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 18), 8, 1.05, Vector2(52, 44), Color(1, 1, 1, 1), false)
+	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 18), 8, 1.2, Vector2(56, 48), Color(1, 1, 1, 1), false)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(14, 24), 8, 1.3)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(34, 24), 8, 1.25)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(20, 26), 8, 1.1)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(28, 26), 8, 1.1)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 22), 8, 1.0)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 22), 8, 1.0)
+	_spr("res://assets/processed/bush.png", Vector2(16, 23), 9, 0.95)
+	_spr("res://assets/processed/bush.png", Vector2(32, 23), 9, 0.95)
 	for p in [Vector2(8, 16), Vector2(12, 20), Vector2(36, 16), Vector2(40, 20), Vector2(10, 24), Vector2(38, 24)]:
 		var pine := "res://assets/processed/tree_pine_b.png" if int(p.x) % 2 == 0 else "res://assets/processed/tree_pine_c.png"
 		_spr(pine, p, 5, 1.15)

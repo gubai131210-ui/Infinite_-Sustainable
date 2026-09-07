@@ -632,7 +632,8 @@ func _paint_station_yard() -> void:
 			var r2 := float(dx * dx) + float(dy * dy) * 1.85
 			if r2 > 268.0 and (absi(xx * 7 + yy * 11) % 4) != 0:
 				continue
-			var h: int = absi(xx * 17 + yy * 13) % 8
+			## 2D value-noise-ish hash — avoid diagonal stripe from xx*17+yy*13
+			var h: int = absi((xx * 73856093) ^ (yy * 19349663) ^ (xx * yy * 83492791)) % 8
 			if h <= 1:
 				_set_cell(_ground, xx, yy, T_PLAZA2)
 			elif h <= 3:
