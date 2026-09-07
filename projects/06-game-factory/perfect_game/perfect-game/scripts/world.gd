@@ -52,7 +52,8 @@ func _ready() -> void:
 	_paint_base()
 	_build_water_collisions()
 	_cache_water_cells()
-	# zone names shown via wood placards in decor.gd
+	_spawn_zone_labels()
+	# wood placards in decor.gd remain as physical props; Labels are poster-scale overlays
 
 var _water_t: float = 0.0
 var _water_cells: Array[Vector2i] = []
