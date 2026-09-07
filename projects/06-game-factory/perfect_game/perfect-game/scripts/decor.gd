@@ -43,7 +43,7 @@ func _atlas_frame(path: String, frame: int = 0, fw: int = -1, fh: int = -1) -> T
 	at.region = Rect2(frame * fw, 0, fw, fh)
 	return at
 
-func _spr(path: String, tile: Vector2, z: int = 5, choppable: bool = false, scale_mul: float = 1.0) -> Sprite2D:
+func _spr(path: String, tile: Vector2, z: int = 0, choppable: bool = false, scale_mul: float = 1.0) -> Sprite2D:
 	var tex := _load_tex(path)
 	if tex == null:
 		return null
@@ -68,7 +68,7 @@ func _spr(path: String, tile: Vector2, z: int = 5, choppable: bool = false, scal
 	add_child(s)
 	return s
 
-func _spr_atlas(path: String, tile: Vector2, z: int = 5, frame: int = 0, flip: bool = false) -> Sprite2D:
+func _spr_atlas(path: String, tile: Vector2, z: int = 0, frame: int = 0, flip: bool = false) -> Sprite2D:
 	var tex := _atlas_frame(path, frame)
 	if tex == null:
 		return null
@@ -406,7 +406,7 @@ func _npcs() -> void:
 			n.line = "……"
 			n.position = Vector2(90, 48) * TS
 		n.sprite_path = "res://assets/processed/%s" % str(info["spr"])
-		n.z_index = 7
+		n.z_index = 0
 		add_child(n)
 
 func _animals() -> void:
@@ -427,7 +427,7 @@ func _animals() -> void:
 		a.display_name = str(item[1])
 		a.sprite_path = "res://assets/processed/%s.png" % str(item[0])
 		a.position = item[2] * TS
-		a.z_index = 6
+		a.z_index = 0
 		## Pen clamp in animal script via meta
 		a.set_meta("pen_min", Vector2(25, 113) * TS)
 		a.set_meta("pen_max", Vector2(43, 121) * TS)

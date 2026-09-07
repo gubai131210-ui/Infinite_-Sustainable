@@ -34,41 +34,94 @@ def _shade_rect(d, box, base, dark, light) -> None:
     d.rectangle([x0, y1 - 1, x1, y1], fill=dark)
 
 
-def barn(w=112, h=88) -> Image.Image:
+def barn(w=120, h=100) -> Image.Image:
+    """Stardew-like red barn — plank walls, loft door, stone footing, dual doors."""
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.rectangle([8, h - 10, w - 8, h - 4], fill=(90, 80, 70, 255))
-    _shade_rect(d, (10, 30, w - 10, h - 8), (168, 52, 44, 255), (110, 30, 28, 255), (200, 80, 70, 255))
-    for x in range(14, w - 14, 6):
-        d.line([(x, 34), (x, h - 10)], fill=(140, 40, 36, 180), width=1)
-    d.polygon([(8, 32), (w // 2, 4), (w - 8, 32)], fill=(78, 58, 40, 255))
-    d.polygon([(14, 32), (w // 2, 10), (w - 14, 32)], fill=(102, 78, 52, 255))
-    d.line([(8, 32), (w // 2, 4)], fill=(50, 36, 24, 255))
-    d.line([(w - 8, 32), (w // 2, 4)], fill=(50, 36, 24, 255))
-    d.rectangle([12, 34, w - 12, 38], fill=(235, 228, 215, 255))
-    d.ellipse([w // 2 - 9, 14, w // 2 + 9, 28], fill=(55, 40, 32, 255), outline=(30, 22, 18, 255))
-    d.line([(w // 2, 14), (w // 2, 28)], fill=(200, 190, 175, 255))
-    d.rectangle([w // 2 - 14, 46, w // 2 + 14, h - 8], fill=(62, 38, 26, 255), outline=(40, 24, 16, 255))
-    d.line([(w // 2, 46), (w // 2, h - 8)], fill=(90, 60, 40, 255))
-    d.ellipse([w // 2 + 6, 58, w // 2 + 10, 62], fill=(180, 150, 60, 255))
-    for ox in (18, w - 34):
-        d.rectangle([ox, 44, ox + 14, 56], fill=(170, 205, 230, 255), outline=(60, 45, 35, 255))
-        d.line([(ox + 7, 44), (ox + 7, 56)], fill=(60, 45, 35, 255))
-        d.line([(ox, 50), (ox + 14, 50)], fill=(60, 45, 35, 255))
+    # Grounding shadow
+    d.ellipse([10, h - 8, w - 10, h - 1], fill=(40, 40, 50, 55))
+    # Stone footing
+    d.rectangle([6, h - 14, w - 6, h - 5], fill=(118, 112, 104, 255))
+    for x in range(8, w - 8, 8):
+        d.rectangle([x, h - 12, x + 6, h - 6], fill=(138, 132, 122, 255))
+        d.line([(x + 6, h - 12), (x + 6, h - 6)], fill=(90, 85, 78, 255))
+    # Wall body with left light / right dark
+    wall = (168, 52, 44, 255)
+    wall_d = (120, 32, 28, 255)
+    wall_l = (200, 85, 72, 255)
+    _shade_rect(d, (8, 28, w - 8, h - 12), wall, wall_d, wall_l)
+    # Vertical planks
+    for x in range(12, w - 12, 5):
+        d.line([(x, 30), (x, h - 14)], fill=(140, 40, 36, 140), width=1)
+        if x % 10 == 2:
+            d.line([(x + 1, 32), (x + 1, h - 16)], fill=(210, 100, 88, 70), width=1)
+    # Cross beams
+    d.rectangle([8, 40, w - 8, 43], fill=(90, 48, 38, 255))
+    d.rectangle([8, 62, w - 8, 65], fill=(90, 48, 38, 255))
+    # Gable roof (brown shingles)
+    mid = w // 2
+    d.polygon([(4, 30), (mid, 2), (w - 4, 30)], fill=(78, 52, 34, 255))
+    d.polygon([(12, 30), (mid, 8), (w - 12, 30)], fill=(102, 72, 46, 255))
+    d.line([(4, 30), (mid, 2)], fill=(45, 30, 20, 255))
+    d.line([(w - 4, 30), (mid, 2)], fill=(45, 30, 20, 255))
+    for i, y in enumerate(range(8, 28, 3)):
+        inset = 8 + i * 5
+        d.line([(inset, y), (w - inset, y)], fill=(60, 40, 28, 150))
+    # White fascia board
+    d.rectangle([8, 28, w - 8, 32], fill=(235, 228, 215, 255))
+    d.line([(8, 32), (w - 8, 32)], fill=(180, 170, 155, 255))
+    # Loft round window
+    d.ellipse([mid - 10, 10, mid + 10, 26], fill=(48, 36, 28, 255), outline=(30, 22, 16, 255))
+    d.ellipse([mid - 7, 13, mid + 7, 23], fill=(160, 195, 220, 255))
+    d.line([(mid, 13), (mid, 23)], fill=(55, 40, 30, 255))
+    d.line([(mid - 7, 18), (mid + 7, 18)], fill=(55, 40, 30, 255))
+    # Main double doors
+    door_l, door_r = mid - 16, mid + 16
+    d.rectangle([door_l, 48, door_r, h - 12], fill=(62, 38, 26, 255), outline=(38, 22, 14, 255))
+    d.line([(mid, 48), (mid, h - 12)], fill=(95, 62, 42, 255))
+    for y in range(52, h - 16, 4):
+        d.line([(door_l + 2, y), (mid - 2, y)], fill=(78, 48, 32, 180))
+        d.line([(mid + 2, y), (door_r - 2, y)], fill=(78, 48, 32, 180))
+    d.ellipse([mid + 8, 66, mid + 12, 70], fill=(190, 160, 70, 255))
+    d.ellipse([mid - 12, 66, mid - 8, 70], fill=(190, 160, 70, 255))
+    # Side windows with shutters
+    for ox in (14, w - 30):
+        d.rectangle([ox - 2, 46, ox + 16, 60], fill=(70, 45, 35, 255))
+        d.rectangle([ox, 48, ox + 14, 58], fill=(170, 205, 230, 255), outline=(55, 40, 30, 255))
+        d.line([(ox + 7, 48), (ox + 7, 58)], fill=(55, 40, 30, 255))
+        d.line([(ox, 53), (ox + 14, 53)], fill=(55, 40, 30, 255))
+        # shutters
+        d.rectangle([ox - 5, 48, ox - 1, 58], fill=(90, 110, 70, 255))
+        d.rectangle([ox + 15, 48, ox + 19, 58], fill=(90, 110, 70, 255))
     return img
 
 
 def silo() -> Image.Image:
-    img = Image.new("RGBA", (40, 88), (0, 0, 0, 0))
+    """Cylindrical metal/wood silo with dome cap — not a flat red pillar."""
+    w, h = 48, 96
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.ellipse([4, 0, 36, 20], fill=(200, 70, 58, 255), outline=(120, 40, 36, 255))
-    d.ellipse([8, 4, 32, 16], fill=(230, 110, 90, 255))
-    _shade_rect(d, (6, 12, 34, 80), (175, 55, 48, 255), (120, 35, 32, 255), (210, 90, 80, 255))
-    for y in (24, 36, 48, 60, 72):
-        d.rectangle([8, y, 32, y + 2], fill=(140, 42, 38, 255))
-        d.rectangle([8, y, 14, y + 2], fill=(200, 90, 80, 180))
-    d.rectangle([16, 18, 24, 24], fill=(90, 95, 105, 255), outline=(50, 50, 55, 255))
-    d.rectangle([10, 80, 30, 86], fill=(80, 70, 60, 255))
+    d.ellipse([6, h - 10, w - 6, h - 2], fill=(40, 40, 50, 50))
+    # Dome cap
+    d.ellipse([4, 2, w - 4, 28], fill=(175, 58, 48, 255), outline=(110, 35, 30, 255))
+    d.ellipse([10, 6, w - 10, 22], fill=(220, 95, 78, 255))
+    d.ellipse([16, 10, w - 16, 18], fill=(240, 140, 120, 180))
+    # Cylinder with horizontal bands + left highlight
+    for y in range(18, h - 12):
+        t = (y - 18) / float(h - 30)
+        shade = int(155 + 40 * (1.0 - t))
+        d.rectangle([8, y, w - 8, y + 1], fill=(shade, 48, 42, 255))
+        d.rectangle([8, y, 14, y + 1], fill=(min(255, shade + 45), 85, 72, 255))
+        d.rectangle([w - 14, y, w - 8, y + 1], fill=(max(0, shade - 35), 30, 28, 255))
+    for y in (28, 42, 56, 70):
+        d.rectangle([9, y, w - 9, y + 2], fill=(130, 40, 36, 255))
+        d.rectangle([9, y, 15, y + 2], fill=(190, 80, 70, 200))
+    # Access hatch
+    d.rectangle([w // 2 - 6, 22, w // 2 + 6, 32], fill=(85, 90, 100, 255), outline=(45, 48, 52, 255))
+    d.rectangle([w // 2 - 3, 24, w // 2 + 3, 30], fill=(55, 58, 65, 255))
+    # Base ring
+    d.rectangle([6, h - 14, w - 6, h - 8], fill=(85, 75, 65, 255))
+    d.rectangle([10, h - 12, w - 10, h - 9], fill=(110, 100, 88, 255))
     return img
 
 
@@ -422,7 +475,7 @@ def cafe() -> Image.Image:
 
 def main() -> None:
     save(barn(), "prop_barn.png")
-    save(barn(100, 80), "prop_barn2.png")
+    save(barn(112, 92), "prop_barn2.png")
     save(silo(), "prop_silo.png")
     save(townhouse((110, 70, 50), (235, 220, 195), shutter=(70, 110, 70)), "prop_farmhouse.png")
     save(

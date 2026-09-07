@@ -6,8 +6,10 @@ var _rain: CPUParticles2D
 
 func _ready() -> void:
 	var world := $World
-	var player := $Player
-	if world.has_method("world_size"):
+	var player := get_node_or_null("World/Entities/Player") as Node2D
+	if player == null:
+		player = get_tree().get_first_node_in_group("player") as Node2D
+	if world.has_method("world_size") and player != null:
 		var sz: Vector2 = world.world_size()
 		var cam := player.get_node("Camera2D") as Camera2D
 		cam.limit_left = 0
@@ -17,14 +19,16 @@ func _ready() -> void:
 		cam.limit_bottom = int(sz.y)
 		cam.zoom = Vector2(2, 2)
 	var spawn := GameBus.consume_spawn()
-	if spawn != Vector2.ZERO:
-		player.global_position = spawn
-	else:
-		player.global_position = Vector2(40 * 16, 90 * 16)
+	if player != null:
+		if spawn != Vector2.ZERO:
+			player.global_position = spawn
+		else:
+			player.global_position = Vector2(40 * 16, 90 * 16)
 	_modulate = CanvasModulate.new()
 	_modulate.color = _world_modulate()
 	add_child(_modulate)
-	_setup_rain(player)
+	if player != null:
+		_setup_rain(player)
 	TimeClock.period_changed.connect(_on_period)
 	TimeClock.hour_changed.connect(func(_d, _h): _refresh_modulate())
 	var sc := get_node_or_null("/root/SeasonClock")
@@ -94,7 +98,9 @@ func _on_period(_p: String) -> void:
 
 func _capture_goldens(player: Node2D = null) -> void:
 	if player == null:
-		player = $Player as Node2D
+		player = get_node_or_null("World/Entities/Player") as Node2D
+	if player == null:
+		player = get_tree().get_first_node_in_group("player") as Node2D
 	if player == null:
 		push_error("GOLDEN_CAPTURE_ABORT no Player")
 		return

@@ -12,7 +12,7 @@ var _lh_t: float = 0.0
 func _ready() -> void:
 	_place()
 
-func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll: Vector2 = Vector2.ZERO, tint: Color = Color(1, 1, 1, 1), y_sort: bool = true) -> Node2D:
+func _spr(path: String, tile: Vector2, z: int = 0, scale_mul: float = 1.0, coll: Vector2 = Vector2.ZERO, tint: Color = Color(1, 1, 1, 1), y_sort: bool = true) -> Node2D:
 	var abs_path := ProjectSettings.globalize_path(path)
 	var img := Image.new()
 	if img.load(abs_path) != OK:
@@ -159,16 +159,16 @@ func _process(delta: float) -> void:
 		_lighthouse_sprite.modulate = Color(pulse, pulse, 0.95 + 0.05 * sin(_lh_t * 2.0), 1.0)
 
 func _farm() -> void:
-	_spr("res://assets/processed/prop_farmhouse_darkroof.png", Vector2(40, 88), 8, 1.05, Vector2(48, 28))
+	_spr("res://assets/processed/prop_farmhouse_darkroof.png", Vector2(40, 88), 0, 1.05, Vector2(48, 28))
 	## Deck/porch strip — Stardew farmhouse sits on raised wood, not floating
-	_spr("res://assets/processed/prop_doormat.png", Vector2(40, 91), 5, 1.2)
-	_spr("res://assets/processed/prop_doormat.png", Vector2(42, 91), 5, 1.15)
-	_spr("res://assets/processed/prop_doormat.png", Vector2(41, 92), 4, 1.0)
-	_spr("res://assets/processed/prop_bench.png", Vector2(36, 91), 5, 0.9)
-	_spr("res://assets/processed/prop_crate.png", Vector2(44, 91), 5, 0.95)
-	_spr("res://assets/processed/prop_barrel.png", Vector2(45, 92), 5, 0.9)
-	_spr("res://assets/processed/prop_hay.png", Vector2(33, 93), 4, 1.0)
-	_spr("res://assets/processed/prop_hay.png", Vector2(47, 94), 4, 0.95)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(40, 91), 0, 1.2)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(42, 91), 0, 1.15)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(41, 92), 0, 1.0)
+	_spr("res://assets/processed/prop_bench.png", Vector2(36, 91), 0, 0.9)
+	_spr("res://assets/processed/prop_crate.png", Vector2(44, 91), 0, 0.95)
+	_spr("res://assets/processed/prop_barrel.png", Vector2(45, 92), 0, 0.9)
+	_spr("res://assets/processed/prop_hay.png", Vector2(33, 93), 0, 1.0)
+	_spr("res://assets/processed/prop_hay.png", Vector2(47, 94), 0, 0.95)
 	## Stardew clearing debris — rocks/logs/weeds dense on dirt apron
 	for p in [
 		Vector2(34, 92), Vector2(46, 93), Vector2(38, 94), Vector2(42, 95),
@@ -181,13 +181,13 @@ func _farm() -> void:
 		Vector2(29, 94), Vector2(47, 98),
 	]:
 		_spr("res://assets/processed/prop_path_tuft.png", p2, 3, 1.0)
-	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 8, 1.25, Vector2(56, 32))
-	_spr("res://assets/processed/prop_doormat.png", Vector2(28, 105), 5, 1.1)
-	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 8, 1.2, Vector2(52, 30))
-	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 8, 1.35, Vector2(18, 40))
-	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 8, 1.35, Vector2(18, 40))
-	_spr("res://assets/processed/prop_chimney.png", Vector2(41, 86), 9, 1.1)
-	_spr("res://assets/processed/prop_signboard.png", Vector2(34, 86), 8, 1.05)
+	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 0, 1.25, Vector2(56, 32))
+	_spr("res://assets/processed/prop_doormat.png", Vector2(28, 105), 0, 1.1)
+	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 0, 1.2, Vector2(52, 30))
+	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 0, 1.35, Vector2(18, 40))
+	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 0, 1.35, Vector2(18, 40))
+	_spr("res://assets/processed/prop_chimney.png", Vector2(41, 86), 0, 1.1)
+	_spr("res://assets/processed/prop_signboard.png", Vector2(34, 86), 0, 1.05)
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(36, 90), 4, 1.0)
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(44, 90), 4, 1.0)
 	_spr("res://assets/processed/prop_planter.png", Vector2(38, 91), 5, 0.95)

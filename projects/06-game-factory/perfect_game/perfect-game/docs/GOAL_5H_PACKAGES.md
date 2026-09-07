@@ -424,4 +424,15 @@
 | P132 | 25m | 路径/广场 `_soften_path_edges` + Critic/push | 00_overview |
 
 ### Overview 对齐进度
-- [x] P130 · [x] P131 · [x] P132
+- [x] P130 · [x] P131 · [x] P132  
+
+## 谷仓立面 + Entities y-sort（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P133 | 40m | 重绘 barn/silo（木板/石基/穹顶） | prop_barn*.png |
+| P134 | 35m | Player 挂 Entities；NPC/树同 z；作物进 Entities | 01_farm y-sort |
+| P135 | 25m | golden + Critic + push | origin/main |
+
+### 立面 y-sort 进度
+- [x] P133 · [x] P134 · [x] P135

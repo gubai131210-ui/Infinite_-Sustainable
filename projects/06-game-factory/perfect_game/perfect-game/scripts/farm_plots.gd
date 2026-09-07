@@ -14,12 +14,23 @@ func _ready() -> void:
 	_ground = world.get_node("Ground")
 	_crops = Node2D.new()
 	_crops.name = "Crops"
-	_crops.z_index = 3
-	world.add_child(_crops)
+	_crops.z_index = 0
+	_crops.y_sort_enabled = true
 	_wet_overlay = Node2D.new()
 	_wet_overlay.name = "WetSoil"
-	_wet_overlay.z_index = 2
-	world.add_child(_wet_overlay)
+	_wet_overlay.z_index = 0
+	## Crops under Entities so they y-sort with player/trees
+	var entities := world.get_node_or_null("Entities")
+	var host: Node = entities if entities != null else world
+	for stale_name in ["Crops", "WetSoil"]:
+		var stale := host.get_node_or_null(stale_name)
+		if stale != null:
+			stale.free()
+		var stale_w := world.get_node_or_null(stale_name)
+		if stale_w != null:
+			stale_w.free()
+	host.add_child(_crops)
+	host.add_child(_wet_overlay)
 	plots = GameBus.farm_plots_data.duplicate(true)
 	_refresh()
 	var player := get_tree().get_first_node_in_group("player")

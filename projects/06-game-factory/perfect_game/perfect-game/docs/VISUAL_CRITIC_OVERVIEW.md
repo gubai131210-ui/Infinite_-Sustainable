@@ -1,21 +1,19 @@
-# 视觉 Critic — golden vs overview（2026-09-07 · P130–P132）
+# 视觉 Critic — golden vs overview（2026-09-07 · P133–P135）
 
 ## 结论
-更接近参考图：**是（结构）** — 畜栏改泥土围场；回声湖南侧补田垄作物；梯田 ledge 软边；路径/广场额外 soften。  
-overview 大图仍偏「瓦片感」，未到 itch 商店主图。  
-itch 主图：**否**。
+更接近参考图：**是（立面 + 排序）** — 谷仓/筒仓不再是扁红柱；Player 迁入 `World/Entities` 与树/NPC 同层 y-sort（修「人走在树冠上」）。  
+itch 主图：**仍否**（全图密度/河岸/店招海报级未达）。
 
 ## 本轮证据
-- pen dirt `(25–43)×(113–121)` + fringe
-- lake_beds + mature crop rows；`06_lake` 相机改向南田
-- `_soften_path_edges`；`01_farm` 相机含畜栏
+- `gen_landmarks.py` barn/silo 重绘；`main.tscn` Player → Entities
+- decor/landmarks/npc/animal `z_index=0`；crops 挂 Entities
 - `GOLDEN_CAPTURE_DONE`
 - Goal **不可 complete**
 
 ## 仍差
 1. 用户签字试玩 + itch URL  
-2. 河岸/湖岸硬边、建筑立面仍偏扁  
-3. 全图密度与参考油画级 overview 仍有差距  
+2. 河岸/湖岸硬边、全图油画密度  
+3. 镇店招海报主图再抬档  
 
 ## Goal
 **不可 complete**。
