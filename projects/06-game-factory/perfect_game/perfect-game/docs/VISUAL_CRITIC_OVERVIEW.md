@@ -1,18 +1,20 @@
-# 视觉 Critic — golden vs overview（2026-09-07 · P116）
+# 视觉 Critic — golden vs overview（2026-09-07 · P118–P119）
 
 ## 结论
-更接近参考图：**是**（金帧藏 HUD；区划大字标；镇区院落+摊位加密；农庄装饰作物避开可锄地）。  
-itch 主图：**否**（仍缺用户签字试玩 + itch URL；油画材质/远景格感未达海报级）。
+更接近参考图：**部分是**（农庄床 soft fringe；脚底阴影；y_sort）。  
+动画：**已补** 行走腿帧 + 锄/浇/播专用帧（待用户 F5 确认腿是否明显动）。  
+itch 主图：**否**。
 
 ## 本轮证据
-- `00_overview` 等 golden 于 10:26 重抓（CLI `--capture_golden`）
-- `landmarks` parse 修复：`Array[String]` 装饰作物；南院房屋下移避开 y80 围栏
+- 对照 `docs/ref/stardew_farm_stitch_ref.jpg` + Stardew wiki farmer walk（约 4 帧交替抬脚）
+- `tools/gen_player_sheet.py` → `player.png` 16 行（walk/hoe/water/plant）
+- `player.gd`：`walk_*` 10fps 循环；`hoe_/water_/plant_` 一次播放
 - Goal **不可 complete**
 
 ## 仍差
-1. 用户签字试玩 + itch URL（关闭 Goal 硬门槛）  
-2. 参考油画级材质仍不足  
-3. 远景 tile 格感；区划标可读性可再加粗  
+1. 用户签字试玩 + itch URL  
+2. 全图草→土 autotile 过渡仍粗（仅床缘 fringe）  
+3. 建筑立面与地面「嵌地」感仍弱于星露谷  
 
 ## Goal
 **不可 complete**。

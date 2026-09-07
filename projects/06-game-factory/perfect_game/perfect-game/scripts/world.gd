@@ -75,22 +75,50 @@ func _spawn_zone_labels() -> void:
 	## Poster-scale placards (readable at overview zoom 0.34)
 	var markers := $ZoneMarkers
 	var labels := {
-		"米勒农庄": Vector2(32, 92),
-		"橡木河": Vector2(18, 48),
-		"橡木火车站": Vector2(142, 8),
-		"回声湖": Vector2(162, 112),
+		"米勒农庄": Vector2(28, 90),
+		"橡木河": Vector2(16, 46),
+		"橡木火车站": Vector2(140, 6),
+		"回声湖": Vector2(158, 104),
 	}
 	for label_text in labels.keys():
 		var lab := Label.new()
 		lab.text = str(label_text)
 		lab.position = labels[label_text] * TS
 		lab.z_index = 40
-		lab.add_theme_font_size_override("font_size", 20)
+		lab.add_theme_font_size_override("font_size", 22)
 		lab.add_theme_color_override("font_color", Color(1, 1, 1))
-		lab.add_theme_color_override("font_outline_color", Color(0.05, 0.05, 0.08))
-		lab.add_theme_constant_override("outline_size", 8)
-		lab.scale = Vector2(2.4, 2.4)
+		lab.add_theme_color_override("font_outline_color", Color(0.04, 0.05, 0.08))
+		lab.add_theme_constant_override("outline_size", 10)
+		lab.scale = Vector2(2.8, 2.8)
 		markers.add_child(lab)
+
+func _fringe_soft(bed: Rect2i) -> void:
+	## Irregular grass/dirt/sand nibbles on bed rim — breaks hard tile seams
+	var x0 := bed.position.x
+	var y0 := bed.position.y
+	var x1 := x0 + bed.size.x - 1
+	var y1 := y0 + bed.size.y - 1
+	for x in range(x0 - 1, x1 + 2):
+		var n: int = absi(x * 13 + y0 * 7) % 5
+		if n <= 2:
+			_set_cell(_ground, x, y0 - 1, T_GRASS3 if (n == 0) else T_DIRT)
+		if n >= 2:
+			_set_cell(_ground, x, y1 + 1, T_GRASS2 if (n == 4) else T_SAND)
+		## Bite into bed edge
+		if (x % 3) == 0:
+			_set_cell(_ground, x, y0, T_GRASS4)
+		if (x % 4) == 1:
+			_set_cell(_ground, x, y1, T_GRASS3)
+	for y in range(y0, y1 + 1):
+		var m: int = absi(y * 11 + x0 * 5) % 4
+		if m <= 1:
+			_set_cell(_ground, x0 - 1, y, T_GRASS2)
+		if m >= 2:
+			_set_cell(_ground, x1 + 1, y, T_GRASS3)
+		if (y % 3) == 0:
+			_set_cell(_ground, x0, y, T_GRASS4)
+		if (y % 3) == 1:
+			_set_cell(_ground, x1, y, T_DIRT2)
 
 func world_size() -> Vector2:
 	return Vector2(W * TS, H * TS)
@@ -215,21 +243,26 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 			_set_cell(_ground, x + 1 + ox, y + 3, T_GRASS)
 
 func _paint_base() -> void:
-	# Full grass with noisy variants (avoid diagonal stripe modulo)
+	# Coherent meadow patches (4×4 cells) — less per-tile hash = less overview grid
 	for y in range(H):
 		for x in range(W):
-			var h := (x * 374761393 + y * 668265263) ^ (x * y * 127)
-			h = abs(h)
-			var g := T_GRASS
-			var m := h % 11
-			if m <= 2:
+			var px4: int = x >> 2
+			var py4: int = y >> 2
+			var patch: int = absi((px4 * 73856093) ^ (py4 * 19349663) ^ (px4 * py4 * 83492791))
+			var local: int = absi((x * 374761393 + y * 668265263) ^ (x * y * 127))
+			var g: int = T_GRASS
+			var m: int = patch % 7
+			if m <= 1:
 				g = T_GRASS2
-			elif m <= 5:
+			elif m <= 3:
 				g = T_GRASS3
-			elif m <= 7:
+			elif m <= 5:
 				g = T_GRASS4
-			elif m == 8:
-				g = T_DIRT if (h % 17) == 0 else T_GRASS
+			# Soft fringe inside patch — occasional neighbor variant
+			if (local % 19) == 0:
+				g = T_GRASS if g != T_GRASS else T_GRASS3
+			elif (local % 29) == 0:
+				g = T_DIRT if (local % 3) == 0 else T_GRASS2
 			_set_cell(_ground, x, y, g)
 	# North hills — irregular shelf (not solid wall); leave waterfall corridor open
 	for x in range(W):
@@ -266,6 +299,8 @@ func _paint_base() -> void:
 		# inner tilled rows
 		for row in range(0, bed.size.y - 1, 2):
 			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
+		## Stardew-like soft fringe: grass/dirt mixed rim (not hard rectangle)
+		_fringe_soft(bed)
 	# Path strips between beds
 	_fill_rect(_ground, Rect2i(30, 78, 4, 22), T_PATH)
 	_fill_rect(_ground, Rect2i(14, 88, 50, 3), T_PATH)

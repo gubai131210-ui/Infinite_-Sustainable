@@ -1,5 +1,5 @@
 extends CharacterBody2D
-## Player — atlas rows: down, left, right, up (48px). Walk cycle always plays while moving.
+## Player — Stardew-like frame anims: walk legs + hoe/water/plant actions.
 
 @export var speed: float = 130.0
 @export var tile_size: int = 16
@@ -9,6 +9,7 @@ extends CharacterBody2D
 enum Tool { HOE, CAN, AXE, ROD }
 
 const CELL := 48
+## Sheet rows: walk D/L/R/U, hoe D/L/R/U, water D/L/R/U, plant D/L/R/U
 const DIRS := ["down", "left", "right", "up"]
 
 var tool: Tool = Tool.HOE
@@ -18,20 +19,38 @@ var _prompt: String = ""
 var _interact_cb: Callable = Callable()
 var _farm: Node = null
 var _busy: float = 0.0
+var _action_lock: bool = false
 var _bob_t: float = 0.0
 var _anim_base_y: float = -8.0
 var _foot_cd: float = 0.0
 var _foot_dust: CPUParticles2D
+var _shadow: Polygon2D
 
 func _ready() -> void:
 	add_to_group("player")
+	y_sort_enabled = true
 	_anim_base_y = anim.position.y
+	_setup_shadow()
 	_setup_frames()
 	_setup_foot_dust()
 	camera.make_current()
 	camera.zoom = Vector2(2, 2)
 	camera.position_smoothing_enabled = false
+	anim.animation_finished.connect(_on_anim_finished)
 	anim.play("idle_down")
+
+func _setup_shadow() -> void:
+	## Grounding oval — Stardew props/characters sit on soft shadows
+	_shadow = Polygon2D.new()
+	_shadow.name = "GroundShadow"
+	_shadow.z_index = -2
+	_shadow.color = Color(0.08, 0.08, 0.12, 0.35)
+	var pts := PackedVector2Array()
+	for i in range(12):
+		var a := TAU * float(i) / 12.0
+		pts.append(Vector2(cos(a) * 9.0, sin(a) * 3.5 + 6.0))
+	_shadow.polygon = pts
+	add_child(_shadow)
 
 func _setup_foot_dust() -> void:
 	_foot_dust = CPUParticles2D.new()
@@ -56,7 +75,6 @@ func _setup_foot_dust() -> void:
 	add_child(_foot_dust)
 
 func _load_tex(path: String) -> Texture2D:
-	# Prefer imported resource; fall back to Image.load for Chinese-path / broken .import
 	if ResourceLoader.exists(path):
 		var res := load(path)
 		if res is Texture2D:
@@ -67,6 +85,16 @@ func _load_tex(path: String) -> Texture2D:
 		return null
 	return ImageTexture.create_from_image(img)
 
+func _add_row_anim(frames: SpriteFrames, name: String, row: int, tex: Texture2D, cols: int, speed: float, loop: bool) -> void:
+	frames.add_animation(name)
+	frames.set_animation_speed(name, speed)
+	frames.set_animation_loop(name, loop)
+	for ci in range(cols):
+		var at := AtlasTexture.new()
+		at.atlas = tex
+		at.region = Rect2(ci * CELL, row * CELL, CELL, CELL)
+		frames.add_frame(name, at, 1.0)
+
 func _setup_frames() -> void:
 	var path := "res://assets/processed/player.png"
 	var tex := _load_tex(path)
@@ -74,31 +102,34 @@ func _setup_frames() -> void:
 		push_error("missing player.png")
 		return
 	var frames := SpriteFrames.new()
-	var cols := maxi(int(tex.get_width() / float(CELL)), 1)
-	var rows := maxi(int(tex.get_height() / float(CELL)), 1)
-	for ri in range(mini(rows, DIRS.size())):
-		var d: String = DIRS[ri]
-		var walk_name := "walk_%s" % d
-		var idle_name := "idle_%s" % d
-		frames.add_animation(walk_name)
-		frames.add_animation(idle_name)
-		frames.set_animation_speed(walk_name, 12.0)
-		frames.set_animation_loop(walk_name, true)
-		frames.set_animation_speed(idle_name, 2.0)
-		frames.set_animation_loop(idle_name, true)
-		for ci in range(cols):
+	for di in range(DIRS.size()):
+		var d: String = DIRS[di]
+		## Walk: 6 clear stride frames @ 10 fps (legs visibly alternate)
+		_add_row_anim(frames, "walk_%s" % d, di, tex, 6, 10.0, true)
+		## Idle: plant frames 0 + 3
+		frames.add_animation("idle_%s" % d)
+		frames.set_animation_speed("idle_%s" % d, 2.0)
+		frames.set_animation_loop("idle_%s" % d, true)
+		for ci in [0, 3]:
 			var at := AtlasTexture.new()
 			at.atlas = tex
-			at.region = Rect2(ci * CELL, ri * CELL, CELL, CELL)
-			frames.add_frame(walk_name, at, 1.0)
-			if ci == 0:
-				frames.add_frame(idle_name, at, 1.0)
-			# soft idle breathe: reuse mid stride as second idle frame
-			if ci == 2:
-				frames.add_frame(idle_name, at, 1.0)
+			at.region = Rect2(ci * CELL, di * CELL, CELL, CELL)
+			frames.add_frame("idle_%s" % d, at, 1.0)
+		## Tool actions: 4 frames, play once
+		_add_row_anim(frames, "hoe_%s" % d, 4 + di, tex, 4, 12.0, false)
+		_add_row_anim(frames, "water_%s" % d, 8 + di, tex, 4, 10.0, false)
+		_add_row_anim(frames, "plant_%s" % d, 12 + di, tex, 4, 10.0, false)
 	anim.sprite_frames = frames
 	anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	anim.speed_scale = 1.0
+	anim.centered = true
+	anim.offset = Vector2(0, -16)
+
+func _on_anim_finished() -> void:
+	if _action_lock:
+		_action_lock = false
+		var idle := "idle_%s" % _facing_name
+		anim.play(idle)
 
 func _dir_name_from_vec(v: Vector2) -> String:
 	if absf(v.x) > absf(v.y):
@@ -141,17 +172,37 @@ func target_cell() -> Vector2i:
 	var world := global_position + facing * float(tile_size)
 	return Vector2i(floori(world.x / tile_size), floori(world.y / tile_size))
 
+func _play_action(kind: String) -> void:
+	_action_lock = true
+	_busy = 0.45
+	var aname := "%s_%s" % [kind, _facing_name]
+	if anim.sprite_frames != null and anim.sprite_frames.has_animation(aname):
+		anim.speed_scale = 1.0
+		anim.play(aname)
+	else:
+		_action_lock = false
+
 func _physics_process(delta: float) -> void:
 	if GameBus.inventory_open or GameBus.dialogue_open:
 		velocity = Vector2.ZERO
-		var idle_lock := "idle_%s" % _facing_name
-		if anim.animation != idle_lock or not anim.is_playing():
-			anim.play(idle_lock)
+		if not _action_lock:
+			var idle_lock := "idle_%s" % _facing_name
+			if anim.animation != idle_lock or not anim.is_playing():
+				anim.play(idle_lock)
 		_set_bob(delta, false)
 		move_and_slide()
 		return
 	_busy = maxf(_busy - delta, 0.0)
 	_foot_cd = maxf(_foot_cd - delta, 0.0)
+
+	## During tool anim: freeze locomotion
+	if _action_lock or _busy > 0.0:
+		velocity = Vector2.ZERO
+		_set_bob(delta, false)
+		move_and_slide()
+		_handle_hotkeys()
+		return
+
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var moving := dir.length() > 0.1
 	if moving:
@@ -159,13 +210,12 @@ func _physics_process(delta: float) -> void:
 		_facing_name = _dir_name_from_vec(facing)
 		velocity = facing * speed
 		var walk_anim := "walk_%s" % _facing_name
-		# Always play so walk cycle never freezes after first frame
 		if anim.animation != walk_anim or not anim.is_playing():
 			anim.play(walk_anim)
-		anim.speed_scale = 1.15
+		anim.speed_scale = 1.0
 		if _foot_cd <= 0.0:
 			SFX.play("footstep")
-			_foot_cd = 0.28
+			_foot_cd = 0.22
 			if _foot_dust != null:
 				_foot_dust.restart()
 				_foot_dust.emitting = true
@@ -179,7 +229,9 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 8.0, float(192 * 16) - 8.0)
 	global_position.y = clampf(global_position.y, 8.0, float(128 * 16) - 8.0)
+	_handle_hotkeys()
 
+func _handle_hotkeys() -> void:
 	if Input.is_action_just_pressed("tool_1"):
 		tool = Tool.HOE
 		GameBus.show_toast("工具：锄头")
@@ -193,6 +245,9 @@ func _physics_process(delta: float) -> void:
 		tool = Tool.ROD
 		GameBus.show_toast("工具：钓竿")
 
+	if _action_lock:
+		return
+
 	if Input.is_action_just_pressed("interact"):
 		if not try_interact():
 			_try_farm_interact()
@@ -205,16 +260,14 @@ func _physics_process(delta: float) -> void:
 		GameBus.show_toast("背包开" if GameBus.inventory_open else "背包关")
 
 func _set_bob(delta: float, moving: bool) -> void:
-	# Light bob only — walk sheet already has stride motion
+	## Keep bob tiny — walk sheet already carries stride bob
 	if moving:
-		_bob_t += delta * 10.0
-		anim.position.y = _anim_base_y + sin(_bob_t) * 0.8
-	else:
-		_bob_t += delta * 2.5
+		_bob_t += delta * 8.0
 		anim.position.y = _anim_base_y + sin(_bob_t) * 0.4
+	else:
+		anim.position.y = _anim_base_y
 
 func _use_tool() -> void:
-	_busy = 0.18
 	var cell := target_cell()
 	match tool:
 		Tool.HOE:
@@ -222,6 +275,7 @@ func _use_tool() -> void:
 				return
 			if not Stamina.spend(4, "hoe"):
 				return
+			_play_action("hoe")
 			if not _farm.call("hoe", cell):
 				Stamina.restore(4)
 			else:
@@ -231,12 +285,14 @@ func _use_tool() -> void:
 				return
 			if not Stamina.spend(2, "water"):
 				return
+			_play_action("water")
 			if _farm.call("water", cell):
 				GameBus.show_toast("浇水了")
 				SFX.play("water")
 			else:
 				Stamina.restore(2)
 		Tool.AXE:
+			_play_action("hoe")  # reuse swing until axe sheet exists
 			_try_chop_tree()
 		Tool.ROD:
 			GameBus.show_toast("去湖边/河边钓鱼点按 E（需装备钓竿）")
@@ -280,6 +336,7 @@ func _try_farm_interact() -> void:
 	if got != null and str(got) != "":
 		Inventory.add(str(got), 1)
 		GameBus.show_toast("收获：" + ItemDB.display_name(str(got)))
+		_play_action("plant")
 		return
 	var seed_id := Inventory.selected_seed
 	if Inventory.has(seed_id):
@@ -288,5 +345,6 @@ func _try_farm_interact() -> void:
 		if _farm.call("plant", cell, seed_id):
 			Inventory.remove(seed_id, 1)
 			GameBus.show_toast("播种：" + ItemDB.display_name(seed_id))
+			_play_action("plant")
 		else:
 			Stamina.restore(1)

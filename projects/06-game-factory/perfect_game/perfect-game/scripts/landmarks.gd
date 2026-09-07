@@ -41,6 +41,18 @@ func _spr(path: String, tile: Vector2, z: int = 6, scale_mul: float = 1.0, coll:
 	s.modulate = tint
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	s.y_sort_enabled = y_sort
+	## Soft grounding shadow (Stardew stitch: props don't float)
+	var shadow := Polygon2D.new()
+	shadow.z_index = -1
+	shadow.color = Color(0.08, 0.08, 0.12, 0.28)
+	var sw := maxf(6.0, float(tex.get_width()) * scale_mul * 0.28)
+	var sh := maxf(2.5, sw * 0.35)
+	var pts := PackedVector2Array()
+	for i in range(10):
+		var a := TAU * float(i) / 10.0
+		pts.append(Vector2(cos(a) * sw, sin(a) * sh + 2.0))
+	shadow.polygon = pts
+	root.add_child(shadow)
 	root.add_child(s)
 	root.position = tile * TS
 	root.z_index = z
@@ -153,6 +165,11 @@ func _farm() -> void:
 	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 8, 1.35, Vector2(18, 40))
 	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 8, 1.35, Vector2(18, 40))
 	_spr("res://assets/processed/prop_chimney.png", Vector2(41, 86), 9, 1.1)
+	_spr("res://assets/processed/prop_signboard.png", Vector2(34, 86), 8, 1.05)
+	_spr("res://assets/processed/prop_flowerbed.png", Vector2(36, 90), 4, 1.0)
+	_spr("res://assets/processed/prop_flowerbed.png", Vector2(44, 90), 4, 1.0)
+	_spr("res://assets/processed/prop_planter.png", Vector2(38, 91), 5, 0.95)
+	_spr("res://assets/processed/prop_planter.png", Vector2(46, 91), 5, 0.95)
 	## Decorative mature beds OUTSIDE playable hoe rows (west bed ~14-29,y78-86)
 	## Place along south pen / barn apron so FarmPlots stay clear
 	var farm_crops: Array[String] = ["greens", "wheat", "tomato", "radish", "pumpkin"]
@@ -170,9 +187,7 @@ func _farm() -> void:
 		_spr(edge_path, Vector2(58 + col * 2, 88), 4, 1.0)
 	_spr("res://assets/processed/prop_crate.png", Vector2(22, 100), 5, 1.1)
 	_spr("res://assets/processed/prop_barrel.png", Vector2(56, 100), 5, 1.05)
-	_spr("res://assets/processed/chicken.png", Vector2(30, 114), 6, 1.0)
-	_spr("res://assets/processed/chicken.png", Vector2(38, 116), 6, 0.95)
-	_spr("res://assets/processed/cow.png", Vector2(34, 118), 6, 1.05)
+	## Live chickens/cows come from decor._animals — no static doubles
 	for x in range(24, 46, 2):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 112), 4, 1.0, Vector2(14, 10))
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 122), 4, 1.0, Vector2(14, 10))

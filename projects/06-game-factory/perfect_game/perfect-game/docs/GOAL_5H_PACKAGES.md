@@ -369,4 +369,15 @@
 | P117 | 25m | Critic + push；催用户签字试玩 / itch URL | origin/main |
 
 ### 海报冲刺进度
-- [x] P116 · [ ] P117  
+- [x] P116 · [x] P117  
+
+## 帧动画与拼接对齐（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P118 | 45m | 玩家行走腿帧夸张重绘 + 锄/浇/播专用帧 | player sheet + F5 腿动 |
+| P119 | 40m | 农庄床软 fringe + 脚底阴影 + y_sort | farm golden / 对照 stardew ref |
+| P120 | 25m | Critic + push；催用户验动画 | origin/main |
+
+### 帧动画拼接进度
+- [x] P118 · [x] P119 · [ ] P120  
