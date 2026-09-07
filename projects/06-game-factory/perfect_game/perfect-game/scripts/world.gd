@@ -239,27 +239,26 @@ func _paint_base() -> void:
 		_set_cell(_ground, cx + 3, y, T_WE_W)
 		_set_cell(_ground, cx - 4, y, T_DIRT)
 		_set_cell(_ground, cx + 4, y, T_DIRT)
-	# Waterfall amphitheater — seat landform into cliff/hill + pool mouth into river
+	# Waterfall amphitheater — rock rim only; interior = water (kill farm/hill banding)
 	for x in range(14, 34):
 		for y in range(10, 24):
 			var dx := x - 24
 			var dy := y - 15
 			var bowl := float(dx * dx) * 0.4 + float(dy * dy) * 1.05
-			if bowl < 36.0:
-				_set_cell(_ground, x, y, T_CLIFF if ((x + y) % 3) != 0 else T_HILL)
-			elif bowl < 52.0 and ((x * 3 + y) % 4) != 0:
-				_set_cell(_ground, x, y, T_HILL)
-	# Pool + river mouth (turquoise join — no grass under fall)
+			if bowl < 22.0:
+				_set_cell(_water, x, y, T_WATER)
+				_set_cell(_ground, x, y, T_WATER)
+			elif bowl < 40.0:
+				_set_cell(_ground, x, y, T_CLIFF)
+			elif bowl < 52.0 and ((x * 3 + y) % 5) != 0:
+				_set_cell(_ground, x, y, T_CLIFF)
+	# Extend pool mouth into river corridor
 	for x in range(19, 29):
-		for y in range(20, 26):
+		for y in range(20, 27):
 			_set_cell(_water, x, y, T_WATER)
 			_set_cell(_ground, x, y, T_WATER)
-	for x in range(18, 30):
-		_set_cell(_ground, x, 25, T_WE_N if (x % 2) == 0 else T_DIRT)
-		_set_cell(_ground, x, 19, T_CLIFF)
-	# Soft bank rocks as dirt nubs
-	for p in [Vector2i(18, 23), Vector2i(29, 23), Vector2i(17, 24), Vector2i(30, 24)]:
-		_set_cell(_ground, p.x, p.y, T_DIRT)
+	for p in [Vector2i(17, 23), Vector2i(18, 24), Vector2i(29, 23), Vector2i(30, 24)]:
+		_set_cell(_ground, p.x, p.y, T_CLIFF)
 	# Bridges
 	for x in range(24, 34):
 		_set_cell(_ground, x, 40, T_BRIDGE)
