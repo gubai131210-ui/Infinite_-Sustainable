@@ -138,7 +138,9 @@ func _capture_goldens(player: Node2D = null) -> void:
 		["00_overview", Vector2(100 * 16, 36 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D
-	var player_sprite := player.get_node_or_null("Sprite2D") as CanvasItem
+	var player_sprite := player.get_node_or_null("AnimatedSprite2D") as CanvasItem
+	if player_sprite == null:
+		player_sprite = player.get_node_or_null("Sprite2D") as CanvasItem
 	for s in shots:
 		player.global_position = s[1]
 		var is_overview := str(s[0]) == "00_overview"

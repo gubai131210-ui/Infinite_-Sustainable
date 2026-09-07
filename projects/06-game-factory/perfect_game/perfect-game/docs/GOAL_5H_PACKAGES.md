@@ -392,3 +392,14 @@
 
 ### 草土嵌地进度
 - [x] P121 · [x] P122 · [x] P123  
+
+## 动物围栏 + 工具帧冒烟 + blob 床缘（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P124 | 35m | 畜栏 clamp + 床缘 nibble/protrude + SE/SW 角瓦 | decor/animal + tileset 25/26 |
+| P125 | 30m | 锄/浇 freeze 冒烟 + 动作锁加固 | smoke/18_hoe · 19_water |
+| P126 | 25m | 重抓 golden + Critic + push；催用户验腿/工具帧 | origin/main |
+
+### 围栏工具进度
+- [x] P124 · [x] P125 · [x] P126

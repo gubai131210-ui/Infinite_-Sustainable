@@ -31,6 +31,8 @@ const T_DIRT2 := 21
 const T_GD_N := 22   # grass↔dirt north edge of dirt
 const T_PLAZA2 := 23
 const T_GD_S := 24
+const T_GD_SE := 25  # outer corner (was sand dup)
+const T_GD_SW := 26  # outer corner (was farmland dup)
 const T_GD_E := 28
 const T_GD_W := 29
 const T_GD_NE := 30
@@ -99,31 +101,49 @@ func _spawn_zone_labels() -> void:
 		markers.add_child(lab)
 
 func _fringe_soft(bed: Rect2i) -> void:
-	## Irregular grass/dirt nibbles on bed rim — NO sand (sand reads as hard tan blocks)
+	## Stardew blob rim: nibble dirt→grass, protrude dirt into grass, GD seam tiles
 	var x0 := bed.position.x
 	var y0 := bed.position.y
 	var x1 := x0 + bed.size.x - 1
 	var y1 := y0 + bed.size.y - 1
-	for x in range(x0 - 1, x1 + 2):
-		var n: int = absi(x * 13 + y0 * 7) % 5
-		if n <= 2:
-			_set_cell(_ground, x, y0 - 1, T_GD_S if (n == 0) else T_GRASS3)
-		if n >= 2:
-			_set_cell(_ground, x, y1 + 1, T_GD_N if (n == 4) else T_GRASS2)
-		if (x % 3) == 0:
+	## Cut hard corners into grass pockets
+	for c in [
+		Vector2i(x0, y0), Vector2i(x1, y0), Vector2i(x0, y1), Vector2i(x1, y1),
+		Vector2i(x0 + 1, y0), Vector2i(x1 - 1, y0), Vector2i(x0, y0 + 1), Vector2i(x1, y0 + 1),
+		Vector2i(x0 + 1, y1), Vector2i(x1 - 1, y1), Vector2i(x0, y1 - 1), Vector2i(x1, y1 - 1),
+	]:
+		if (absi(c.x * 19 + c.y * 23) % 3) != 0:
+			_set_cell(_ground, c.x, c.y, T_GRASS3 if ((c.x + c.y) % 2) == 0 else T_GRASS2)
+	for x in range(x0, x1 + 1):
+		var n: int = absi(x * 13 + y0 * 7) % 6
+		if n == 0:
 			_set_cell(_ground, x, y0, T_GRASS4)
-		if (x % 4) == 1:
-			_set_cell(_ground, x, y1, T_GRASS3)
+		elif n == 1:
+			_set_cell(_ground, x, y0, T_GD_N)
+		elif n >= 4:
+			_set_cell(_ground, x, y0 - 1, T_DIRT2 if (n == 5) else T_GD_S)
+		var s: int = absi(x * 11 + y1 * 9) % 6
+		if s == 0:
+			_set_cell(_ground, x, y1, T_GRASS2)
+		elif s == 1:
+			_set_cell(_ground, x, y1, T_GD_S)
+		elif s >= 4:
+			_set_cell(_ground, x, y1 + 1, T_DIRT if (s == 5) else T_GD_N)
 	for y in range(y0, y1 + 1):
-		var m: int = absi(y * 11 + x0 * 5) % 4
-		if m <= 1:
-			_set_cell(_ground, x0 - 1, y, T_GD_E)
-		if m >= 2:
-			_set_cell(_ground, x1 + 1, y, T_GD_W)
-		if (y % 3) == 0:
+		var w: int = absi(y * 11 + x0 * 5) % 6
+		if w == 0:
 			_set_cell(_ground, x0, y, T_GRASS4)
-		if (y % 3) == 1:
-			_set_cell(_ground, x1, y, T_DIRT2)
+		elif w == 1:
+			_set_cell(_ground, x0, y, T_GD_W)
+		elif w >= 4:
+			_set_cell(_ground, x0 - 1, y, T_DIRT2 if (w == 5) else T_GD_E)
+		var e: int = absi(y * 17 + x1 * 3) % 6
+		if e == 0:
+			_set_cell(_ground, x1, y, T_GRASS3)
+		elif e == 1:
+			_set_cell(_ground, x1, y, T_GD_E)
+		elif e >= 4:
+			_set_cell(_ground, x1 + 1, y, T_DIRT if (e == 5) else T_GD_W)
 
 func world_size() -> Vector2:
 	return Vector2(W * TS, H * TS)
@@ -541,6 +561,10 @@ func _stitch_dirt_seams() -> void:
 				to_set.append([x - 1, y - 1, T_GD_NE])
 			if _is_grassish(_cell_tid(x + 1, y - 1)):
 				to_set.append([x + 1, y - 1, T_GD_NW])
+			if _is_grassish(_cell_tid(x - 1, y + 1)):
+				to_set.append([x - 1, y + 1, T_GD_SE])
+			if _is_grassish(_cell_tid(x + 1, y + 1)):
+				to_set.append([x + 1, y + 1, T_GD_SW])
 	for item in to_set:
 		_set_cell(_ground, int(item[0]), int(item[1]), int(item[2]))
 

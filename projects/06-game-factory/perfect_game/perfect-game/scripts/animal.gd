@@ -123,7 +123,10 @@ func _physics_process(delta: float) -> void:
 		_timer = randf_range(0.8, 2.4)
 		var opts := [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN, Vector2.ZERO, Vector2.LEFT, Vector2.RIGHT]
 		_dir = opts[randi() % opts.size()]
-	if global_position.distance_to(_home) > 40.0:
+	var wander_r := 28.0
+	if has_meta("wander_radius"):
+		wander_r = float(get_meta("wander_radius"))
+	if global_position.distance_to(_home) > wander_r:
 		_dir = (_home - global_position).normalized()
 	velocity = _dir * _speed
 	var moving := _dir.length() > 0.1
@@ -140,6 +143,12 @@ func _physics_process(delta: float) -> void:
 		_bob_t += delta * 2.0
 		anim.position.y = _anim_base_y + sin(_bob_t) * 0.4
 	move_and_slide()
+	## Hard clamp inside pen AABB when provided
+	if has_meta("pen_min") and has_meta("pen_max"):
+		var pmin: Vector2 = get_meta("pen_min")
+		var pmax: Vector2 = get_meta("pen_max")
+		global_position.x = clampf(global_position.x, pmin.x, pmax.x)
+		global_position.y = clampf(global_position.y, pmin.y, pmax.y)
 
 func _prompt_text() -> String:
 	if _product_ready:

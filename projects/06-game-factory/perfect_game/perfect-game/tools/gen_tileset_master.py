@@ -260,43 +260,49 @@ def water_edge(side: str) -> Image.Image:
 
 
 def grass_dirt(side: str) -> Image.Image:
-    """Irregular grass↔dirt seam (Stardew stitch). side = edge of the DIRT region."""
-    img = grass(1).copy()
-    dcol = (148, 108, 68, 255)
-    dcol2 = (128, 92, 55, 255)
+    """Strong irregular grass↔dirt seam — grass tufts overhang dirt (Stardew stitch)."""
+    img = grass(2).copy()
+    dcols = [(148, 108, 68, 255), (128, 92, 55, 255), (165, 122, 80, 255), (138, 100, 62, 255)]
     for y in range(TS):
         for x in range(TS):
-            jag = (x * 3 + y * 5) % 4
+            # multi-frequency jagged boundary
+            jag = ((x * 5) ^ (y * 9) ^ (x * y)) % 7
+            wave = int(2.2 * math.sin(x * 0.9 + y * 0.4))
             hit = False
             if side == "n":
-                hit = y > 7 - jag // 2
+                hit = y > (6 + wave - jag // 3)
             elif side == "s":
-                hit = y < 8 + jag // 2
+                hit = y < (9 + wave + jag // 3)
             elif side == "e":
-                hit = x < 8 + jag // 2
+                hit = x < (9 + wave + jag // 3)
             elif side == "w":
-                hit = x > 7 - jag // 2
+                hit = x > (6 + wave - jag // 3)
             elif side == "ne":
-                hit = y > 8 - jag // 2 and x < 8 + jag // 2
+                hit = y > (7 + wave) and x < (9 - wave)
             elif side == "nw":
-                hit = y > 8 - jag // 2 and x > 7 - jag // 2
+                hit = y > (7 + wave) and x > (6 + wave)
             elif side == "se":
-                hit = y < 8 + jag // 2 and x < 8 + jag // 2
+                hit = y < (9 - wave) and x < (9 - wave)
             elif side == "sw":
-                hit = y < 8 + jag // 2 and x > 7 - jag // 2
+                hit = y < (9 - wave) and x > (6 + wave)
             if hit:
-                px(img, x, y, dcol if ((x + y) % 2) == 0 else dcol2)
-    for _ in range(8):
+                px(img, x, y, dcols[(x + y) % 4])
+    # dense grass blade overhang onto dirt side
+    for _ in range(18):
         if side in ("n", "ne", "nw"):
-            x, y = rng.randrange(2, 14), rng.randrange(8, 14)
+            x, y = rng.randrange(1, 15), rng.randrange(7, 15)
         elif side in ("s", "se", "sw"):
-            x, y = rng.randrange(2, 14), rng.randrange(2, 8)
+            x, y = rng.randrange(1, 15), rng.randrange(1, 9)
         elif side == "e":
-            x, y = rng.randrange(2, 8), rng.randrange(2, 14)
+            x, y = rng.randrange(1, 9), rng.randrange(1, 15)
         else:
-            x, y = rng.randrange(8, 14), rng.randrange(2, 14)
-        px(img, x, y, (62, 128, 52, 255))
-        px(img, x, max(0, y - 1), (96, 170, 78, 255))
+            x, y = rng.randrange(7, 15), rng.randrange(1, 15)
+        blade = (48 + rng.randrange(0, 30), 110 + rng.randrange(0, 40), 40 + rng.randrange(0, 20), 255)
+        tip = (90 + rng.randrange(0, 40), 160 + rng.randrange(0, 40), 70 + rng.randrange(0, 20), 255)
+        px(img, x, y, blade)
+        px(img, x, max(0, y - 1), tip)
+        if rng.random() > 0.5:
+            px(img, min(15, x + 1), y, blade)
     return img
 
 
@@ -337,6 +343,9 @@ def main() -> None:
         grass_dirt("ne"),
         grass_dirt("nw"),
     ]
+    # Replace duplicate sand/farmland slots (25–26) with SE/SW corners
+    extra[9] = grass_dirt("se")   # was sand dup @ atlas 25
+    extra[10] = grass_dirt("sw")  # was farmland dup @ atlas 26
     tiles.extend(extra)
     cols, rows = 8, 4
     atlas = Image.new("RGBA", (cols * TS, rows * TS), (0, 0, 0, 0))

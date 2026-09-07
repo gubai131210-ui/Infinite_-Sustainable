@@ -59,6 +59,9 @@ func _spr(path: String, tile: Vector2, z: int = 5, choppable: bool = false, scal
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	if "tree" in path:
 		s.set_meta("sway", true)
+	elif "flower" in path or "bush" in path:
+		s.set_meta("sway", true)
+		s.set_meta("sway_soft", true)
 	if choppable:
 		s.add_to_group("choppable")
 		s.set_meta("chop_hp", 2)
@@ -236,6 +239,15 @@ func _props_fill() -> void:
 		Vector2(90, 48), Vector2(148, 14), Vector2(168, 100),
 	]:
 		_spr("res://assets/processed/prop_lamp.png", p, 5)
+	## Farm bed / path seam tufts — Stardew grass overhang on dirt edges
+	for x in range(13, 66, 2):
+		_spr("res://assets/processed/prop_path_tuft.png", Vector2(x + 0.2, 77), 3, false)
+		_spr("res://assets/processed/prop_path_tuft.png", Vector2(x, 88.2), 3, false)
+		_spr("res://assets/processed/prop_path_tuft.png", Vector2(x + 0.4, 99.5), 3, false)
+	for y in range(78, 100, 2):
+		_spr("res://assets/processed/prop_path_tuft.png", Vector2(13.2, y), 3, false)
+		_spr("res://assets/processed/prop_path_tuft.png", Vector2(50.5, y + 0.3), 3, false)
+		_spr("res://assets/processed/prop_path_pebble.png", Vector2(30.5, y), 2, false)
 
 func _bushes() -> void:
 	# Plaza fringe tufts denser (around current storefront ring)
@@ -311,6 +323,9 @@ func _flowers() -> void:
 		# Lake shore
 		Vector2(148, 98), Vector2(154, 102), Vector2(166, 96), Vector2(176, 98),
 		Vector2(182, 92), Vector2(170, 110),
+		# Miller farmstead yard
+		Vector2(34, 88), Vector2(42, 88), Vector2(38, 92), Vector2(48, 92),
+		Vector2(20, 96), Vector2(54, 96), Vector2(26, 108), Vector2(42, 110),
 	]
 	for i in range(spots.size()):
 		_spr("res://assets/processed/flower_%d.png" % (i % 4), spots[i], 3)
@@ -395,15 +410,15 @@ func _npcs() -> void:
 		add_child(n)
 
 func _animals() -> void:
-	# Live animals with walk cycles (not static sprites)
+	## All livestock inside south pen only (avoid tree canopy z-fight)
 	var animal_spots := [
-		["chicken", "鸡", Vector2(30, 100)],
-		["chicken", "鸡", Vector2(34, 102)],
-		["chicken", "鸡", Vector2(38, 100)],
-		["cow", "牛", Vector2(28, 116)],
-		["cow", "牛", Vector2(40, 118)],
-		["sheep", "羊", Vector2(32, 114)],
-		["sheep", "羊", Vector2(38, 116)],
+		["chicken", "鸡", Vector2(28, 114)],
+		["chicken", "鸡", Vector2(32, 116)],
+		["chicken", "鸡", Vector2(36, 114)],
+		["cow", "牛", Vector2(30, 118)],
+		["cow", "牛", Vector2(38, 118)],
+		["sheep", "羊", Vector2(34, 116)],
+		["sheep", "羊", Vector2(40, 116)],
 	]
 	var animal_scene := preload("res://scenes/animal.tscn")
 	for item in animal_spots:
@@ -413,6 +428,10 @@ func _animals() -> void:
 		a.sprite_path = "res://assets/processed/%s.png" % str(item[0])
 		a.position = item[2] * TS
 		a.z_index = 6
+		## Pen clamp in animal script via meta
+		a.set_meta("pen_min", Vector2(25, 113) * TS)
+		a.set_meta("pen_max", Vector2(43, 121) * TS)
+		a.set_meta("wander_radius", 28.0)
 		add_child(a)
 
 func _door_and_chest() -> void:
@@ -634,7 +653,8 @@ func _sway_trees() -> void:
 	for c in get_children():
 		if c is Sprite2D and c.has_meta("sway") and bool(c.get_meta("sway")):
 			var tw := c.create_tween().set_loops()
-			var amp := randf_range(1.2, 3.2)
-			var dur := randf_range(1.8, 3.0)
+			var soft := c.has_meta("sway_soft") and bool(c.get_meta("sway_soft"))
+			var amp := randf_range(0.6, 1.6) if soft else randf_range(1.2, 3.2)
+			var dur := randf_range(1.4, 2.4) if soft else randf_range(1.8, 3.0)
 			tw.tween_property(c, "rotation_degrees", amp, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 			tw.tween_property(c, "rotation_degrees", -amp, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)

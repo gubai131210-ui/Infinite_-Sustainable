@@ -27,6 +27,11 @@
 | Golden 全套 | `GOLDEN_CAPTURE_DONE`（含 `07` zoom 1.55） |
 | 农庄锄→种→浇→睡→熟→收 | cell(16,78) radish **stage 0→3** · harvest=`radish` · `smoke/16_farm_growth.png` |
 | Tween 修复 | crop/tree sway 绑定节点，避免 sleep 刷新时 infinite loop |
+| 走路帧 | `walk_down` frame **5** · `smoke/17_walk_anim.png` |
+| 锄地帧（freeze） | `hoe_down` frame **2** · `smoke/18_hoe_anim.png` |
+| 浇水帧（freeze） | `water_down` frame **2** · `smoke/19_water_anim.png` |
+| 畜栏 | 鸡/牛/羊 spawn + `pen_min`/`pen_max` clamp 南围栏内 |
+| Golden 重抓 | P126 `GOLDEN_CAPTURE_DONE`（含 blob fringe） |
 
 > Agent MCP 冒烟 **不能替代** 用户签字。中文路径本机手感 / 输入 / 音频需你确认。
 

@@ -20,6 +20,7 @@ var _interact_cb: Callable = Callable()
 var _farm: Node = null
 var _busy: float = 0.0
 var _action_lock: bool = false
+var _action_anim: String = ""
 var _bob_t: float = 0.0
 var _anim_base_y: float = -8.0
 var _foot_cd: float = 0.0
@@ -126,10 +127,14 @@ func _setup_frames() -> void:
 	anim.offset = Vector2(0, -16)
 
 func _on_anim_finished() -> void:
-	if _action_lock:
-		_action_lock = false
-		var idle := "idle_%s" % _facing_name
-		anim.play(idle)
+	if not _action_lock:
+		return
+	var cur := String(anim.animation)
+	if _action_anim != "" and cur != _action_anim:
+		return
+	_action_lock = false
+	_action_anim = ""
+	anim.play("idle_%s" % _facing_name)
 
 func _dir_name_from_vec(v: Vector2) -> String:
 	if absf(v.x) > absf(v.y):
@@ -138,6 +143,27 @@ func _dir_name_from_vec(v: Vector2) -> String:
 
 func set_farm(farm: Node) -> void:
 	_farm = farm
+
+func debug_list_anims() -> PackedStringArray:
+	if anim == null or anim.sprite_frames == null:
+		return PackedStringArray()
+	return anim.sprite_frames.get_animation_names()
+
+func debug_play_hoe() -> String:
+	_play_action("hoe")
+	return "%s|lock=%s|busy=%.2f" % [String(anim.animation), str(_action_lock), _busy]
+
+func debug_freeze_action(kind: String, frame: int = 2) -> String:
+	## Hold a mid-action pose for MCP smoke (tool anims finish before remote round-trips)
+	_action_anim = "%s_%s" % [kind, _facing_name]
+	_action_lock = true
+	_busy = 30.0
+	if anim.sprite_frames != null and anim.sprite_frames.has_animation(_action_anim):
+		anim.play(_action_anim)
+		anim.pause()
+		var fc: int = anim.sprite_frames.get_frame_count(_action_anim)
+		anim.frame = clampi(frame, 0, maxi(fc - 1, 0))
+	return "%s frame=%d lock=%s" % [String(anim.animation), anim.frame, str(_action_lock)]
 
 func set_interact_prompt(text: String, cb: Callable = Callable()) -> void:
 	_prompt = text
@@ -173,14 +199,17 @@ func target_cell() -> Vector2i:
 	return Vector2i(floori(world.x / tile_size), floori(world.y / tile_size))
 
 func _play_action(kind: String) -> void:
+	_action_anim = "%s_%s" % [kind, _facing_name]
 	_action_lock = true
-	_busy = 0.45
-	var aname := "%s_%s" % [kind, _facing_name]
-	if anim.sprite_frames != null and anim.sprite_frames.has_animation(aname):
+	_busy = 0.42
+	if anim.sprite_frames != null and anim.sprite_frames.has_animation(_action_anim):
 		anim.speed_scale = 1.0
-		anim.play(aname)
+		anim.play(_action_anim)
+		anim.set_frame_and_progress(0, 0.0)
 	else:
+		push_warning("Oakhaven: missing player anim %s" % _action_anim)
 		_action_lock = false
+		_action_anim = ""
 
 func _physics_process(delta: float) -> void:
 	if GameBus.inventory_open or GameBus.dialogue_open:
@@ -195,9 +224,14 @@ func _physics_process(delta: float) -> void:
 	_busy = maxf(_busy - delta, 0.0)
 	_foot_cd = maxf(_foot_cd - delta, 0.0)
 
-	## During tool anim: freeze locomotion
+	## During tool anim: freeze locomotion + re-assert action frames
 	if _action_lock or _busy > 0.0:
 		velocity = Vector2.ZERO
+		if _action_lock and _action_anim != "" and String(anim.animation) != _action_anim:
+			anim.play(_action_anim)
+		if _action_lock and _busy <= 0.0 and not anim.is_playing():
+			_action_lock = false
+			_action_anim = ""
 		_set_bob(delta, false)
 		move_and_slide()
 		_handle_hotkeys()
