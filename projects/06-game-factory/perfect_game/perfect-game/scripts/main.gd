@@ -128,6 +128,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 		["07_waterfall", Vector2(24 * 16, 20 * 16)],
 		["03_town", Vector2(90 * 16, 58 * 16)],
 		["09_storefronts", Vector2(90 * 16, 56 * 16)],
+		["10_shop_door", Vector2(78 * 16, 52 * 16)],
 		["04_station", Vector2(155 * 16, 18 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(168 * 16, 105 * 16)],
@@ -144,6 +145,8 @@ func _capture_goldens(player: Node2D = null) -> void:
 			cam.zoom = Vector2(0.9, 0.9)
 		elif str(s[0]) == "09_storefronts":
 			cam.zoom = Vector2(0.95, 0.95)
+		elif str(s[0]) == "10_shop_door":
+			cam.zoom = Vector2(2.0, 2.0)
 		else:
 			cam.zoom = Vector2(2, 2)
 		await get_tree().process_frame

@@ -122,9 +122,9 @@ func _trees() -> void:
 	for p in [
 		Vector2(66, 28), Vector2(66, 34), Vector2(66, 40), Vector2(66, 48), Vector2(66, 55), Vector2(66, 68),
 		Vector2(116, 28), Vector2(116, 34), Vector2(116, 40), Vector2(116, 48), Vector2(116, 55), Vector2(116, 68),
-		Vector2(78, 26), Vector2(102, 26), Vector2(78, 70), Vector2(102, 70),
-		Vector2(70, 30), Vector2(112, 30), Vector2(70, 66), Vector2(112, 66),
-		Vector2(64, 44), Vector2(118, 44), Vector2(64, 60), Vector2(118, 60),
+		Vector2(78, 44), Vector2(102, 44), Vector2(78, 72), Vector2(102, 72),
+		Vector2(70, 48), Vector2(112, 48), Vector2(70, 68), Vector2(112, 68),
+		Vector2(64, 52), Vector2(118, 52), Vector2(64, 64), Vector2(118, 64),
 	]:
 		spots.append(p)
 	# Station ridge: NO tree wall — leave sky/mountain/cliff readable
@@ -228,24 +228,24 @@ func _props_fill() -> void:
 	]:
 		_spr("res://assets/processed/prop_barrel.png", p, 4)
 	for p in [
-		Vector2(76, 38), Vector2(104, 38), Vector2(76, 60), Vector2(104, 60),
-		Vector2(90, 36), Vector2(148, 14), Vector2(168, 100),
+		Vector2(76, 52), Vector2(104, 52), Vector2(76, 64), Vector2(104, 64),
+		Vector2(90, 48), Vector2(148, 14), Vector2(168, 100),
 	]:
 		_spr("res://assets/processed/prop_lamp.png", p, 5)
 
 func _bushes() -> void:
-	# Plaza fringe tufts denser (soften stone rect)
+	# Plaza fringe tufts denser (around current storefront ring)
 	for p in [
-		Vector2(72, 36), Vector2(74, 35), Vector2(110, 36), Vector2(112, 35),
-		Vector2(72, 62), Vector2(74, 64), Vector2(110, 62), Vector2(112, 64),
-		Vector2(70, 42), Vector2(70, 50), Vector2(70, 58), Vector2(114, 42), Vector2(114, 50), Vector2(114, 58),
-		Vector2(80, 34), Vector2(90, 34), Vector2(100, 34), Vector2(80, 66), Vector2(90, 66), Vector2(100, 66),
-		Vector2(76, 38), Vector2(108, 38), Vector2(76, 60), Vector2(108, 60),
+		Vector2(70, 48), Vector2(72, 46), Vector2(110, 46), Vector2(112, 48),
+		Vector2(72, 66), Vector2(74, 68), Vector2(110, 66), Vector2(112, 68),
+		Vector2(68, 52), Vector2(68, 58), Vector2(68, 64), Vector2(116, 52), Vector2(116, 58), Vector2(116, 64),
+		Vector2(84, 48), Vector2(96, 48), Vector2(84, 70), Vector2(96, 70),
+		Vector2(76, 54), Vector2(108, 54), Vector2(76, 64), Vector2(108, 64),
 	]:
 		_spr("res://assets/processed/prop_path_tuft.png", p, 3, false)
 	for p in [
-		Vector2(73, 40), Vector2(111, 44), Vector2(73, 56), Vector2(111, 52),
-		Vector2(84, 35), Vector2(96, 35), Vector2(84, 63), Vector2(96, 63),
+		Vector2(73, 50), Vector2(111, 52), Vector2(73, 62), Vector2(111, 60),
+		Vector2(86, 49), Vector2(94, 49), Vector2(86, 67), Vector2(94, 67),
 	]:
 		_spr("res://assets/processed/prop_path_pebble.png", p, 2, false)
 	# Path fringe tufts + pebbles (soften dirt edge brick-read)
@@ -413,11 +413,13 @@ func _animals() -> void:
 
 func _door_and_chest() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(36, 90), 4)
+	# Door tiles match landmarks._town facade footprints (P103)
 	var doors := [
 		{"id": "farmhouse", "prompt": "按 E 进入农舍", "pos": Vector2(40, 88)},
 		{"id": "barn", "prompt": "按 E 进入谷仓", "pos": Vector2(28, 102)},
-		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(72, 32)},
-		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(108, 32)},
+		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(78, 51)},
+		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(102, 51)},
+		{"id": "bakery", "prompt": "按 E 进入面包房", "pos": Vector2(90, 63)},
 		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(148, 18)},
 		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(174, 100)},
 	]
@@ -480,20 +482,20 @@ func _door_and_chest() -> void:
 	stall.mode = "dialogue"
 	stall.speaker = "摊主"
 	stall.message = "今日番茄与萝卜新鲜，先去农庄种点种子吧！"
-	stall.position = Vector2(80, 44) * TS
+	stall.position = Vector2(90, 72) * TS
 	add_child(stall)
 	var sell := preload("res://scenes/interact_zone.tscn").instantiate()
 	sell.prompt_text = "按 E 卖出作物"
 	sell.mode = "shop_sell"
-	sell.position = Vector2(72, 36) * TS
+	sell.position = Vector2(74, 52) * TS
 	add_child(sell)
 	var buy := preload("res://scenes/interact_zone.tscn").instantiate()
 	buy.prompt_text = "按 E 买种子礼包(30金)"
 	buy.mode = "shop_buy"
-	buy.position = Vector2(76, 36) * TS
+	buy.position = Vector2(82, 52) * TS
 	add_child(buy)
 	# Quest visit triggers (轻松日常打卡)
-	_quest_zone("visit_town", "镇中心", Vector2(90, 48))
+	_quest_zone("visit_town", "镇中心", Vector2(90, 56))
 	_quest_zone("visit_station", "火车站", Vector2(150, 18))
 	_quest_zone("visit_lighthouse", "灯塔", Vector2(174, 102))
 	var fish := preload("res://scenes/interact_zone.tscn").instantiate()
@@ -544,7 +546,7 @@ func _quest_zone(step_id: String, label: String, tile: Vector2) -> void:
 	add_child(z)
 
 func _ambient() -> void:
-	for origin in [Vector2(40, 86), Vector2(74, 32), Vector2(108, 32), Vector2(142, 12), Vector2(174, 100)]:
+	for origin in [Vector2(40, 86), Vector2(78, 48), Vector2(102, 48), Vector2(90, 60), Vector2(142, 12), Vector2(174, 100)]:
 		_spawn_smoke(origin * TS)
 	_spawn_ripples(Vector2(155, 108) * TS)
 	_spawn_ripples(Vector2(28, 50) * TS)

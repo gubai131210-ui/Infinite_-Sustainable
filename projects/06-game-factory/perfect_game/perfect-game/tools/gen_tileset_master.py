@@ -63,36 +63,60 @@ def grass(variant: int = 0) -> Image.Image:
     return img
 
 
-def dirt() -> Image.Image:
-    img = Image.new("RGBA", (TS, TS), (148, 108, 68, 255))
-    for _ in range(22):
-        x, y = rng.randrange(TS), rng.randrange(TS)
-        px(img, x, y, (128, 92, 55, 255) if rng.random() > 0.5 else (165, 122, 80, 255))
-    return img
-
-
 def path() -> Image.Image:
-    img = Image.new("RGBA", (TS, TS), (188, 168, 118, 255))
-    for _ in range(16):
+    """Organic dirt path — mottled, no hard brick borders."""
+    img = Image.new("RGBA", (TS, TS), (176, 148, 98, 255))
+    for _ in range(48):
         x, y = rng.randrange(TS), rng.randrange(TS)
-        px(img, x, y, (160, 140, 95, 255))
-    # soft edge darken
-    for i in range(TS):
-        px(img, i, 0, (150, 130, 90, 255))
-        px(img, 0, i, (150, 130, 90, 255))
+        choice = rng.randrange(4)
+        if choice == 0:
+            px(img, x, y, (150, 122, 78, 255))
+        elif choice == 1:
+            px(img, x, y, (195, 168, 118, 255))
+        elif choice == 2:
+            px(img, x, y, (138, 110, 70, 255))
+        else:
+            px(img, x, y, (168, 140, 92, 255))
+    # Soft pebble nubs (not full edge lines)
+    for _ in range(4):
+        x, y = rng.randrange(2, 14), rng.randrange(2, 14)
+        px(img, x, y, (120, 100, 70, 255))
+        px(img, x + 1, y, (130, 108, 76, 255))
     return img
 
 
 def plaza() -> Image.Image:
-    img = Image.new("RGBA", (TS, TS), (158, 152, 144, 255))
-    for x in range(TS):
-        px(img, x, 0, (120, 114, 106, 255))
-        px(img, x, 8, (120, 114, 106, 255))
-    for y in range(TS):
-        px(img, 0, y, (120, 114, 106, 255))
-        px(img, 8, y, (120, 114, 106, 255))
-    px(img, 3, 3, (175, 170, 162, 255))
-    px(img, 11, 11, (140, 134, 126, 255))
+    """Worn cobble plaza — irregular stones, no 8px brick grid."""
+    img = Image.new("RGBA", (TS, TS), (152, 146, 138, 255))
+    # Irregular cobble patches instead of crosshair grid
+    for _ in range(10):
+        cx, cy = rng.randrange(1, 14), rng.randrange(1, 14)
+        w = rng.randrange(2, 5)
+        h = rng.randrange(2, 4)
+        shade = (
+            140 + rng.randrange(0, 30),
+            134 + rng.randrange(0, 28),
+            126 + rng.randrange(0, 26),
+            255,
+        )
+        for yy in range(cy, min(TS, cy + h)):
+            for xx in range(cx, min(TS, cx + w)):
+                if rng.random() > 0.15:
+                    px(img, xx, yy, shade)
+    for _ in range(8):
+        x, y = rng.randrange(TS), rng.randrange(TS)
+        px(img, x, y, (118, 112, 104, 255) if rng.random() > 0.5 else (170, 164, 156, 255))
+    return img
+
+
+def dirt() -> Image.Image:
+    img = Image.new("RGBA", (TS, TS), (148, 108, 68, 255))
+    for _ in range(36):
+        x, y = rng.randrange(TS), rng.randrange(TS)
+        px(img, x, y, (128, 92, 55, 255) if rng.random() > 0.5 else (165, 122, 80, 255))
+    for _ in range(6):
+        x, y = rng.randrange(1, 14), rng.randrange(1, 14)
+        px(img, x, y, (110, 82, 50, 255))
     return img
 
 

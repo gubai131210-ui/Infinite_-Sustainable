@@ -10,6 +10,7 @@ const ROOM_PALETTE := {
 	"barn": {"floor": Color(0.55, 0.42, 0.28), "wall": Color(0.4, 0.3, 0.2), "tint": Color(1.0, 0.95, 0.85)},
 	"shop": {"floor": Color(0.62, 0.55, 0.48), "wall": Color(0.45, 0.5, 0.55), "tint": Color(1.0, 1.0, 1.05)},
 	"cafe": {"floor": Color(0.5, 0.38, 0.32), "wall": Color(0.42, 0.28, 0.25), "tint": Color(1.08, 0.95, 0.9)},
+	"bakery": {"floor": Color(0.68, 0.55, 0.4), "wall": Color(0.55, 0.4, 0.32), "tint": Color(1.1, 1.0, 0.92)},
 	"station": {"floor": Color(0.45, 0.48, 0.52), "wall": Color(0.35, 0.38, 0.45), "tint": Color(0.95, 0.98, 1.05)},
 	"lighthouse": {"floor": Color(0.4, 0.42, 0.5), "wall": Color(0.3, 0.32, 0.42), "tint": Color(0.9, 0.95, 1.1)},
 }
@@ -64,6 +65,14 @@ func _configure_zones() -> void:
 		z.message = "热可可暖手，精力 +10"
 		z.position = Vector2(9 * TS, 5 * TS)
 		add_child(z)
+	elif id == "bakery":
+		var counter := preload("res://scenes/interact_zone.tscn").instantiate()
+		counter.prompt_text = "按 E 试吃南瓜派（+15 精力）"
+		counter.mode = "stamina_sip"
+		counter.stamina_restore = 15
+		counter.message = "刚出炉的南瓜派，精力 +15"
+		counter.position = Vector2(9 * TS, 5 * TS)
+		add_child(counter)
 	elif id == "farmhouse":
 		var stove := preload("res://scenes/interact_zone.tscn").instantiate()
 		stove.prompt_text = "按 E 灶台烹饪（自动选可做菜谱）"
@@ -145,6 +154,14 @@ func _build_room() -> void:
 			_prop("res://assets/processed/prop_chair.png", Vector2(12 * TS, 7 * TS))
 			_prop("res://assets/processed/prop_chair.png", Vector2(14 * TS, 7 * TS))
 			_prop("res://assets/processed/prop_lamp.png", Vector2(9 * TS, 8 * TS))
+		"bakery":
+			_prop("res://assets/processed/prop_counter.png", Vector2(9 * TS, 4 * TS))
+			_prop("res://assets/processed/prop_shelf.png", Vector2(4 * TS, 4 * TS))
+			_prop("res://assets/processed/prop_shelf.png", Vector2(14 * TS, 4 * TS))
+			_prop("res://assets/processed/prop_table.png", Vector2(6 * TS, 7 * TS))
+			_prop("res://assets/processed/prop_barrel.png", Vector2(12 * TS, 7 * TS))
+			_prop("res://assets/processed/item_pumpkin_pie.png", Vector2(9 * TS, 5 * TS))
+			_prop("res://assets/processed/prop_lamp.png", Vector2(15 * TS, 8 * TS))
 		"station":
 			_prop("res://assets/processed/prop_bench.png", Vector2(5 * TS, 5 * TS))
 			_prop("res://assets/processed/prop_bench.png", Vector2(9 * TS, 5 * TS))

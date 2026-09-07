@@ -307,3 +307,14 @@
 
 ### 店招构图进度
 - [x] P99 · P100 · P101 · P102  
+
+## 店面交互同步与有机地面（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P103 | 35m | 门/买卖/烟/面包房内景对齐店面 | 10_shop_door + interiors |
+| P104 | 30m | 路径/广场去砖纹 + 变体 dither | tileset + town golden |
+| P105 | 25m | golden + Critic + push | origin/main |
+
+### 店面交互进度
+- [x] P103 · P104 · P105  

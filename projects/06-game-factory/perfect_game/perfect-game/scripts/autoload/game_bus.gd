@@ -30,6 +30,7 @@ const INTERIORS := {
 	"barn": {"scene": "res://scenes/interiors/barn.tscn", "title": "谷仓工坊"},
 	"shop": {"scene": "res://scenes/interiors/shop.tscn", "title": "杂货店"},
 	"cafe": {"scene": "res://scenes/interiors/cafe.tscn", "title": "橡木咖啡馆"},
+	"bakery": {"scene": "res://scenes/interiors/bakery.tscn", "title": "橡木面包房"},
 	"station": {"scene": "res://scenes/interiors/station.tscn", "title": "火车站厅"},
 	"lighthouse": {"scene": "res://scenes/interiors/lighthouse.tscn", "title": "灯塔底层"},
 }

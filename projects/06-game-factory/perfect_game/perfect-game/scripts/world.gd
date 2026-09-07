@@ -26,6 +26,9 @@ const T_WE_N := 16
 const T_WE_S := 17
 const T_GRASS3 := 18
 const T_GRASS4 := 19
+const T_PATH2 := 20  # organic path variant (atlas extras)
+const T_DIRT2 := 21
+const T_PLAZA2 := 23
 
 # Zone rects from R5_WORLD_BLUEPRINT
 const ZONES := {
@@ -135,12 +138,14 @@ func _paint_plaza_soft(cx: int, cy: int, hw: int, hh: int) -> void:
 			var n2: float = float((x * 13 + y * 19) % 7) / 7.0
 			if edge < 0.55:
 				if n2 > 0.82:
-					_set_cell(_ground, x, y, T_DIRT)
+					_set_cell(_ground, x, y, T_DIRT2)
+				elif n > 0.7:
+					_set_cell(_ground, x, y, T_PLAZA2)
 				else:
 					_set_cell(_ground, x, y, T_PLAZA)
 			elif edge < 0.72:
 				if n > 0.35:
-					_set_cell(_ground, x, y, T_PLAZA)
+					_set_cell(_ground, x, y, T_PLAZA if ((x + y) % 2 == 0) else T_PLAZA2)
 				elif n > 0.15:
 					_set_cell(_ground, x, y, T_DIRT)
 				elif n2 > 0.5:
@@ -170,12 +175,12 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 		var y: int = int(lerpf(float(a.y), float(b.y), t) + wobble_y)
 		x = clampi(x, 2, W - 4)
 		y = clampi(y, 2, H - 4)
-		_set_cell(_ground, x, y, T_PATH)
-		_set_cell(_ground, x + 1, y, T_PATH)
+		_set_cell(_ground, x, y, T_PATH if (i % 3 != 0) else T_PATH2)
+		_set_cell(_ground, x + 1, y, T_PATH2 if (i % 2 == 0) else T_PATH)
 		if i % 3 != 1:
-			_set_cell(_ground, x, y + 1, T_PATH)
+			_set_cell(_ground, x, y + 1, T_PATH if (i % 5 != 0) else T_DIRT2)
 		if i % 4 == 0:
-			_set_cell(_ground, x + 1, y + 1, T_DIRT)
+			_set_cell(_ground, x + 1, y + 1, T_DIRT if (i % 8 == 0) else T_DIRT2)
 		# Organic fringe: dirt nubs + grass dither (less brick corridor)
 		var ox := (i % 5) - 2
 		var oy := ((i * 3) % 5) - 2
