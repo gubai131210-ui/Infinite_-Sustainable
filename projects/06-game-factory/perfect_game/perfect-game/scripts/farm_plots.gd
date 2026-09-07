@@ -168,6 +168,12 @@ func _refresh() -> void:
 		c.queue_free()
 	for c in _wet_overlay.get_children():
 		c.queue_free()
+	## Also clear any flattened crop sprites from prior refresh
+	var host := _crops.get_parent()
+	if host != null:
+		for c in host.get_children():
+			if c.has_meta("farm_crop_vis"):
+				c.queue_free()
 	for key in plots.keys():
 		var p: Dictionary = plots[key]
 		if bool(p.get("wet", false)):
@@ -185,6 +191,7 @@ func _refresh() -> void:
 		var root := Node2D.new()
 		root.position = Vector2(key.x * TS + TS * 0.5, key.y * TS + TS * 0.5)
 		root.set_meta("cell", key)
+		root.set_meta("farm_crop_vis", true)
 		root.z_index = 0
 		root.y_sort_enabled = true
 		var spr := Sprite2D.new()
@@ -193,7 +200,11 @@ func _refresh() -> void:
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.modulate = SeasonClock.crop_modulate()
 		root.add_child(spr)
-		_crops.add_child(root)
+		## Attach to Entities (sibling of Player) for correct y_sort — not under Crops@0,0
+		if host != null:
+			host.add_child(root)
+		else:
+			_crops.add_child(root)
 		_start_sway(root, stage)
 
 func _add_wet_tile(cell: Vector2i) -> void:
