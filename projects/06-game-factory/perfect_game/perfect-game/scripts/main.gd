@@ -144,6 +144,11 @@ func _capture_goldens(player: Node2D = null) -> void:
 	for s in shots:
 		player.global_position = s[1]
 		var is_overview := str(s[0]) == "00_overview"
+		var world := get_node_or_null("World")
+		if world != null:
+			var zm := world.get_node_or_null("ZoneMarkers")
+			if zm != null:
+				zm.visible = is_overview
 		if player_sprite != null:
 			player_sprite.visible = not is_overview
 		if is_overview:

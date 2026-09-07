@@ -163,10 +163,24 @@ func _farm() -> void:
 	## Deck/porch strip — Stardew farmhouse sits on raised wood, not floating
 	_spr("res://assets/processed/prop_doormat.png", Vector2(40, 91), 5, 1.2)
 	_spr("res://assets/processed/prop_doormat.png", Vector2(42, 91), 5, 1.15)
+	_spr("res://assets/processed/prop_doormat.png", Vector2(41, 92), 4, 1.0)
 	_spr("res://assets/processed/prop_bench.png", Vector2(36, 91), 5, 0.9)
 	_spr("res://assets/processed/prop_crate.png", Vector2(44, 91), 5, 0.95)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(34, 92), 4, 0.85)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(46, 93), 4, 0.8)
+	_spr("res://assets/processed/prop_barrel.png", Vector2(45, 92), 5, 0.9)
+	_spr("res://assets/processed/prop_hay.png", Vector2(33, 93), 4, 1.0)
+	_spr("res://assets/processed/prop_hay.png", Vector2(47, 94), 4, 0.95)
+	## Stardew clearing debris — rocks/logs/weeds dense on dirt apron
+	for p in [
+		Vector2(34, 92), Vector2(46, 93), Vector2(38, 94), Vector2(42, 95),
+		Vector2(30, 96), Vector2(50, 97), Vector2(36, 98), Vector2(44, 99),
+		Vector2(32, 100), Vector2(48, 101), Vector2(40, 102), Vector2(28, 98),
+	]:
+		_spr("res://assets/processed/prop_rocks.png", p, 4, 0.75 + float(int(p.x) % 3) * 0.08)
+	for p2 in [
+		Vector2(35, 95), Vector2(43, 96), Vector2(39, 100), Vector2(51, 99),
+		Vector2(29, 94), Vector2(47, 98),
+	]:
+		_spr("res://assets/processed/prop_path_tuft.png", p2, 3, 1.0)
 	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 8, 1.25, Vector2(56, 32))
 	_spr("res://assets/processed/prop_doormat.png", Vector2(28, 105), 5, 1.1)
 	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 8, 1.2, Vector2(52, 30))

@@ -1,20 +1,21 @@
-# 视觉 Critic — golden vs overview（2026-09-07 · P124–P126）
+# 视觉 Critic — golden vs overview（2026-09-07 · P127–P129）
 
 ## 结论
-更接近参考图：**部分是** — 床缘 nibble/protrude + SE/SW 角瓦 + tuft；远景仍偏「格网矩形床」。  
-动画：**Agent 已验** `hoe_down` frame=2 / `water_down` frame=2（freeze 冒烟，因 MCP 往返 > 挥动时长）；走路此前 `walk_down` frame 5。仍需用户 F5 手感。  
-itch 主图：**否**。
+更接近参考图：**是（院子层）** — 农舍/谷仓不规则土坪 blob + 蜿蜒路径 + 木桥瓦门廊台阶 + 碎屑密度；田垄仍为矩形（玩法需要）但外围 apron 已 blob。  
+区划大字标默认隐藏（仅 overview golden 显示）→ 农庄/店招帧更干净。  
+itch 主图：**仍否**（店招帧可读但未到「商店页直接当主图」）。
 
 ## 本轮证据
-- 畜栏 `(25–43)×(113–121)` meta clamp；路径 tuft/pebble
-- `grass_dirt` SE/SW 占 atlas 25/26；`_fringe_soft` 啃角+外凸
-- `smoke/18_hoe_anim.png` · `smoke/19_water_anim.png` · golden 全套重抓
+- `world._fill_dirt_blob` + 农舍/谷仓 apron；门廊 `T_BRIDGE`/`T_STAIRS`
+- `landmarks._farm` 岩石/干草/草丛碎屑
+- `ZoneMarkers.visible=false`（overview 捕获时再开）
+- `GOLDEN_CAPTURE_DONE` 全套重抓
 - Goal **不可 complete**
 
 ## 仍差
 1. 用户签字试玩 + itch URL  
-2. 土床轮廓仍需更接近星露谷不规则 blob（远景硬边）  
-3. 雨夜/海报级灯光与建筑木台嵌地  
+2. 田垄硬边仍可见；河岸/全图 autotile 未达星露谷  
+3. 海报级光照与建筑立面嵌地再抬一档  
 
 ## Goal
 **不可 complete**。

@@ -80,8 +80,9 @@ func _cache_water_cells() -> void:
 	for cell in _water.get_used_cells():
 		_water_cells.append(cell)
 func _spawn_zone_labels() -> void:
-	## Poster-scale placards (readable at overview zoom 0.34)
+	## Poster placards — hidden in normal play; golden overview toggles visible
 	var markers := $ZoneMarkers
+	markers.visible = false
 	var labels := {
 		"米勒农庄": Vector2(28, 90),
 		"橡木河": Vector2(16, 46),
@@ -99,6 +100,44 @@ func _spawn_zone_labels() -> void:
 		lab.add_theme_constant_override("outline_size", 10)
 		lab.scale = Vector2(2.8, 2.8)
 		markers.add_child(lab)
+
+func _fill_dirt_blob(cx: int, cy: int, hw: int, hh: int, till: bool = false) -> void:
+	## Stardew-like irregular dirt patch (noisy ellipse), optional tilled core
+	for y in range(cy - hh - 3, cy + hh + 4):
+		for x in range(cx - hw - 3, cx + hw + 4):
+			var dx: float = absf(float(x - cx)) / float(maxi(hw, 1))
+			var dy: float = absf(float(y - cy)) / float(maxi(hh, 1))
+			var edge: float = sqrt(dx * dx * 0.85 + dy * dy)
+			var n: float = float(absi(x * 17 + y * 31) % 11) / 11.0
+			var n2: float = float(absi(x * 13 + y * 19) % 7) / 7.0
+			var wave: float = 0.14 * sin(float(x) * 0.55 + float(y) * 0.31) + 0.1 * (n - 0.5)
+			var rim: float = 1.0 + wave
+			if edge < rim * 0.72:
+				if till and edge < rim * 0.55 and ((y + cy) % 2) == 0 and x > cx - hw + 1 and x < cx + hw - 1:
+					_set_cell(_ground, x, y, T_FARM)
+				elif n2 > 0.78:
+					_set_cell(_ground, x, y, T_DIRT2)
+				else:
+					_set_cell(_ground, x, y, T_DIRT)
+			elif edge < rim * 0.92:
+				## Soft grass↔dirt fringe band
+				var pick: int = absi(x * 7 + y * 11) % 5
+				if pick == 0:
+					_set_cell(_ground, x, y, T_GD_N if dy > dx else T_GD_E)
+				elif pick == 1:
+					_set_cell(_ground, x, y, T_GD_S if dy > dx else T_GD_W)
+				elif pick == 2:
+					_set_cell(_ground, x, y, T_DIRT2)
+				elif pick == 3:
+					_set_cell(_ground, x, y, T_GRASS3)
+				else:
+					_set_cell(_ground, x, y, T_GRASS4)
+			elif edge < rim * 1.05 and n > 0.55:
+				## Occasional dirt spit / grass pocket outside
+				if n2 > 0.7:
+					_set_cell(_ground, x, y, T_DIRT2)
+				else:
+					_set_cell(_ground, x, y, T_GRASS2)
 
 func _fringe_soft(bed: Rect2i) -> void:
 	## Stardew blob rim: nibble dirt→grass, protrude dirt into grass, GD seam tiles
@@ -313,30 +352,32 @@ func _paint_base() -> void:
 			continue
 		_fill_rect(_ground, Rect2i(x, 3, 2, 3), T_CLIFF)
 
-	# Z1 farm — rectangular crop beds + grass corridors (like reference), not one brown slab
+	# Z1 farm — Stardew hybrid: irregular dirt CLEARINGS + rectangular tilled beds
 	# Animal pen stays grass (south of barns)
+	## Farmhouse / barn dirt aprons (blob, not crop grid)
+	_fill_dirt_blob(40, 93, 15, 7, false)
+	_fill_dirt_blob(38, 104, 17, 6, false)
+	_fill_dirt_blob(28, 100, 8, 4, false)
+	## Soft path ribbons (noisy)
+	for y in range(76, 108):
+		var wob: int = int(1.6 * sin(float(y) * 0.33))
+		_set_cell(_ground, 30 + wob, y, T_PATH if (y % 3 != 0) else T_PATH2)
+		_set_cell(_ground, 31 + wob, y, T_PATH2 if (y % 4 == 0) else T_DIRT2)
+	for x in range(14, 60):
+		var wobx: int = int(1.3 * sin(float(x) * 0.38))
+		_set_cell(_ground, x, 88 + wobx, T_PATH if (x % 3 != 0) else T_DIRT2)
+	## Playable tilled beds (keep FarmPlots cells like 16,78 hoeable)
 	var farm_beds := [
 		Rect2i(14, 78, 16, 10), Rect2i(34, 78, 16, 10), Rect2i(52, 78, 12, 10),
 		Rect2i(14, 92, 16, 8), Rect2i(34, 92, 16, 8),
 	]
 	for bed in farm_beds:
 		_fill_rect(_ground, bed, T_DIRT)
-		# inner tilled rows
 		for row in range(0, bed.size.y - 1, 2):
 			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
-		## Stardew-like soft fringe: grass/dirt mixed rim (not hard rectangle)
 		_fringe_soft(bed)
-		## Re-stamp tilled rows so fringe nibbles never eat hoeable farmland
 		for row in range(0, bed.size.y - 1, 2):
 			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
-	# Path strips between beds
-	_fill_rect(_ground, Rect2i(30, 78, 4, 22), T_PATH)
-	_fill_rect(_ground, Rect2i(14, 88, 50, 3), T_PATH)
-	# Yard around farmhouse / barns — light dirt patches, not wall-to-wall soil
-	for y in range(96, 110):
-		for x in range(22, 56):
-			if ((x + y * 3) % 5) != 0:
-				_set_cell(_ground, x, y, T_DIRT)
 	# Animal pen floor stays mostly grass (south of barns)
 	_fill_rect(_ground, Rect2i(24, 112, 20, 10), T_GRASS2)
 
@@ -594,6 +635,17 @@ func _paint_building_footings() -> void:
 				else:
 					_set_cell(_ground, xx, yy, T_DIRT2)
 		_fringe_soft(pad)
+	## Farmhouse raised wood porch (bridge tiles as deck planks + step)
+	for xx in range(37, 46):
+		_set_cell(_ground, xx, 90, T_BRIDGE)
+		_set_cell(_ground, xx, 91, T_BRIDGE)
+		if (xx % 2) == 0:
+			_set_cell(_ground, xx, 92, T_PATH)
+		else:
+			_set_cell(_ground, xx, 92, T_DIRT2)
+	_set_cell(_ground, 40, 92, T_STAIRS)
+	_set_cell(_ground, 41, 92, T_STAIRS)
+	_set_cell(_ground, 42, 92, T_STAIRS)
 
 func _build_water_collisions() -> void:
 	for c in _colliders.get_children():

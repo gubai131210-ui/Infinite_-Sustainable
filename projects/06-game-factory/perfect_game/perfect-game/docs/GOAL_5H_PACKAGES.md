@@ -402,4 +402,15 @@
 | P126 | 25m | 重抓 golden + Critic + push；催用户验腿/工具帧 | origin/main |
 
 ### 围栏工具进度
-- [x] P124 · [x] P125 · [x] P126
+- [x] P124 · [x] P125 · [x] P126  
+
+## 星露谷院子 blob + 木台嵌地（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P127 | 40m | 农舍/谷仓不规则土坪 blob + 蜿蜒路径 | 01_farm vs stardew ref |
+| P128 | 30m | 院子碎屑密度 + 木桥瓦门廊台阶；区标默认隐藏 | landmarks + footing |
+| P129 | 25m | golden + Critic + push；催用户签字 | origin/main |
+
+### 院子 blob 进度
+- [x] P127 · [x] P128 · [x] P129
