@@ -271,3 +271,15 @@
 
 ### 松海瀑嵌入进度
 - [x] P87 · P88 · P89 · P90  
+
+## 松冠批处理与河岸（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P91 | 35m | 全宽松冠条替换 2.7k sprites | 启动/overview |
+| P92 | 20m | pine_b/c 变体点缀 | N accents |
+| P93 | 25m | 池口软岸 + golden | waterfall |
+| P94 | 20m | Critic + push | origin/main |
+
+### 松冠批处理进度
+- [x] P91 · P92 · P93 · P94  

@@ -59,11 +59,14 @@ func _place() -> void:
 	_lake()
 
 func _mountains() -> void:
-	## Tall seamless skyline only — no extra cloud/cliff stack (avoids fake seams).
+	## Tall seamless skyline + batched pine canopy strip (perf: not 2k tree sprites).
 	_spr("res://assets/processed/prop_skyline_wide.png", Vector2(96, 0), 1, 1.0, Vector2.ZERO, Color(1, 1, 1, 1), false)
-	# Landmark pines away from waterfall bowl
-	for p in [Vector2(6, 12), Vector2(50, 11), Vector2(126, 12), Vector2(186, 11)]:
-		_spr("res://assets/processed/tree_pine.png", p, 4, 0.85)
+	# Overlapping canopy masses under skyline (waterfall window baked transparent)
+	_spr("res://assets/processed/prop_pine_canopy.png", Vector2(96, 16), 3, 1.0, Vector2.ZERO, Color(1, 1, 1, 1), false)
+	_spr("res://assets/processed/prop_pine_canopy.png", Vector2(96, 20), 4, 1.0, Vector2.ZERO, Color(0.85, 0.95, 0.88, 1), false)
+	# Sparse landmark accent pines only
+	for p in [Vector2(6, 14), Vector2(48, 13), Vector2(120, 14), Vector2(186, 13)]:
+		_spr("res://assets/processed/tree_pine.png", p, 5, 0.95)
 
 func _ruins() -> void:
 	## Irregular mossy arches woven with canopy (break flat grid rows)

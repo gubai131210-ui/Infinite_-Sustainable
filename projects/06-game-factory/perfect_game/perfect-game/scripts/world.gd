@@ -252,12 +252,23 @@ func _paint_base() -> void:
 				_set_cell(_ground, x, y, T_CLIFF)
 			elif bowl < 52.0 and ((x * 3 + y) % 5) != 0:
 				_set_cell(_ground, x, y, T_CLIFF)
-	# Extend pool mouth into river corridor
+	# Extend pool mouth into river + soft irregular banks (no hard dirt ladder)
 	for x in range(19, 29):
-		for y in range(20, 27):
+		for y in range(20, 28):
 			_set_cell(_water, x, y, T_WATER)
 			_set_cell(_ground, x, y, T_WATER)
-	for p in [Vector2i(17, 23), Vector2i(18, 24), Vector2i(29, 23), Vector2i(30, 24)]:
+	# Soft bank fringe — mix cliff / water-edge / grass, irregular
+	for x in range(16, 32):
+		var edge_y := 27 + ((x * 3) % 3) - 1
+		if (x + edge_y) % 4 == 0:
+			_set_cell(_ground, x, edge_y, T_CLIFF)
+		elif (x * 2 + edge_y) % 3 == 0:
+			_set_cell(_ground, x, edge_y, T_WE_N)
+		else:
+			_set_cell(_ground, x, edge_y, T_GRASS3 if (x % 2) == 0 else T_DIRT)
+		if (x % 3) == 0:
+			_set_cell(_ground, x, edge_y + 1, T_GRASS2)
+	for p in [Vector2i(16, 24), Vector2i(17, 25), Vector2i(30, 24), Vector2i(31, 25), Vector2i(18, 26), Vector2i(29, 26)]:
 		_set_cell(_ground, p.x, p.y, T_CLIFF)
 	# Bridges
 	for x in range(24, 34):

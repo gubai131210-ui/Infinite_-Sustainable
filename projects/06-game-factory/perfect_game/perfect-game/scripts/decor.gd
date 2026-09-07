@@ -173,32 +173,20 @@ func _forest_rim() -> void:
 			if ((x + y * 3) % 4) == 0:
 				continue
 			_spr("res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 2), y), 5)
-	# N pine SEA — overlapping larger pines (not a sparse shelf). Narrow waterfall gap only.
-	for x in range(1, 191, 1):
-		if x >= 18 and x <= 32:
-			continue  # narrow waterfall sky corridor
-		if x >= 132 and x <= 178 and (x % 4) != 0:
-			continue  # keep station tracks readable
-		for y in range(12, 30, 1):
-			# High density: only rare skips
-			if ((x * 5 + y * 7) % 13) == 0:
-				continue
-			var sc := 1.15 + float((x + y) % 4) * 0.12
-			# Almost all pines for dark continuous sea
-			if ((x + y) % 7) == 0:
-				_spr("res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 3) * 0.2, y + (x % 2) * 0.15), 5, false, sc)
-			else:
-				_spr("res://assets/processed/tree_pine.png", Vector2(x + (y % 3) * 0.25, y + (x % 2) * 0.2), 5, false, sc)
-	# Second overlapping pass for mass (offset half-step)
-	for x in range(2, 190, 2):
+	# N canopy: batched strip lives in landmarks — only sparse accent pines here (variants)
+	for x in range(4, 188, 5):
 		if x >= 18 and x <= 32:
 			continue
-		if x >= 132 and x <= 178:
+		if x >= 132 and x <= 178 and (x % 3) != 0:
 			continue
-		for y in range(13, 29, 2):
-			if ((x + y * 3) % 5) == 0:
-				continue
-			_spr("res://assets/processed/tree_pine.png", Vector2(x + 0.55, y + 0.4), 6, false, 1.35)
+		var y := 22 + (x % 5)
+		var path := "res://assets/processed/tree_pine.png"
+		match (x + y) % 3:
+			1:
+				path = "res://assets/processed/tree_pine_b.png"
+			2:
+				path = "res://assets/processed/tree_pine_c.png"
+		_spr(path, Vector2(x + 0.3, y), 5, false, 1.2 + float(x % 3) * 0.08)
 	# Soft mid-map irregular groves (fill open grass sea between rim and town)
 	for gx in range(42, 120, 4):
 		for gy in range(28, 68, 4):
