@@ -1,20 +1,20 @@
-# 视觉 Critic — golden vs overview（2026-09-07 · P161）
+# 视觉 Critic — golden vs overview（2026-09-07 · P162）
 
 ## 结论
-更接近参考图：**部分是（树冠裂带 + 路缘 fringe + 软湖岸）** — lobe 簇树冠、GD/spit 路肩、湖外圈沙缘 dither。  
-itch 主图：**仍否**（参考海报密度/接缝仍不足；需用户试玩签字 + itch URL）。
+更接近参考图：**部分是（软接缝纪律 + 镇区密度）** — PATH 免 GD 棋盘；湖岸陆地禁 WE；民宅环加密接地。  
+itch 主图：**仍否**（近景岸/田仍偏硬；海报密度距参考图仍差；需用户试玩签字 + itch URL）。
 
 ## 本轮证据
-- REGION：`docs/regions/P161_CANOPY_SHORE.md`
-- `tools/gen_canopy_p161.py` → `prop_pine_canopy` / `prop_meadow_canopy`
-- `landmarks.gd` 错位叠层；`world.gd` soften+spit + 湖岸 dither
-- golden 全套 + `GOLDEN_CAPTURE_DONE`
+- REGION：`docs/regions/P162_TOWN_SHORE.md`
+- `world.gd`：`_stitch_dirt_seams` 仅 DIRT/FARM；shore land 无 WE；住宅 footing
+- `landmarks.gd`：+6 houses
+- golden 全套 + `GOLDEN_CAPTURE_DONE` · 0 errors
 - Goal **不可 complete**
 
 ## 仍差
 1. 用户签字试玩（`docs/PLAYTEST_EVIDENCE.md`）+ itch URL  
 2. Critic 商店页主图仍否  
-3. 近景岸线/田块 fringe 仍硬；镇区建筑密度与参考图仍有差距  
+3. 近景沙↔水 / 田↔草 fringe 仍需 tileset 级软边；广场对称感仍偏强  
 
 ## Goal
 **不可 complete**。

@@ -267,7 +267,7 @@ func _town() -> void:
 	# Shade trees in residential yards (overview density — not plaza center)
 	for tp in [Vector2(58, 44), Vector2(122, 44), Vector2(50, 62), Vector2(130, 62), Vector2(70, 82), Vector2(110, 82)]:
 		_spr("res://assets/processed/tree_%d.png" % (int(tp.x + tp.y) % 3), tp, 6, 1.15)
-	# Houses ring — keep clear of hero facade footprints
+	# Houses ring — denser residential clusters (ref overview; keep clear of hero facades)
 	var houses := [
 		[Vector2(54, 40), "red"],
 		[Vector2(54, 58), "thatch"],
@@ -281,6 +281,13 @@ func _town() -> void:
 		[Vector2(118, 34), "thatch"],
 		[Vector2(66, 88), "green"],
 		[Vector2(114, 88), "red"],
+		## P162 — fill west/east residential gaps toward ref density
+		[Vector2(42, 44), "thatch"],
+		[Vector2(138, 44), "green"],
+		[Vector2(58, 70), "red"],
+		[Vector2(122, 70), "slate"],
+		[Vector2(80, 86), "thatch"],
+		[Vector2(100, 86), "green"],
 	]
 	for h in houses:
 		var path := "res://assets/processed/prop_house_redroof.png"

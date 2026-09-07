@@ -495,7 +495,7 @@ func _paint_base() -> void:
 		_water.erase_cell(Vector2i(x, 63))
 
 	# Z3 plaza — soft oval core + dither fringe (less brick rectangle)
-	_paint_plaza_soft(90, 50, 20, 14)
+	_paint_plaza_soft(90, 52, 22, 16)
 	for x in range(70, 114):
 		if (x * 3 + 5) % 7 != 0:
 			_set_cell(_ground, x, 35 + ((x * 2) % 2), T_DIRT if (x % 3 == 0) else T_PLAZA)
@@ -823,27 +823,26 @@ func _stitch_water_shores() -> void:
 					we = T_WE_N
 				edge_water.append([x, y, we])
 			if n_land:
-				land_fringe.append([x, y - 1, T_SAND if (absi(x + y) % 2) == 0 else T_WE_S])
+				land_fringe.append([x, y - 1, T_SAND if (absi(x + y) % 3) != 0 else T_GRASS3])
 			if s_land:
-				land_fringe.append([x, y + 1, T_SAND if (absi(x * 2 + y) % 2) == 0 else T_WE_N])
+				land_fringe.append([x, y + 1, T_SAND if (absi(x * 2 + y) % 3) != 0 else T_GRASS4])
 			if w_land:
-				land_fringe.append([x - 1, y, T_SAND if (absi(x + y * 2) % 3) != 0 else T_WE_E])
+				land_fringe.append([x - 1, y, T_SAND if (absi(x + y * 2) % 4) != 0 else T_DIRT2])
 			if e_land:
-				land_fringe.append([x + 1, y, T_SAND if (absi(x * 3 + y) % 3) != 0 else T_WE_W])
+				land_fringe.append([x + 1, y, T_SAND if (absi(x * 3 + y) % 4) != 0 else T_DIRT2])
 			for d in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
 				var nx: int = x + d.x
 				var ny: int = y + d.y
 				if not _is_shoreable(_cell_tid(nx, ny)):
 					continue
 				var n: int = absi(nx * 19 + ny * 23) % 5
-				## Prefer sand/grass speckles over WE on land (less jagged hero shores)
+				## Land ring: sand/grass/dirt only — never WE (P162; WE stays on water layer)
 				if n <= 2:
 					land_fringe.append([nx, ny, T_SAND])
 				elif n == 3:
 					land_fringe.append([nx, ny, T_GRASS3])
 				else:
 					land_fringe.append([nx, ny, T_DIRT2])
-					land_fringe.append([nx, ny, T_WE_S if d.y < 0 else T_WE_N])
 	for item in edge_water:
 		var ex: int = int(item[0])
 		var ey: int = int(item[1])
@@ -854,13 +853,12 @@ func _stitch_water_shores() -> void:
 		_set_cell(_ground, int(item[0]), int(item[1]), int(item[2]))
 
 func _stitch_dirt_seams() -> void:
-	## For each dirtish cell, if neighbor is grass, place transition on the GRASS side
-	## (keeps farmland interior intact; seams read as soft like Stardew)
+	## Farm/dirt beds only — PATH uses soften_path_edges (avoid checkerboard GD spam)
 	var to_set: Array = []
 	for y in range(H):
 		for x in range(W):
 			var tid: int = _cell_tid(x, y)
-			if not _is_dirtish(tid):
+			if tid != T_DIRT and tid != T_DIRT2 and tid != T_FARM:
 				continue
 			# north neighbor grass → put GD_S on that grass cell (dirt below jag)
 			if _is_grassish(_cell_tid(x, y - 1)):
@@ -871,14 +869,14 @@ func _stitch_dirt_seams() -> void:
 				to_set.append([x - 1, y, T_GD_E])
 			if _is_grassish(_cell_tid(x + 1, y)):
 				to_set.append([x + 1, y, T_GD_W])
-			# outer corners on grass diagonal
-			if _is_grassish(_cell_tid(x - 1, y - 1)):
+			# outer corners on grass diagonal (thinned — less brick frame)
+			if _is_grassish(_cell_tid(x - 1, y - 1)) and (absi(x * 7 + y) % 3) == 0:
 				to_set.append([x - 1, y - 1, T_GD_NE])
-			if _is_grassish(_cell_tid(x + 1, y - 1)):
+			if _is_grassish(_cell_tid(x + 1, y - 1)) and (absi(x * 11 + y) % 3) == 0:
 				to_set.append([x + 1, y - 1, T_GD_NW])
-			if _is_grassish(_cell_tid(x - 1, y + 1)):
+			if _is_grassish(_cell_tid(x - 1, y + 1)) and (absi(x + y * 13) % 3) == 0:
 				to_set.append([x - 1, y + 1, T_GD_SE])
-			if _is_grassish(_cell_tid(x + 1, y + 1)):
+			if _is_grassish(_cell_tid(x + 1, y + 1)) and (absi(x * 17 + y * 3) % 3) == 0:
 				to_set.append([x + 1, y + 1, T_GD_SW])
 	for item in to_set:
 		_set_cell(_ground, int(item[0]), int(item[1]), int(item[2]))
@@ -894,6 +892,12 @@ func _paint_building_footings() -> void:
 		Rect2i(86, 64, 10, 3),   # bakery
 		Rect2i(148, 19, 12, 4),  # station hall apron only (do not remash full yard/rails)
 		Rect2i(170, 102, 8, 4),  # lighthouse
+		## Residential ring aprons (P162 — embed house yards)
+		Rect2i(52, 42, 6, 3), Rect2i(52, 60, 6, 3), Rect2i(124, 42, 6, 3), Rect2i(124, 60, 6, 3),
+		Rect2i(72, 78, 6, 3), Rect2i(104, 78, 6, 3), Rect2i(46, 52, 6, 3), Rect2i(130, 52, 6, 3),
+		Rect2i(60, 36, 6, 3), Rect2i(116, 36, 6, 3), Rect2i(64, 90, 6, 3), Rect2i(112, 90, 6, 3),
+		Rect2i(40, 46, 6, 3), Rect2i(136, 46, 6, 3), Rect2i(56, 72, 6, 3), Rect2i(120, 72, 6, 3),
+		Rect2i(78, 88, 6, 3), Rect2i(98, 88, 6, 3),
 	]
 	for pad in pads:
 		for yy in range(pad.position.y, pad.position.y + pad.size.y):
