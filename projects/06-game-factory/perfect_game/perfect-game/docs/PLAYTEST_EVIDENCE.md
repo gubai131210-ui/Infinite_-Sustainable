@@ -14,11 +14,19 @@
 
 用户需在中文路径本机 **双击 exe 或编辑器 F5** 做最终冒烟（Agent 不代替该步宣称“可玩可发布”）。
 
-## MCP 冒烟（Agent）
+## MCP 冒烟（Agent · 2026-09-07）
 
-| 日期 | 结果 |
+| 步骤 | 结果 |
 |------|------|
-| 2026-09-07（P109–P114） | `run_scene` → **0** script error · `GOLDEN_CAPTURE_DONE` |
+| `run_scene` | 0 script error |
+| 杂货店进门 → 买种子礼包 | 金 **120→90**；`seed_radish` count≥3；截图 `smoke/11_shop_interior.png` |
+| 咖啡馆进门 → 热可可 | 金 **90→80**；截图 `smoke/12_cafe_interior.png` |
+| 面包房进门 → 南瓜派 | 金 **80→65**；标题「橡木面包房」；截图 `smoke/13_bakery_interior.png` |
+| 瀑布构图 | 截图 `smoke/14_waterfall.png` |
+| 镇店招 | 截图 `smoke/15_storefronts.png` |
+| Golden 全套 | `GOLDEN_CAPTURE_DONE`（含 `07` zoom 1.55） |
+
+> Agent MCP 冒烟 **不能替代** 用户签字。中文路径本机手感 / 输入 / 音频需你确认。
 
 ## Golden
 
