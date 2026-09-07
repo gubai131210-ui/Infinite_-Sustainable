@@ -140,7 +140,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 		if str(s[0]) == "00_overview":
 			cam.zoom = Vector2(0.34, 0.34)
 		elif str(s[0]) == "07_waterfall":
-			cam.zoom = Vector2(1.15, 1.15)
+			cam.zoom = Vector2(1.55, 1.55)
 		elif str(s[0]) == "01_farm":
 			cam.zoom = Vector2(1.4, 1.4)
 		elif str(s[0]) == "03_town":
