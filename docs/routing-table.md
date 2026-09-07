@@ -38,6 +38,7 @@
 | 场景 | Playbook |
 |------|----------|
 | Godot 画面/分层/移动探针 | PB-Game-Visual |
+| Oakhaven 世界驱动地图（防拼接割裂） | PB-Oakhaven-World |
 | 内容工厂图文 | PB-Content |
 | 工控/PLC | PB-Industrial |
 | 学习新技术 | PB-Learn |

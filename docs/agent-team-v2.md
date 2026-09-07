@@ -52,6 +52,7 @@ Conductor → Scout/Researcher → Planner → Builder(+Asset/Game)
 | ID | 路径 |
 |----|------|
 | PB-Game-Visual | [playbooks/PB-Game-Visual.md](playbooks/PB-Game-Visual.md) |
+| PB-Oakhaven-World | [playbooks/PB-Oakhaven-World.md](playbooks/PB-Oakhaven-World.md) |
 | PB-Content | [playbooks/PB-Content.md](playbooks/PB-Content.md) |
 | PB-Industrial | [playbooks/PB-Industrial.md](playbooks/PB-Industrial.md) |
 | PB-Learn | [playbooks/PB-Learn.md](playbooks/PB-Learn.md) |
