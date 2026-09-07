@@ -116,10 +116,10 @@ func _ruins() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(82, 18), 6, 0.9)
 
 func _river() -> void:
-	## Landform bowl seated on amphitheater tiles + flanking pine sea edge
+	## Amphitheater bowl above canopy/skyline (non-y-sort) so hero shot reads falls
 	for p in [Vector2(9, 15), Vector2(13, 18), Vector2(35, 15), Vector2(39, 18), Vector2(11, 21), Vector2(37, 21)]:
 		_spr("res://assets/processed/tree_pine.png", p, 5, 1.2)
-	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 14), 6, 1.75, Vector2(48, 40))
+	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 18), 8, 1.05, Vector2(52, 44), Color(1, 1, 1, 1), false)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(14, 24), 8, 1.3)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(34, 24), 8, 1.25)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(20, 26), 8, 1.1)
@@ -127,10 +127,10 @@ func _river() -> void:
 	for p in [Vector2(8, 16), Vector2(12, 20), Vector2(36, 16), Vector2(40, 20), Vector2(10, 24), Vector2(38, 24)]:
 		var pine := "res://assets/processed/tree_pine_b.png" if int(p.x) % 2 == 0 else "res://assets/processed/tree_pine_c.png"
 		_spr(pine, p, 5, 1.15)
-	for p in [Vector2(14, 25), Vector2(34, 25)]:
-		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 10, 1.1)
-	_spr("res://assets/processed/bush.png", Vector2(19, 25), 9, 1.0)
-	_spr("res://assets/processed/bush.png", Vector2(29, 25), 9, 1.0)
+	for p in [Vector2(14, 26), Vector2(34, 26)]:
+		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 10, 1.05)
+	_spr("res://assets/processed/bush.png", Vector2(19, 26), 9, 1.0)
+	_spr("res://assets/processed/bush.png", Vector2(29, 26), 9, 1.0)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)
@@ -306,22 +306,22 @@ func _town() -> void:
 		_spr("res://assets/processed/prop_path_tuft.png", p2 + Vector2(1, 0), 2, 0.85)
 
 func _station() -> void:
-	# Upgraded hall + canopy + crawling train; collision shorter so door is approachable
-	_spr("res://assets/processed/prop_station.png", Vector2(148, 16), 8, 1.1, Vector2(100, 28))
-	_spr("res://assets/processed/prop_canopy.png", Vector2(156, 20), 7, 1.2)
-	_train = _spr("res://assets/processed/prop_train.png", Vector2(160, 22), 7, 1.25, Vector2.ZERO)
+	# Hall + canopy + train south of pine strip (station window in canopy)
+	_spr("res://assets/processed/prop_station.png", Vector2(152, 20), 0, 1.05, Vector2(96, 26))
+	_spr("res://assets/processed/prop_canopy.png", Vector2(158, 24), 0, 1.15)
+	_train = _spr("res://assets/processed/prop_train.png", Vector2(162, 26), 0, 1.2, Vector2.ZERO)
 	if _train != null:
 		_train_home = _train.position
 		_attach_train_steam(_train)
-	_spr("res://assets/processed/prop_tunnel.png", Vector2(184, 16), 9, 1.3, Vector2(36, 32))
-	_spr("res://assets/processed/prop_crate.png", Vector2(136, 18), 5)
-	_spr("res://assets/processed/prop_crate.png", Vector2(140, 20), 5)
-	_spr("res://assets/processed/prop_barrel.png", Vector2(142, 18), 5)
-	_spr("res://assets/processed/prop_lamp.png", Vector2(146, 14), 5)
-	_spr("res://assets/processed/prop_lamp.png", Vector2(166, 14), 5)
-	_spr("res://assets/processed/prop_signboard.png", Vector2(150, 10), 8)
-	for x in range(128, 178, 3):
-		_spr("res://assets/processed/prop_fence.png", Vector2(x, 26), 4)
+	_spr("res://assets/processed/prop_tunnel.png", Vector2(186, 18), 0, 1.25, Vector2(32, 28))
+	_spr("res://assets/processed/prop_crate.png", Vector2(140, 22), 0)
+	_spr("res://assets/processed/prop_crate.png", Vector2(144, 24), 0)
+	_spr("res://assets/processed/prop_barrel.png", Vector2(146, 22), 0)
+	_spr("res://assets/processed/prop_lamp.png", Vector2(148, 18), 0)
+	_spr("res://assets/processed/prop_lamp.png", Vector2(168, 18), 0)
+	_spr("res://assets/processed/prop_signboard.png", Vector2(154, 14), 0)
+	for x in range(132, 180, 2):
+		_spr("res://assets/processed/prop_fence.png", Vector2(x, 30), 0)
 
 func _attach_train_steam(train: Node2D) -> void:
 	var p := CPUParticles2D.new()

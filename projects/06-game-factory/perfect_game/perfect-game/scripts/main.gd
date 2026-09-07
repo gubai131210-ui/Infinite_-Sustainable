@@ -134,11 +134,11 @@ func _capture_goldens(player: Node2D = null) -> void:
 	var shots := [
 		["01_farm", Vector2(38 * 16, 100 * 16)],
 		["02_river", Vector2(28 * 16, 28 * 16)],
-		["07_waterfall", Vector2(24 * 16, 18 * 16)],
+		["07_waterfall", Vector2(24 * 16, 17 * 16)],
 		["03_town", Vector2(90 * 16, 58 * 16)],
 		["09_storefronts", Vector2(90 * 16, 56 * 16)],
 		["10_shop_door", Vector2(78 * 16, 52 * 16)],
-		["04_station", Vector2(155 * 16, 18 * 16)],
+		["04_station", Vector2(156 * 16, 24 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(120 * 16, 112 * 16)],
 		["00_overview", Vector2(96 * 16, 58 * 16)],
@@ -156,11 +156,15 @@ func _capture_goldens(player: Node2D = null) -> void:
 			if zm != null:
 				zm.visible = is_overview
 		if player_sprite != null:
-			player_sprite.visible = not is_overview
+			## Hide player on poster hero frames (overview + waterfall + station)
+			var hide_player := is_overview or str(s[0]) in ["07_waterfall", "04_station"]
+			player_sprite.visible = not hide_player
 		if is_overview:
 			cam.zoom = Vector2(0.30, 0.30)
 		elif str(s[0]) == "07_waterfall":
-			cam.zoom = Vector2(1.55, 1.55)
+			cam.zoom = Vector2(1.05, 1.05)
+		elif str(s[0]) == "04_station":
+			cam.zoom = Vector2(1.15, 1.15)
 		elif str(s[0]) == "01_farm":
 			cam.zoom = Vector2(1.4, 1.4)
 		elif str(s[0]) == "03_town":

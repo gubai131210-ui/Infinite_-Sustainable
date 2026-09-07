@@ -491,3 +491,14 @@
 
 ### 民宅农舍进度
 - [x] P148 · [x] P149 · [x] P150
+
+## 瀑布/车站英雄镜头（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P151 | 45m | 松冠站/瀑开窗 + skyline notch + 瀑碗抬层 | prop_pine_canopy / skyline / waterfall_bowl |
+| P152 | 30m | 站厅+火车出冠；交互点南移 | 04_station + landmarks._station |
+| P153 | 25m | golden + Critic + push | 07_waterfall 瀑入画 · origin/main |
+
+### 瀑布车站进度
+- [x] P151 · [x] P152 · [x] P153

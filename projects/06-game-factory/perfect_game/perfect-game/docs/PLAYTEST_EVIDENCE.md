@@ -35,6 +35,9 @@
 | 院子 blob / 门廊 | P127–P129：农舍 apron blob + bridge 木台 + 碎屑；区标默认隐藏；golden 再抓 |
 | Overview 对齐 | P130–P132：畜栏泥土 + 湖南田 + 路径 soften；farm/lake 相机重取景 |
 | 立面 + y-sort | P133–P135：barn/silo 重绘；Player→Entities；树/NPC 同层排序 |
+| 镇店招 | P139–P141：店招加深 + 广场密度 |
+| Overview 密度 | P142–P144：软草 + 加密；取景含四区标 |
+| 树冠 + NPC | P145–P147：meadow canopy 条带；NPC 脚影/步幅；smoke/20_npc_life |
 
 > Agent MCP 冒烟 **不能替代** 用户签字。中文路径本机手感 / 输入 / 音频需你确认。
 

@@ -753,7 +753,7 @@ func _paint_building_footings() -> void:
 		Rect2i(74, 52, 10, 3),   # shop
 		Rect2i(98, 52, 10, 3),   # cafe
 		Rect2i(86, 64, 10, 3),   # bakery
-		Rect2i(144, 18, 14, 4),  # station
+		Rect2i(148, 22, 14, 4),  # station
 		Rect2i(170, 102, 8, 4),  # lighthouse
 	]
 	for pad in pads:

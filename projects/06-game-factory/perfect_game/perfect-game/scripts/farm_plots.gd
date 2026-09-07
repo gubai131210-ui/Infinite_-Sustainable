@@ -200,7 +200,7 @@ func _refresh() -> void:
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.modulate = SeasonClock.crop_modulate()
 		root.add_child(spr)
-		## Attach to Entities (sibling of Player) for correct y_sort — not under Crops@0,0
+		## Attach to Entities (sibling of Player) for correct y_sort
 		if host != null:
 			host.add_child(root)
 		else:

@@ -480,7 +480,7 @@ func _door_and_chest() -> void:
 		{"id": "shop", "prompt": "按 E 进入杂货店", "pos": Vector2(78, 51)},
 		{"id": "cafe", "prompt": "按 E 进入咖啡馆", "pos": Vector2(102, 51)},
 		{"id": "bakery", "prompt": "按 E 进入面包房", "pos": Vector2(90, 63)},
-		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(148, 18)},
+		{"id": "station", "prompt": "按 E 进入火车站厅", "pos": Vector2(152, 22)},
 		{"id": "lighthouse", "prompt": "按 E 进入灯塔", "pos": Vector2(174, 100)},
 	]
 	for d in doors:
@@ -509,7 +509,7 @@ func _door_and_chest() -> void:
 	var signs := [
 		{"t": "米勒农庄", "pos": Vector2(42, 76)},
 		{"t": "橡木河", "pos": Vector2(34, 48)},
-		{"t": "橡木火车站", "pos": Vector2(150, 10)},
+		{"t": "橡木火车站", "pos": Vector2(154, 14)},
 		{"t": "回声湖", "pos": Vector2(162, 96)},
 	]
 	for s in signs:
@@ -535,7 +535,7 @@ func _door_and_chest() -> void:
 	fall.quest_step_id = "visit_waterfall"
 	fall.speaker = "瀑布回声"
 	fall.message = "水雾扑面。耳边有人低语：\n「若你听见瀑布的回声，就去灯塔看一眼灯火。」"
-	fall.position = Vector2(24, 20) * TS
+	fall.position = Vector2(24, 18) * TS
 	add_child(fall)
 	var stall := preload("res://scenes/interact_zone.tscn").instantiate()
 	stall.prompt_text = "按 E 看看摊位"
@@ -556,7 +556,7 @@ func _door_and_chest() -> void:
 	add_child(buy)
 	# Quest visit triggers (轻松日常打卡)
 	_quest_zone("visit_town", "镇中心", Vector2(90, 56))
-	_quest_zone("visit_station", "火车站", Vector2(150, 18))
+	_quest_zone("visit_station", "火车站", Vector2(154, 22))
 	_quest_zone("visit_lighthouse", "灯塔", Vector2(174, 102))
 	var fish := preload("res://scenes/interact_zone.tscn").instantiate()
 	fish.prompt_text = "按 E 钓鱼"
@@ -610,8 +610,9 @@ func _ambient() -> void:
 		_spawn_smoke(origin * TS)
 	_spawn_ripples(Vector2(155, 108) * TS)
 	_spawn_ripples(Vector2(28, 50) * TS)
+	_spawn_waterfall_mist(Vector2(24, 16) * TS)
 	_spawn_waterfall_mist(Vector2(24, 20) * TS)
-	_spawn_waterfall_mist(Vector2(24, 24) * TS)
+	_spawn_waterfall_mist(Vector2(22, 18) * TS)
 	_sway_trees()
 
 func _spawn_smoke(at: Vector2) -> void:
