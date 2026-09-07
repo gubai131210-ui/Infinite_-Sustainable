@@ -101,9 +101,9 @@ func _river() -> void:
 	## Landform bowl seated on amphitheater tiles + flanking pine sea edge
 	for p in [Vector2(9, 15), Vector2(13, 18), Vector2(35, 15), Vector2(39, 18), Vector2(11, 21), Vector2(37, 21)]:
 		_spr("res://assets/processed/tree_pine.png", p, 5, 1.2)
-	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 13), 6, 1.35, Vector2(64, 80))
-	_spr("res://assets/processed/prop_rocks.png", Vector2(17, 22), 8, 1.15)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(31, 22), 8, 1.1)
+	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 12), 6, 1.4, Vector2(72, 88))
+	_spr("res://assets/processed/prop_rocks.png", Vector2(16, 22), 8, 1.2)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(32, 22), 8, 1.15)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(21, 24), 8, 1.0)
 	_spr("res://assets/processed/prop_rocks.png", Vector2(27, 24), 8, 1.0)
 	for p in [Vector2(14, 25), Vector2(34, 25)]:
@@ -169,10 +169,10 @@ func _town() -> void:
 	_spr("res://assets/processed/prop_stall.png", Vector2(102, 56), 6, 1.2, Vector2(32, 20))
 	for p in [Vector2(84, 46), Vector2(96, 46), Vector2(84, 52), Vector2(96, 52)]:
 		_spr("res://assets/processed/prop_planter.png", p, 5, 1.0)
-	# Hero shop / cafe / bakery
-	_spr("res://assets/processed/prop_shop_awning.png", Vector2(70, 28), 9, 1.55, Vector2(72, 52))
-	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(110, 28), 9, 1.55, Vector2(72, 52))
-	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 66), 9, 1.4, Vector2(56, 40))
+	# Hero shop / cafe / bakery — larger for overview/town readable signs
+	_spr("res://assets/processed/prop_shop_awning.png", Vector2(68, 26), 9, 1.65, Vector2(78, 56))
+	_spr("res://assets/processed/prop_cafe_awning.png", Vector2(112, 26), 9, 1.65, Vector2(78, 56))
+	_spr("res://assets/processed/prop_bakery.png", Vector2(90, 64), 9, 1.5, Vector2(60, 44))
 	var houses := [
 		[Vector2(62, 36), "red"],
 		[Vector2(62, 54), "thatch"],

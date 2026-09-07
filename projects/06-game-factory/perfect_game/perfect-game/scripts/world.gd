@@ -229,16 +229,25 @@ func _paint_base() -> void:
 	# Animal pen floor stays mostly grass (south of barns)
 	_fill_rect(_ground, Rect2i(24, 112, 20, 10), T_GRASS2)
 
-	# Z2 river winding + banks + edges
+	# Z2 river winding + soft banks + edges
 	for y in range(16, 100):
 		var cx := 28 + int(6.0 * sin(y * 0.18))
 		for dx in range(-2, 3):
 			_set_cell(_water, cx + dx, y, T_WATER)
 			_set_cell(_ground, cx + dx, y, T_WATER)
-		_set_cell(_ground, cx - 3, y, T_WE_E)
-		_set_cell(_ground, cx + 3, y, T_WE_W)
-		_set_cell(_ground, cx - 4, y, T_DIRT)
-		_set_cell(_ground, cx + 4, y, T_DIRT)
+		# Soft irregular banks (not hard dirt ladder every cell)
+		var wob := (y * 3) % 3 - 1
+		_set_cell(_ground, cx - 3 + wob, y, T_WE_E if (y % 2) == 0 else T_GRASS3)
+		_set_cell(_ground, cx + 3 - wob, y, T_WE_W if (y % 2) == 0 else T_GRASS2)
+		if y % 3 == 0:
+			_set_cell(_ground, cx - 4, y, T_GRASS4)
+			_set_cell(_ground, cx + 4, y, T_DIRT)
+		elif y % 4 == 1:
+			_set_cell(_ground, cx - 4 + wob, y, T_DIRT)
+			_set_cell(_ground, cx + 4 - wob, y, T_GRASS3)
+		else:
+			_set_cell(_ground, cx - 4, y, T_GRASS2)
+			_set_cell(_ground, cx + 4, y, T_GRASS)
 	# Waterfall amphitheater — rock rim only; interior = water (kill farm/hill banding)
 	for x in range(14, 34):
 		for y in range(10, 24):
