@@ -126,7 +126,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 		["01_farm", Vector2(40 * 16, 98 * 16)],
 		["02_river", Vector2(28 * 16, 28 * 16)],
 		["07_waterfall", Vector2(24 * 16, 20 * 16)],
-		["03_town", Vector2(90 * 16, 48 * 16)],
+		["03_town", Vector2(90 * 16, 40 * 16)],
 		["04_station", Vector2(155 * 16, 18 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
 		["06_lake", Vector2(168 * 16, 105 * 16)],
