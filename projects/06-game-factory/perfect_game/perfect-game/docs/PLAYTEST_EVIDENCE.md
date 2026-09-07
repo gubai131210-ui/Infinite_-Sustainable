@@ -1,39 +1,55 @@
-# Oakhaven 试玩 / 导出证据（P54）
+# Oakhaven 试玩 / 导出证据
 
-> 竖切证据 ≠ Goal complete。本文件只记录当前可核验事实。
+> 竖切证据 ≠ Goal complete。本文件只记录当前可核验事实。  
+> **关闭 Goal 硬门槛：** 下方「用户签字」表全部勾选 + itch 页面 URL。
 
 ## 导出产物（本机）
 
 | 项 | 值 |
 |----|----|
 | 路径 | `build/Oakhaven.exe` |
-| 大小 | ≈ **103.8 MB**（108870760 bytes） |
-| 时间戳 | 2026-09-07 04:03 |
+| 大小 | ≈ **103.8 MB** |
+| 时间戳 | 2026-09-07 |
 | 引擎 | Godot **4.6.1 mono** |
-| 模板 | `D:\Godot\export_templates\4.6.1.stable.mono\` + AppData junction |
 
-用户需在中文路径本机 **双击 exe 或编辑器 F5** 做最终冒烟（Agent 不代替该步宣称“可玩无发布”）。
+用户需在中文路径本机 **双击 exe 或编辑器 F5** 做最终冒烟（Agent 不代替该步宣称“可玩可发布”）。
 
 ## MCP 冒烟（Agent）
 
 | 日期 | 结果 |
 |------|------|
-| 2026-09-07（P46–P55 轮） | `run_scene` → **0** script error |
+| 2026-09-07（P109–P114） | `run_scene` → **0** script error · `GOLDEN_CAPTURE_DONE` |
 
 ## Golden
 
-`assets/qa/golden/`：`00_overview` … `06_lake` + `07_waterfall` + `08_dialogue`
-
+`assets/qa/golden/`：`00_overview` … `10_shop_door`  
 对照：`docs/ref/oakhaven_overview.jpg`
 
 ## itch
 
 - 文案：[`ITCH_PAGE_DRAFT_CN.md`](ITCH_PAGE_DRAFT_CN.md)
-- 导出步骤：[`EXPORT_AND_PLAYTEST.md`](EXPORT_AND_PLAYTEST.md)
-- **尚未**完成：正式 itch 上传截图 / 页面 URL（待用户发布）
+- 导出：[`EXPORT_AND_PLAYTEST.md`](EXPORT_AND_PLAYTEST.md)
+- **尚未**完成：正式 itch 上传 URL（待用户发布）
+
+## 用户签字试玩清单（请本机勾选后回贴）
+
+请 F5 或运行 `build/Oakhaven.exe`，逐项勾选：
+
+- [ ] 农庄：锄地 → 播种 → 浇水 → 床睡觉 → 作物有生长
+- [ ] 镇中心：看见 **GENERAL STORE / OAKHAVEN CAFE / BAKERY** 招牌
+- [ ] 杂货店：E 进门 → 买种子礼包 / 卖作物 → E 离开
+- [ ] 咖啡馆：E 进门 → 花 10 金点可可 → 精力增加
+- [ ] 面包房：E 进门 → 花 15 金买派 → 离开
+- [ ] 瀑布：走到西北瀑布，能看到崖壁落水 + 听瀑交互
+- [ ] 灯塔 / 火车站：可接近并进入内景
+- [ ] NPC（林婶/豆豆）在店面附近走动，可对话
+- [ ] 雨天或过夜后存档仍在（金币/地块）
+- [ ] 无崩溃、无黑屏、无进店卡死
+
+签字：________　　日期：________　　itch URL（可选）：________
 
 ## 仍缺（Goal 关闭前）
 
-1. 店面主图级视觉（Critic 仍为否）  
-2. 用户签字的导出试玩清单（`EXPORT_AND_PLAYTEST.md` 回归项）  
-3. itch 页面实际上线证据  
+1. 上表用户签字  
+2. itch 页面实际上线证据  
+3. Critic「商店页主图」仍为否（视觉可继续打磨，但不替代签字）

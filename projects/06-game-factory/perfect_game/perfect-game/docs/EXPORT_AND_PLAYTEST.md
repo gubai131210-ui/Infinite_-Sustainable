@@ -31,13 +31,18 @@ itch 文案见 [`ITCH_PAGE_DRAFT_CN.md`](ITCH_PAGE_DRAFT_CN.md)。
 - [ ] 河水 soft shimmer（无棋盘闪烁）  
 - [ ] 秋冬色调变化（过 7 天进下一季）  
 - [ ] 双击 `build/Oakhaven.exe` 冒烟  
+- [ ] 镇中心三家招牌可读（GENERAL STORE / OAKHAVEN CAFE / BAKERY）  
+- [ ] E 进入杂货店 / 咖啡馆 / 面包房并可离开  
+- [ ] 咖啡馆 10 金可可、面包房 15 金牌可扣金加精力  
 
 ## Golden 截图
 
 ```text
 Godot 运行主场景并传用户参数：
   --capture_golden
-输出：`00_overview` … `06_lake` + `07_waterfall` + `08_dialogue`
+输出：`00_overview` … `10_shop_door` + `08_dialogue`
 ```
 
 对照：`docs/ref/oakhaven_overview.jpg` + Visual Bible。
+
+签字清单见 [`PLAYTEST_EVIDENCE.md`](PLAYTEST_EVIDENCE.md)。
