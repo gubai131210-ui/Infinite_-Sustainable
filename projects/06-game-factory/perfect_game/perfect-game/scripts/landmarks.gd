@@ -337,3 +337,17 @@ func _lake() -> void:
 	_spr("res://assets/processed/prop_lamp.png", Vector2(170, 100), 5)
 	_spr("res://assets/processed/prop_crate.png", Vector2(156, 106), 4)
 	_spr("res://assets/processed/prop_barrel.png", Vector2(162, 108), 4)
+	## Mature rows on lake-west fields (outside water ellipse)
+	var lake_crops: Array[String] = ["wheat", "tomato", "greens", "pumpkin", "radish"]
+	for col in range(6):
+		var k: String = lake_crops[col % lake_crops.size()]
+		_spr("res://assets/processed/crop_%s_3.png" % k, Vector2(114 + col * 2, 106), 4, 1.0)
+		_spr("res://assets/processed/crop_%s_2.png" % k, Vector2(114 + col * 2, 108), 4, 1.0)
+	for col2 in range(5):
+		var k2: String = lake_crops[(col2 + 2) % lake_crops.size()]
+		_spr("res://assets/processed/crop_%s_3.png" % k2, Vector2(114 + col2 * 2, 116), 4, 1.0)
+	for col3 in range(8):
+		var k3: String = lake_crops[col3 % lake_crops.size()]
+		_spr("res://assets/processed/crop_%s_2.png" % k3, Vector2(142 + col3 * 2, 125), 4, 0.95)
+	for p in [Vector2(116, 112), Vector2(122, 118), Vector2(148, 126)]:
+		_spr("res://assets/processed/prop_path_tuft.png", p, 3, 1.0)

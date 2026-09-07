@@ -126,7 +126,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 		hud.visible = false
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/qa/golden"))
 	var shots := [
-		["01_farm", Vector2(40 * 16, 98 * 16)],
+		["01_farm", Vector2(36 * 16, 108 * 16)],
 		["02_river", Vector2(28 * 16, 28 * 16)],
 		["07_waterfall", Vector2(24 * 16, 18 * 16)],
 		["03_town", Vector2(90 * 16, 58 * 16)],
@@ -134,7 +134,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 		["10_shop_door", Vector2(78 * 16, 52 * 16)],
 		["04_station", Vector2(155 * 16, 18 * 16)],
 		["05_terrace", Vector2(142 * 16, 44 * 16)],
-		["06_lake", Vector2(168 * 16, 105 * 16)],
+		["06_lake", Vector2(120 * 16, 112 * 16)],
 		["00_overview", Vector2(100 * 16, 36 * 16)],
 	]
 	var cam := player.get_node("Camera2D") as Camera2D

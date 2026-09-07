@@ -33,6 +33,7 @@
 | 畜栏 | 鸡/牛/羊 spawn + `pen_min`/`pen_max` clamp 南围栏内 |
 | Golden 重抓 | P126 `GOLDEN_CAPTURE_DONE`（含 blob fringe） |
 | 院子 blob / 门廊 | P127–P129：农舍 apron blob + bridge 木台 + 碎屑；区标默认隐藏；golden 再抓 |
+| Overview 对齐 | P130–P132：畜栏泥土 + 湖南田 + 路径 soften；farm/lake 相机重取景 |
 
 > Agent MCP 冒烟 **不能替代** 用户签字。中文路径本机手感 / 输入 / 音频需你确认。
 

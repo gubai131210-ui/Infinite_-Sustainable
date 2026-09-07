@@ -413,4 +413,15 @@
 | P129 | 25m | golden + Critic + push；催用户签字 | origin/main |
 
 ### 院子 blob 进度
-- [x] P127 · [x] P128 · [x] P129
+- [x] P127 · [x] P128 · [x] P129  
+
+## Overview 对齐：畜栏土坪 + 湖田 + 路径软边（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P130 | 35m | 畜栏泥土围场（对照 overview） | 01_farm pen dirt |
+| P131 | 35m | 回声湖南田垄 + 梯田 ledge fringe | 06_lake / 05_terrace |
+| P132 | 25m | 路径/广场 `_soften_path_edges` + Critic/push | 00_overview |
+
+### Overview 对齐进度
+- [x] P130 · [x] P131 · [x] P132

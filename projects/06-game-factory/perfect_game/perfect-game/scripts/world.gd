@@ -378,8 +378,18 @@ func _paint_base() -> void:
 		_fringe_soft(bed)
 		for row in range(0, bed.size.y - 1, 2):
 			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
-	# Animal pen floor stays mostly grass (south of barns)
-	_fill_rect(_ground, Rect2i(24, 112, 20, 10), T_GRASS2)
+	# Animal pen — dirt yard like overview ref (not plain grass)
+	_fill_dirt_blob(34, 116, 11, 5, false)
+	for yy in range(113, 121):
+		for xx in range(25, 43):
+			var h: int = absi(xx * 11 + yy * 7) % 5
+			if h <= 2:
+				_set_cell(_ground, xx, yy, T_DIRT)
+			elif h == 3:
+				_set_cell(_ground, xx, yy, T_DIRT2)
+			else:
+				_set_cell(_ground, xx, yy, T_PATH2)
+	_fringe_soft(Rect2i(25, 113, 18, 8))
 
 	# Z2 river winding + soft banks + edges
 	for y in range(16, 100):
@@ -498,16 +508,18 @@ func _paint_base() -> void:
 	_fill_rect(_ground, Rect2i(178, 10, 10, 16), T_CLIFF)
 	_fill_rect(_ground, Rect2i(180, 14, 6, 8), T_HILL)
 
-	# Z5 terraces — tall dark cliff faces with grass gap between bands
+	# Z5 terraces — tall dark cliff faces with soft farmable ledges (not brick strips)
 	for band in range(5):
 		var y0 := 38 + band * 10
 		var inset := (band % 3) - 1
 		var x0 := 122 + inset
 		var w := 42
-		# farmable ledge
-		_fill_rect(_ground, Rect2i(x0 + 2, y0, w - 2, 3), T_FARM)
-		for x in range(x0 + 4, x0 + w - 2, 2):
-			_set_cell(_ground, x, y0 + 1, T_DIRT)
+		# farmable ledge as soft dirt + tilled rows
+		var ledge := Rect2i(x0 + 2, y0, w - 2, 3)
+		_fill_rect(_ground, ledge, T_DIRT)
+		_fill_rect(_ground, Rect2i(x0 + 3, y0 + 1, w - 4, 1), T_FARM)
+		_fringe_soft(ledge)
+		_fill_rect(_ground, Rect2i(x0 + 3, y0 + 1, w - 4, 1), T_FARM)
 		# thick rocky retaining wall / cliff face (must read as elevation)
 		_fill_rect(_ground, Rect2i(x0, y0 + 3, w, 5), T_CLIFF)
 		for x in range(x0, x0 + w):
@@ -555,6 +567,32 @@ func _paint_base() -> void:
 	for x in range(158, 166):
 		_set_cell(_ground, x, 110, T_BRIDGE)
 		_water.erase_cell(Vector2i(x, 110))
+	## Lake-side crop fields (must sit OUTSIDE water ellipse center 155,104)
+	## West shore grass (overview: fields beside Echo Lake)
+	_fill_dirt_blob(118, 108, 10, 5, false)
+	var lake_beds := [
+		Rect2i(112, 104, 14, 8),
+		Rect2i(112, 114, 12, 6),
+	]
+	for bed in lake_beds:
+		_fill_rect(_ground, bed, T_DIRT)
+		for row in range(0, bed.size.y - 1, 2):
+			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
+		_fringe_soft(bed)
+		for row in range(0, bed.size.y - 1, 2):
+			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
+		## Erase any water cells that leaked under beds
+		for yy in range(bed.position.y, bed.position.y + bed.size.y):
+			for xx in range(bed.position.x, bed.position.x + bed.size.x):
+				_water.erase_cell(Vector2i(xx, yy))
+	## Thin south-sand strip crops (y high enough to exit deep water)
+	_fill_dirt_blob(150, 126, 12, 2, false)
+	for xx in range(140, 168):
+		_set_cell(_ground, xx, 125, T_DIRT if (xx % 2) == 0 else T_FARM)
+		_set_cell(_ground, xx, 126, T_FARM if (xx % 2) == 0 else T_DIRT2)
+		_water.erase_cell(Vector2i(xx, 125))
+		_water.erase_cell(Vector2i(xx, 126))
+	_fringe_soft(Rect2i(140, 125, 28, 2))
 
 	# Stairs from north hills into farm corridor
 	for y in range(14, 24):
@@ -562,8 +600,33 @@ func _paint_base() -> void:
 			_set_cell(_ground, x, y, T_STAIRS)
 	## Stardew-like grass↔dirt seam autotile pass
 	_stitch_dirt_seams()
+	## Extra path/plaza fringe soften (overview hard edges)
+	_soften_path_edges()
 	## Building footings — dirt pads so facades sit on ground (not float)
 	_paint_building_footings()
+
+func _soften_path_edges() -> void:
+	## Nibble path/plaza borders into grass + GD tiles (breaks overview brick-read)
+	var extras: Array = []
+	for y in range(H):
+		for x in range(W):
+			var tid: int = _cell_tid(x, y)
+			if tid != T_PATH and tid != T_PATH2 and tid != T_PLAZA and tid != T_PLAZA2:
+				continue
+			for d in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
+				var nx: int = x + d.x
+				var ny: int = y + d.y
+				if not _is_grassish(_cell_tid(nx, ny)):
+					continue
+				var n: int = absi(nx * 13 + ny * 17) % 6
+				if n == 0:
+					extras.append([nx, ny, T_GD_S if d.y < 0 else (T_GD_N if d.y > 0 else (T_GD_E if d.x < 0 else T_GD_W))])
+				elif n == 1:
+					extras.append([nx, ny, T_GRASS3])
+				elif n == 2:
+					extras.append([nx, ny, T_DIRT2])
+	for item in extras:
+		_set_cell(_ground, int(item[0]), int(item[1]), int(item[2]))
 
 func _is_dirtish(tid: int) -> bool:
 	return tid == T_DIRT or tid == T_DIRT2 or tid == T_FARM or tid == T_PATH or tid == T_PATH2 or tid == T_SAND
