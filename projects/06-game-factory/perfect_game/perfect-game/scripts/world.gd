@@ -326,6 +326,9 @@ func _paint_base() -> void:
 			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
 		## Stardew-like soft fringe: grass/dirt mixed rim (not hard rectangle)
 		_fringe_soft(bed)
+		## Re-stamp tilled rows so fringe nibbles never eat hoeable farmland
+		for row in range(0, bed.size.y - 1, 2):
+			_fill_rect(_ground, Rect2i(bed.position.x + 1, bed.position.y + row, bed.size.x - 2, 1), T_FARM)
 	# Path strips between beds
 	_fill_rect(_ground, Rect2i(30, 78, 4, 22), T_PATH)
 	_fill_rect(_ground, Rect2i(14, 88, 50, 3), T_PATH)
