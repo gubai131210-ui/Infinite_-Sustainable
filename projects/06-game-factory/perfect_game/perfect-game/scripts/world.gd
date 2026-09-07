@@ -353,7 +353,7 @@ func _paint_base() -> void:
 		_fill_rect(_ground, Rect2i(x, 3, 2, 3), T_CLIFF)
 
 	# Z1 farm — Stardew hybrid: irregular dirt CLEARINGS + rectangular tilled beds
-	# Animal pen stays grass (south of barns)
+	# Animal pen = dirt yard (overview ref), not plain grass
 	## Farmhouse / barn dirt aprons (blob, not crop grid)
 	_fill_dirt_blob(40, 93, 15, 7, false)
 	_fill_dirt_blob(38, 104, 17, 6, false)
