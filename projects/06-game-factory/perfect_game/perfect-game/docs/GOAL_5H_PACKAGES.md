@@ -247,3 +247,15 @@
 
 ### 山谷林缘进度
 - [x] P78 · P79 · P80 · P81 · P82  
+
+## 密冠与瀑地貌（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P83 | 35m | 北麓连续密松冠 | overview |
+| P84 | 30m | 一体瀑碗 landform | waterfall |
+| P85 | 25m | 中空草地补林 | overview |
+| P86 | 30m | 远峰加深 + golden/Critic/push | origin/main |
+
+### 密冠瀑地貌进度
+- [x] P83 · P84 · P85 · P86  

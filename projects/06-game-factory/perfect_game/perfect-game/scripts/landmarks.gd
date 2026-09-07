@@ -95,22 +95,18 @@ func _ruins() -> void:
 	_spr("res://assets/processed/chest.png", Vector2(82, 18), 6, 0.9)
 
 func _river() -> void:
-	## Amphitheater bowl: side pines + few organic cliffs + dual fall
-	for p in [Vector2(10, 14), Vector2(14, 16), Vector2(34, 14), Vector2(38, 16), Vector2(12, 18), Vector2(36, 18)]:
-		_spr("res://assets/processed/tree_pine.png", p, 4, 1.05)
-	_spr("res://assets/processed/prop_cliff.png", Vector2(19, 10), 3, 1.45)
-	_spr("res://assets/processed/prop_cliff.png", Vector2(29, 10), 3, 1.4)
-	_spr("res://assets/processed/prop_cliff.png", Vector2(24, 12), 4, 1.25)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 16), 5, 1.2)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 16), 5, 1.15)
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 15), 7, 1.75, Vector2(48, 64))
-	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 17), 8, 1.3, Vector2(36, 48), Color(0.92, 0.96, 1.0, 0.85))
-	_spr("res://assets/processed/prop_rocks.png", Vector2(20, 21), 9, 1.05)
-	_spr("res://assets/processed/prop_rocks.png", Vector2(28, 21), 9, 1.0)
-	for p in [Vector2(14, 22), Vector2(34, 22)]:
-		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 11, 1.05)
-	_spr("res://assets/processed/bush.png", Vector2(20, 23), 10, 1.0)
-	_spr("res://assets/processed/bush.png", Vector2(28, 23), 10, 1.0)
+	## Single landform bowl (cliff+fall+mist) + flanking pines — less prop-float stack
+	for p in [Vector2(10, 14), Vector2(14, 17), Vector2(34, 14), Vector2(38, 17), Vector2(12, 20), Vector2(36, 20)]:
+		_spr("res://assets/processed/tree_pine.png", p, 4, 1.1)
+	_spr("res://assets/processed/prop_waterfall_bowl.png", Vector2(24, 14), 6, 1.55, Vector2(56, 72))
+	# Soft secondary veil only
+	_spr("res://assets/processed/prop_waterfall.png", Vector2(24, 16), 7, 1.15, Vector2.ZERO, Color(0.9, 0.95, 1.0, 0.55))
+	_spr("res://assets/processed/prop_rocks.png", Vector2(18, 20), 8, 1.1)
+	_spr("res://assets/processed/prop_rocks.png", Vector2(30, 20), 8, 1.05)
+	for p in [Vector2(14, 23), Vector2(34, 23)]:
+		_spr("res://assets/processed/tree_%d.png" % (int(p.x) % 3), p, 10, 1.05)
+	_spr("res://assets/processed/bush.png", Vector2(20, 24), 9, 1.0)
+	_spr("res://assets/processed/bush.png", Vector2(28, 24), 9, 1.0)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 40), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(29, 62), 5, 1.2)
 	_spr("res://assets/processed/prop_bridge.png", Vector2(28, 78), 5, 1.1)

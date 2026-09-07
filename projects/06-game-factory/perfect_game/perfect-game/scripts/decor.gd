@@ -172,19 +172,33 @@ func _forest_rim() -> void:
 			if ((x + y * 3) % 4) == 0:
 				continue
 			_spr("res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 2), y), 5)
-	# Mid-north forest shelf BELOW skyline (y>=18) — closes open grass sea
-	for x in range(2, 190, 3):
-		if x >= 14 and x <= 40:
-			continue  # waterfall corridor
-		if x >= 130 and x <= 178:
-			# thin station approach — don't wall tracks
-			if (x % 6) != 0:
+	# Dense continuous N pine canopy under skyline (y 14–28) — leave waterfall + station gaps
+	for x in range(1, 191, 2):
+		if x >= 15 and x <= 38:
+			continue  # waterfall sky corridor
+		if x >= 128 and x <= 180:
+			if (x % 5) != 0:
+				continue  # sparse near station tracks
+		for y in range(14, 28, 2):
+			# denser than prior shelf: skip less often
+			if ((x * 3 + y * 5) % 11) == 0:
 				continue
-		for y in range(18, 26, 2):
-			if ((x * 5 + y * 7) % 6) == 0:
+			# Prefer pines for dark continuous canopy (ref look)
+			var pine_n := ((x + y) % 3) != 2
+			var path_n := "res://assets/processed/tree_pine.png" if pine_n else "res://assets/processed/tree_%d.png" % (x % 3)
+			_spr(path_n, Vector2(x + (y % 2) * 0.45, y + (x % 2) * 0.25), 5)
+	# Soft mid-map irregular groves (fill open grass sea between rim and town)
+	for gx in range(42, 120, 4):
+		for gy in range(28, 68, 4):
+			# keep town plaza / paths relatively clear
+			if gx >= 68 and gx <= 116 and gy >= 34 and gy <= 66:
+				if ((gx + gy) % 5) != 0:
+					continue
+			if ((gx * 7 + gy * 11) % 9) < 5:
 				continue
-			var use_pine := (x + y) % 4 == 0
-			_spr("res://assets/processed/tree_pine.png" if use_pine else "res://assets/processed/tree_%d.png" % (x % 3), Vector2(x + (y % 2) * 0.5, y), 5)
+			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.3, gy + (gx % 2) * 0.3), 5)
+			if ((gx + gy) % 4) == 0:
+				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.2, gy + 0.8), 5)
 	# Soft inner belts (east of river / west of town) to break empty mid-grass
 	for y in range(28, 70, 3):
 		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(48 + (y % 3), y), 5)
@@ -523,7 +537,8 @@ func _ambient() -> void:
 		_spawn_smoke(origin * TS)
 	_spawn_ripples(Vector2(155, 108) * TS)
 	_spawn_ripples(Vector2(28, 50) * TS)
-	_spawn_waterfall_mist(Vector2(24, 22) * TS)
+	_spawn_waterfall_mist(Vector2(24, 20) * TS)
+	_spawn_waterfall_mist(Vector2(24, 24) * TS)
 	_sway_trees()
 
 func _spawn_smoke(at: Vector2) -> void:
