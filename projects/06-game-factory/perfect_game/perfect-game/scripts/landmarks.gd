@@ -188,8 +188,9 @@ func _farm() -> void:
 	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 0, 1.25, Vector2(56, 32))
 	_spr("res://assets/processed/prop_doormat.png", Vector2(28, 105), 0, 1.1)
 	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 0, 1.2, Vector2(52, 30))
-	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 0, 1.35, Vector2(18, 40))
-	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 0, 1.35, Vector2(18, 40))
+	## Silos south of farmhouse so dome caps stay in farm golden frame
+	_spr("res://assets/processed/prop_silo.png", Vector2(34, 100), 0, 1.15, Vector2(16, 36))
+	_spr("res://assets/processed/prop_silo.png", Vector2(50, 100), 0, 1.15, Vector2(16, 36))
 	_spr("res://assets/processed/prop_chimney.png", Vector2(41, 86), 0, 1.1)
 	_spr("res://assets/processed/prop_signboard.png", Vector2(34, 86), 0, 1.05)
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(36, 90), 4, 1.0)
