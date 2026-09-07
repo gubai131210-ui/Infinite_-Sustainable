@@ -192,13 +192,14 @@ func _farm() -> void:
 	_spr("res://assets/processed/prop_flowerbed.png", Vector2(44, 90), 4, 1.0)
 	_spr("res://assets/processed/prop_planter.png", Vector2(38, 91), 5, 0.95)
 	_spr("res://assets/processed/prop_planter.png", Vector2(46, 91), 5, 0.95)
-	## Decorative mature beds OUTSIDE playable hoe rows (west bed ~14-29,y78-86)
-	## Place along south pen / barn apron so FarmPlots stay clear
+	## Decorative mature beds OUTSIDE playable hoe rows
+	## Hoe beds ~ (14-29/34-49, y78-86) and (14-29/34-49, y92-99) — keep clear
+	## Place on barn apron south of beds (y>=106)
 	var farm_crops: Array[String] = ["greens", "wheat", "tomato", "radish", "pumpkin"]
-	for row in range(3):
-		for col in range(7):
-			var cx := 18 + col * 2
-			var cy := 94 + row * 2
+	for row in range(2):
+		for col in range(6):
+			var cx := 20 + col * 2
+			var cy := 106 + row * 2
 			var kind: String = farm_crops[(row + col) % farm_crops.size()]
 			var stage: int = 2 + ((row + col) % 2)
 			var crop_path: String = "res://assets/processed/crop_%s_%d.png" % [kind, stage]
@@ -206,7 +207,7 @@ func _farm() -> void:
 	for col in range(5):
 		var kind2: String = farm_crops[col % farm_crops.size()]
 		var edge_path: String = "res://assets/processed/crop_%s_3.png" % kind2
-		_spr(edge_path, Vector2(58 + col * 2, 88), 4, 1.0)
+		_spr(edge_path, Vector2(58 + col * 2, 86), 4, 1.0)
 	_spr("res://assets/processed/prop_crate.png", Vector2(22, 100), 5, 1.1)
 	_spr("res://assets/processed/prop_barrel.png", Vector2(56, 100), 5, 1.05)
 	## Live chickens/cows come from decor._animals — no static doubles
