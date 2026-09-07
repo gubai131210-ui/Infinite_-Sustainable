@@ -458,3 +458,14 @@
 
 ### 镇店招进度
 - [x] P139 · [x] P140 · [x] P141
+
+## Overview 油画密度（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P142 | 35m | 近色草瓦 + 8×8 草斑破棋盘 | tileset + 00_overview |
+| P143 | 40m | 中景/站湖走廊树灌花加密 | decor groves |
+| P144 | 25m | overview 取景含四区标 + Critic/push | origin/main |
+
+### Overview 密度进度
+- [x] P142 · [x] P143 · [x] P144

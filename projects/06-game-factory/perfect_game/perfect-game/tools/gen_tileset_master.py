@@ -40,36 +40,37 @@ def fill(img, c):
 
 
 def grass(variant: int = 0) -> Image.Image:
-    """Soft mottled meadow — close base hues so atlas seams read less as a grid."""
-    bases = [(74, 146, 62), (78, 150, 66), (70, 140, 58), (82, 154, 68)]
+    """Oil-meadow grass — near-identical bases so overview zoom never reads as a checkerboard."""
+    # Very close hues; variation comes from soft blobs, not tile-to-tile base jumps
+    bases = [(76, 148, 64), (78, 150, 66), (74, 146, 62), (77, 149, 65)]
     b = bases[variant % 4]
     img = Image.new("RGBA", (TS, TS), (*b, 255))
-    # Large soft blobs (oil-meadow feel at overview zoom)
-    for _ in range(5):
+    # Large soft blobs (same family across variants)
+    for _ in range(6):
         cx, cy = rng.randrange(TS), rng.randrange(TS)
-        rad = rng.randrange(3, 7)
+        rad = rng.randrange(4, 8)
         tint = (
-            max(0, min(255, b[0] + rng.randrange(-18, 22))),
-            max(0, min(255, b[1] + rng.randrange(-16, 24))),
-            max(0, min(255, b[2] + rng.randrange(-12, 16))),
+            max(0, min(255, b[0] + rng.randrange(-10, 12))),
+            max(0, min(255, b[1] + rng.randrange(-8, 14))),
+            max(0, min(255, b[2] + rng.randrange(-6, 10))),
             255,
         )
         for yy in range(TS):
             for xx in range(TS):
-                if (xx - cx) * (xx - cx) + (yy - cy) * (yy - cy) <= rad * rad and rng.random() > 0.25:
+                if (xx - cx) * (xx - cx) + (yy - cy) * (yy - cy) <= rad * rad and rng.random() > 0.2:
                     px(img, xx, yy, tint)
-    # Fine dither (low contrast — avoid pepper noise that grids at zoom-out)
-    for _ in range(28):
+    # Fine low-contrast dither
+    for _ in range(22):
         x, y = rng.randrange(TS), rng.randrange(TS)
-        bright = (min(255, b[0] + 14), min(255, b[1] + 16), min(255, b[2] + 10), 255)
-        dark = (max(0, b[0] - 12), max(0, b[1] - 14), max(0, b[2] - 10), 255)
+        bright = (min(255, b[0] + 8), min(255, b[1] + 10), min(255, b[2] + 6), 255)
+        dark = (max(0, b[0] - 8), max(0, b[1] - 9), max(0, b[2] - 6), 255)
         px(img, x, y, bright if rng.random() > 0.5 else dark)
-    # Sparse blade / flower speck
-    for _ in range(4):
+    # Sparse blades only (flowers rarer — avoid pepper grid at zoom-out)
+    for _ in range(3):
         x, y = rng.randrange(1, 14), rng.randrange(2, 14)
-        px(img, x, y, (52, 118, 44, 255))
-        px(img, x, y - 1, (102, 172, 84, 255))
-    if variant % 2 == 0 and rng.random() > 0.45:
+        px(img, x, y, (58, 124, 48, 255))
+        px(img, x, y - 1, (98, 168, 82, 255))
+    if variant == 0 and rng.random() > 0.7:
         fx, fy = rng.randrange(2, 14), rng.randrange(2, 14)
         px(img, fx, fy, (220, 96, 124, 255) if rng.random() > 0.5 else (236, 214, 96, 255))
     return img

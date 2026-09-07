@@ -87,7 +87,7 @@ func _spawn_zone_labels() -> void:
 		"米勒农庄": Vector2(28, 90),
 		"橡木河": Vector2(16, 46),
 		"橡木火车站": Vector2(140, 6),
-		"回声湖": Vector2(158, 104),
+		"回声湖": Vector2(148, 100),
 	}
 	for label_text in labels.keys():
 		var lab := Label.new()
@@ -307,26 +307,26 @@ func _paint_path_winding(a: Vector2i, b: Vector2i, steps: int) -> void:
 			_set_cell(_ground, x + 1 + ox, y + 3, T_GRASS)
 
 func _paint_base() -> void:
-	# Coherent meadow patches (4×4 cells) — less per-tile hash = less overview grid
+	# Coherent meadow patches (8×8 cells) — large soft fields kill overview checkerboard
 	for y in range(H):
 		for x in range(W):
-			var px4: int = x >> 2
-			var py4: int = y >> 2
-			var patch: int = absi((px4 * 73856093) ^ (py4 * 19349663) ^ (px4 * py4 * 83492791))
+			var px8: int = x >> 3
+			var py8: int = y >> 3
+			var patch: int = absi((px8 * 73856093) ^ (py8 * 19349663) ^ (px8 * py8 * 83492791))
 			var local: int = absi((x * 374761393 + y * 668265263) ^ (x * y * 127))
 			var g: int = T_GRASS
-			var m: int = patch % 7
-			if m <= 1:
+			var m: int = patch % 5
+			if m == 0:
 				g = T_GRASS2
-			elif m <= 3:
+			elif m == 1:
 				g = T_GRASS3
-			elif m <= 5:
+			elif m == 2:
 				g = T_GRASS4
-			# Soft fringe inside patch — occasional neighbor variant
-			if (local % 19) == 0:
+			# Soft fringe inside patch — rare neighbor variant (not every other tile)
+			if (local % 23) == 0:
 				g = T_GRASS if g != T_GRASS else T_GRASS3
-			elif (local % 29) == 0:
-				g = T_DIRT if (local % 3) == 0 else T_GRASS2
+			elif (local % 41) == 0:
+				g = T_DIRT if (local % 5) == 0 else T_GRASS2
 			_set_cell(_ground, x, y, g)
 	# North hills — irregular shelf (not solid wall); leave waterfall corridor open
 	for x in range(W):

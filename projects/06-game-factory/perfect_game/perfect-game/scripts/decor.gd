@@ -197,36 +197,67 @@ func _forest_rim() -> void:
 				path = "res://assets/processed/tree_pine_c.png"
 		_spr(path, Vector2(x + 0.3, y), 5, false, 1.2 + float(x % 3) * 0.08)
 	# Soft mid-map irregular groves (fill open grass sea between rim and town)
-	for gx in range(40, 124, 3):
-		for gy in range(26, 72, 3):
+	for gx in range(38, 128, 2):
+		for gy in range(24, 76, 2):
 			# keep town plaza / storefronts clear of grove trees
-			if gx >= 62 and gx <= 120 and gy >= 36 and gy <= 78:
+			if gx >= 66 and gx <= 118 and gy >= 38 and gy <= 76:
 				continue
 			# leave waterfall approach open
 			if gx <= 42 and gy <= 30:
 				continue
 			var h := (gx * 7 + gy * 11) % 11
-			if h < 6:
+			if h < 4:
 				continue
 			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.25, gy + (gx % 2) * 0.25), 5, 0.95 + float(h % 3) * 0.06)
-			if h >= 9:
+			if h >= 8:
 				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.1, gy + 0.7), 5, 1.05)
 	# Soft inner belts (east of river / west of town) to break empty mid-grass
-	for y in range(28, 70, 3):
-		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(48 + (y % 3), y), 5)
-		_spr("res://assets/processed/tree_%d.png" % ((y + 1) % 3), Vector2(56 + (y % 2), y + 1), 5)
+	for y in range(26, 74, 2):
+		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(46 + (y % 3), y), 5)
+		_spr("res://assets/processed/tree_%d.png" % ((y + 1) % 3), Vector2(54 + (y % 2), y + 1), 5)
+		_spr("res://assets/processed/bush.png", Vector2(50 + (y % 2) * 0.4, y + 0.5), 3, false)
+	# Town→lake / town→station corridors (overview empty grass seas)
+	for x in range(110, 170, 2):
+		for y in range(28, 50, 2):
+			if x >= 130 and x <= 178 and y <= 28:
+				continue  # station platform
+			var hh := (x * 13 + y * 17) % 9
+			if hh < 3:
+				continue
+			if hh <= 5:
+				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.2, y + 0.2), 5, 1.0)
+			elif hh == 6:
+				_spr("res://assets/processed/bush.png", Vector2(x, y), 3, false)
+			else:
+				_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x, y), 2, false)
+	for x in range(118, 170, 2):
+		for y in range(70, 100, 2):
+			## west of lake / south of terraces
+			if x >= 150 and y >= 86:
+				continue  # lake water
+			var hh2 := (x * 19 + y * 23) % 10
+			if hh2 < 4:
+				continue
+			if hh2 <= 6:
+				_spr("res://assets/processed/tree_%d.png" % ((x + y) % 3), Vector2(x + 0.15, y), 5, 0.98)
+			elif hh2 == 7:
+				_spr("res://assets/processed/bush.png", Vector2(x, y + 0.2), 3, false)
+			else:
+				_spr("res://assets/processed/flower_%d.png" % ((x) % 4), Vector2(x + 0.3, y), 2, false)
 	# Mid-map ground clutter (flowers/tufts — trees alone don't kill grass sea)
-	for x in range(40, 125, 2):
-		for y in range(30, 72, 2):
+	for x in range(38, 130, 2):
+		for y in range(28, 76, 2):
 			if x >= 70 and x <= 114 and y >= 36 and y <= 64:
 				continue  # plaza
-			var h := (x * 17 + y * 31) % 11
+			var h := (x * 17 + y * 31) % 9
 			if h == 0:
 				_spr("res://assets/processed/prop_path_tuft.png", Vector2(x + 0.3, y), 2, false)
 			elif h == 1 or h == 2:
 				_spr("res://assets/processed/flower_%d.png" % ((x + y) % 4), Vector2(x, y), 2, false)
 			elif h == 3:
 				_spr("res://assets/processed/bush.png", Vector2(x + 0.2, y + 0.2), 3, false)
+			elif h == 4:
+				_spr("res://assets/processed/prop_path_pebble.png", Vector2(x + 0.1, y + 0.1), 2, false)
 
 func _props_fill() -> void:
 	for p in [
