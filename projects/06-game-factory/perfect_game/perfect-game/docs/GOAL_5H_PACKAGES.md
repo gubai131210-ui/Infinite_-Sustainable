@@ -329,3 +329,14 @@
 
 ### NPC 排班进度
 - [x] P106 · P107 · P108  
+
+## 参考图视觉对齐（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P109 | 40m | 林冠层次 + 更高瀑碗 + 店面阴影 | canopy/waterfall |
+| P110 | 30m | 中图落叶林 denser（避开广场） | overview |
+| P111 | 25m | golden + Critic + push | origin/main |
+
+### 参考视觉进度
+- [x] P109 · P110 · P111  

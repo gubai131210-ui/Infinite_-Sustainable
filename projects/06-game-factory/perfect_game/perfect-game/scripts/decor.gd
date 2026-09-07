@@ -188,16 +188,20 @@ func _forest_rim() -> void:
 				path = "res://assets/processed/tree_pine_c.png"
 		_spr(path, Vector2(x + 0.3, y), 5, false, 1.2 + float(x % 3) * 0.08)
 	# Soft mid-map irregular groves (fill open grass sea between rim and town)
-	for gx in range(42, 120, 4):
-		for gy in range(28, 68, 4):
+	for gx in range(40, 124, 3):
+		for gy in range(26, 72, 3):
 			# keep town plaza / storefronts clear of grove trees
 			if gx >= 62 and gx <= 120 and gy >= 36 and gy <= 78:
 				continue
-			if ((gx * 7 + gy * 11) % 9) < 5:
+			# leave waterfall approach open
+			if gx <= 42 and gy <= 30:
 				continue
-			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.3, gy + (gx % 2) * 0.3), 5)
-			if ((gx + gy) % 4) == 0:
-				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.2, gy + 0.8), 5)
+			var h := (gx * 7 + gy * 11) % 11
+			if h < 6:
+				continue
+			_spr("res://assets/processed/tree_%d.png" % ((gx + gy) % 3), Vector2(gx + (gy % 3) * 0.25, gy + (gx % 2) * 0.25), 5, 0.95 + float(h % 3) * 0.06)
+			if h >= 9:
+				_spr("res://assets/processed/tree_pine.png", Vector2(gx + 1.1, gy + 0.7), 5, 1.05)
 	# Soft inner belts (east of river / west of town) to break empty mid-grass
 	for y in range(28, 70, 3):
 		_spr("res://assets/processed/tree_%d.png" % (y % 3), Vector2(48 + (y % 3), y), 5)
