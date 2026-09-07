@@ -281,19 +281,28 @@ func _paint_base() -> void:
 		for dx in range(-2, 3):
 			_set_cell(_water, cx + dx, y, T_WATER)
 			_set_cell(_ground, cx + dx, y, T_WATER)
-		# Soft irregular banks (not hard dirt ladder every cell)
+		# Soft irregular banks — wider sand/dirt shoulder (ref-like river edge)
 		var wob := (y * 3) % 3 - 1
-		_set_cell(_ground, cx - 3 + wob, y, T_WE_E if (y % 2) == 0 else T_GRASS3)
-		_set_cell(_ground, cx + 3 - wob, y, T_WE_W if (y % 2) == 0 else T_GRASS2)
+		_set_cell(_ground, cx - 3 + wob, y, T_SAND if (y % 5 == 0) else (T_WE_E if (y % 2) == 0 else T_GRASS3))
+		_set_cell(_ground, cx + 3 - wob, y, T_SAND if (y % 5 == 2) else (T_WE_W if (y % 2) == 0 else T_GRASS2))
+		if y % 2 == 0:
+			_set_cell(_ground, cx - 4 + wob, y, T_DIRT if (y % 3 == 0) else T_SAND)
+			_set_cell(_ground, cx + 4 - wob, y, T_DIRT if (y % 4 == 0) else T_GRASS3)
 		if y % 3 == 0:
-			_set_cell(_ground, cx - 4, y, T_GRASS4)
-			_set_cell(_ground, cx + 4, y, T_DIRT)
+			_set_cell(_ground, cx - 5, y, T_GRASS4)
+			_set_cell(_ground, cx + 5, y, T_DIRT)
+			_set_cell(_ground, cx - 2, y, T_SAND)
+			_set_cell(_ground, cx + 2, y, T_SAND)
 		elif y % 4 == 1:
 			_set_cell(_ground, cx - 4 + wob, y, T_DIRT)
 			_set_cell(_ground, cx + 4 - wob, y, T_GRASS3)
+			_set_cell(_ground, cx - 5 + wob, y, T_GRASS2)
 		else:
 			_set_cell(_ground, cx - 4, y, T_GRASS2)
 			_set_cell(_ground, cx + 4, y, T_GRASS)
+			if y % 5 == 3:
+				_set_cell(_ground, cx - 5, y, T_SAND)
+				_set_cell(_ground, cx + 5, y, T_DIRT)
 	# Waterfall amphitheater — rock rim only; interior = water (kill farm/hill banding)
 	for x in range(14, 34):
 		for y in range(10, 24):

@@ -340,3 +340,14 @@
 
 ### 参考视觉进度
 - [x] P109 · P110 · P111  
+
+## 农庄灯塔与河岸加厚（≠ complete）
+
+| ID | 估时 | 目标 | 完成证据 |
+|----|------|------|----------|
+| P112 | 30m | barn/silo/lighthouse + 河岸 sand | farm/lake/river |
+| P113 | 20m | 瀑金帧构图 + canopy 微细节 | waterfall/overview |
+| P114 | 20m | Critic + push | origin/main |
+
+### 农庄灯塔进度
+- [x] P112 · P113 · P114  

@@ -125,7 +125,7 @@ func _capture_goldens(player: Node2D = null) -> void:
 	var shots := [
 		["01_farm", Vector2(40 * 16, 98 * 16)],
 		["02_river", Vector2(28 * 16, 28 * 16)],
-		["07_waterfall", Vector2(24 * 16, 20 * 16)],
+		["07_waterfall", Vector2(24 * 16, 18 * 16)],
 		["03_town", Vector2(90 * 16, 58 * 16)],
 		["09_storefronts", Vector2(90 * 16, 56 * 16)],
 		["10_shop_door", Vector2(78 * 16, 52 * 16)],
@@ -140,7 +140,9 @@ func _capture_goldens(player: Node2D = null) -> void:
 		if str(s[0]) == "00_overview":
 			cam.zoom = Vector2(0.34, 0.34)
 		elif str(s[0]) == "07_waterfall":
-			cam.zoom = Vector2(1.35, 1.35)
+			cam.zoom = Vector2(1.15, 1.15)
+		elif str(s[0]) == "01_farm":
+			cam.zoom = Vector2(1.4, 1.4)
 		elif str(s[0]) == "03_town":
 			cam.zoom = Vector2(0.9, 0.9)
 		elif str(s[0]) == "09_storefronts":

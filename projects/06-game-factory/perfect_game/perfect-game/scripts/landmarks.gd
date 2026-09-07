@@ -148,10 +148,10 @@ func _process(delta: float) -> void:
 
 func _farm() -> void:
 	_spr("res://assets/processed/prop_farmhouse_darkroof.png", Vector2(40, 88), 8, 1.05, Vector2(48, 28))
-	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 8, 1.05, Vector2(70, 36))
-	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 8, 1.0, Vector2(64, 34))
-	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 8, 1.1, Vector2(22, 48))
-	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 8, 1.1, Vector2(22, 48))
+	_spr("res://assets/processed/prop_barn.png", Vector2(28, 102), 8, 1.25, Vector2(56, 32))
+	_spr("res://assets/processed/prop_barn2.png", Vector2(48, 104), 8, 1.2, Vector2(52, 30))
+	_spr("res://assets/processed/prop_silo.png", Vector2(36, 98), 8, 1.35, Vector2(18, 40))
+	_spr("res://assets/processed/prop_silo.png", Vector2(52, 98), 8, 1.35, Vector2(18, 40))
 	_spr("res://assets/processed/prop_chimney.png", Vector2(41, 86), 9, 1.1)
 	for x in range(24, 46, 2):
 		_spr("res://assets/processed/prop_fence.png", Vector2(x, 112), 4, 1.0, Vector2(14, 10))
@@ -241,7 +241,7 @@ func _attach_train_steam(train: Node2D) -> void:
 	train.add_child(p)
 
 func _lake() -> void:
-	var lh := _spr("res://assets/processed/prop_lighthouse.png", Vector2(174, 100), 11, 1.25, Vector2(30, 72))
+	var lh := _spr("res://assets/processed/prop_lighthouse.png", Vector2(174, 100), 11, 1.55, Vector2(24, 48))
 	if lh != null and lh.has_meta("sprite"):
 		_lighthouse_sprite = lh.get_meta("sprite")
 	_spr("res://assets/processed/prop_rocks.png", Vector2(168, 106), 5, 1.2)
