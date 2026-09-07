@@ -185,7 +185,8 @@ func _refresh() -> void:
 		var root := Node2D.new()
 		root.position = Vector2(key.x * TS + TS * 0.5, key.y * TS + TS * 0.5)
 		root.set_meta("cell", key)
-		root.z_index = 3
+		root.z_index = 0
+		root.y_sort_enabled = true
 		var spr := Sprite2D.new()
 		spr.texture = tex
 		spr.centered = true
